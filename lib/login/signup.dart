@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_splim/login/validate.dart';
+import 'package:flutter_splim/login/validateEmail.dart'
 
 class Account {
   String? email;
@@ -335,6 +336,7 @@ class CreateAccountScreen extends StatelessWidget {
                             passwordConfirm: passwordConfirmValue,
                           );
 
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ValidateEmail()));
 
                         }
                       },

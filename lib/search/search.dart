@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_splim/DB/DBHelper.dart';
 import 'package:flutter_splim/search/searchResult.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -30,6 +32,7 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState(); // widget에서 dbHelper를 가져와서 초기화
     recentSearches = dbHelper.getRecords();
+    fetchSuggestions();
   }
 
   void handleSearchChange(String searchTerm) {
@@ -44,6 +47,17 @@ class _SearchPageState extends State<SearchPage> {
         .where((suggestion) =>
         suggestion.toLowerCase().contains(searchTerm.toLowerCase()))
         .toList();
+  }
+
+  Future<void> fetchSuggestions() async {
+    final response = await http.get(Uri.parse('http://localhost:8080/items/names'));
+    if (response.statusCode == 200) {
+      setState(() {
+        suggestions = List<String>.from(json.decode(response.body));
+      });
+    } else {
+      throw Exception('Failed to load suggestions');
+    }
   }
 
   @override
@@ -79,6 +93,7 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                   ),
                 ),
+
                 FutureBuilder(
                   future: recentSearches,
                   builder: (context, AsyncSnapshot<List<Record>> snapshot) {

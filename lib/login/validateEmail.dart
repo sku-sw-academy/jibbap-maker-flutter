@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_splim/login/login.dart';
+import 'package:http/http.dart' as http;
+
+class Account {
+  String? email;
+  String? nickname;
+  String? password;
+
+  Account({
+    this.email,
+    this.nickname,
+    this.password,
+  });
+}
 
 class ValidateEmail extends StatelessWidget {
-  ValidateEmail({super.key});
   final TextEditingController _emailController = TextEditingController();
   //final String authkey;
+
+  final String email;
+  final String nickname;
+  final String password;
+
+  ValidateEmail({
+    required this.email,
+    required this.nickname,
+    required this.password,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +144,19 @@ class ValidateEmail extends StatelessWidget {
                     // 로그인 버튼이 눌렸을 때의 처리
                     // 아이디와 비밀번호를 사용하여 로그인을 시도하고 결과에 따라 처리
                     String num = _emailController.text.toString();
+
+                    Map<String, dynamic> signUpData = {
+                      'email': email,
+                      'nickname': nickname,
+                      'password': password,
+                      // 다른 필요한 데이터도 추가할 수 있음
+                    };
+
+                    // 회원가입 데이터를 JSON 형태로 변환
+
+
+                    // MySQL 서버 URL
+                    String url = 'http://your_mysql_server_url';
 
                     showDialog(
                           context: context,

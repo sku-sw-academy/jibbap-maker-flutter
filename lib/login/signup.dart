@@ -2,20 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_splim/login/validate.dart';
 import 'package:flutter_splim/login/validateEmail.dart'
 
-class Account {
-  String? email;
-  String? nickname;
-  String? password;
-  String? passwordConfirm;
-
-  Account({
-    this.email,
-    this.nickname,
-    this.password,
-    this.passwordConfirm
-  });
-}
-
 
 class CreateAccountScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();
@@ -326,17 +312,8 @@ class CreateAccountScreen extends StatelessWidget {
                           String emailValue = _emailController.text.toString();
                           String nicknameValue = _nickNameController.text.toString();
                           String passwordValue = _passwordController.text.toString();
-                          String passwordConfirmValue = _passwordConfirmController.text.toString();
 
-                          /// 회원가입 정보로 Account Instance 생성
-                          Account newAccount = Account(
-                            email: emailValue,
-                            nickname: nicknameValue,
-                            password: passwordValue,
-                            passwordConfirm: passwordConfirmValue,
-                          );
-
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ValidateEmail()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ValidateEmail(email: emailValue, nickname: nicknameValue, password: passwordValue,)));
 
                         }
                       },

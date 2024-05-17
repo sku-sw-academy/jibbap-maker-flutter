@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_splim/login/login.dart';
+import 'package:flutter_splim/login/signout.dart';
 import 'package:http/http.dart' as http;
 
 class Account {

@@ -4,6 +4,7 @@ import 'package:flutter_splim/search/searchResult.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:mysql_client/mysql_client.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -14,16 +15,7 @@ class _SearchPageState extends State<SearchPage> {
   final DatabaseHelper dbHelper = DatabaseHelper();
 
   String searchText = '';
-  List<String> suggestions = ["고등어", "조기", "수입조기", "명태", "물오징어", "건멸치",
-    "건오징어", "김", "건미역", "굴", "새우젓", "멸치액젓", "굵은소금", "꽁치", "전복", "새우",
-    "삼치", "쌀", "찹쌀", "콩", "팥", "녹두", "고구마", "배추", "양배추", "알배기배추", "브로콜리",
-    "감자", "참깨", "땅콩", "느타리버섯", "시금치", "상추", "얼갈이배추", "갓", "수박", "참외",
-    "오이","호박", "토마토", "딸기", "무", "당근", "열무", "건고추", "풋고추", "붉은 고추",
-    "깐마늘(국산)", "양파", "파", "생강", "고춧가루", "미나리", "깻잎", "피망", "파프리카", "멜론",
-    "방울토마토", "팽이버섯", "새송이버섯", "호두", "아몬드", "사과", "배", "복숭아", "포도", "감귤",
-    "단감", "바나나", "참다래", "파인애플", "오렌지", "자몽", "레몬", "체리", "건포도", "건블루베리",
-    "망고", "아보카도", "소", "돼지", "수입 소고기", "수입 돼지고기", "닭", "계란", "우유",
-    "즉석밥", "두부", "김치", "고추장", "된장", "간장", "맛김(조미김)", "콩나물", "apple", "banana"]; // 예시 자동완성 목록
+  List<String> suggestions = []; // 예시 자동완성 목록
 
   //List<String> recentSearches = ['사과'];
   late Future<List<Record>> recentSearches;
@@ -50,7 +42,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> fetchSuggestions() async {
-    final response = await http.get(Uri.parse('http://localhost:8080/items/names'));
+    final response = await http.get(Uri.parse('http://127.0.0.1:8080/items/names'));
     if (response.statusCode == 200) {
       setState(() {
         suggestions = List<String>.from(json.decode(response.body));
@@ -149,7 +141,7 @@ class _SearchPageState extends State<SearchPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => SelectedPage(suggestion: recentSearch),
+                                  builder: (context) => SelectedPage(itemname: recentSearch),
                                 ),
                               );
                             },
@@ -211,7 +203,7 @@ class _SearchPageState extends State<SearchPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SelectedPage(suggestion: suggestion),
+                        builder: (context) => SelectedPage(itemname: suggestion),
                       ),
                     );
                   },

@@ -161,7 +161,7 @@ class ValidateEmail extends StatelessWidget {
                     showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            backgroundColor: Color(0xFF45B0C5),
+                            backgroundColor: Color(0xFFF4F9FA),
                             title: Text("인증 되었습니다.",style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -181,6 +181,7 @@ class ValidateEmail extends StatelessWidget {
                             actions: [
                               TextButton(
                                 onPressed: (){
+                                  Navigator.of(context).popUntil((route) => route.isFirst);
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
                                 },
                                 child: Text("확인", style: TextStyle(

@@ -38,25 +38,9 @@ class MainPage extends StatelessWidget {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('알뜰집밥'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SearchPage()),
-                );
-              },
-            ),
-          ],
-        ),
-
         body: TabBarView(
           children: [
-            HomePage(), // 홈 화면
+            MyHomePage(), // 홈 화면
             Container(),
             Container(),
             Container()

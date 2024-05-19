@@ -13,6 +13,7 @@ class MyPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text('MyProfile'),
+          backgroundColor: Colors.blue,
           centerTitle: true,
           actions: [
             IconButton(

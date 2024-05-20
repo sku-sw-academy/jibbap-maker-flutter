@@ -43,10 +43,11 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 Expanded(
                   child: Container(
+                    width: double.infinity,
                     height: screenHeight / 4,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Row(
                           children: [
@@ -69,12 +70,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               ],
                             ),
 
-                            IconButton(
-                              icon: Icon(Icons.list),
-                              onPressed: () {
-                                // 아이콘 버튼이 눌렸을 때 실행될 코드 추가
-                              },
-                            ),
                           ],
                         ),
                         Expanded(
@@ -83,36 +78,45 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: [
                                Expanded(
                                 child: ListTile(
-                                  title:
-                                  Row(
-                                  children: [
-                                    Text(
-                                      "1. 감자",
-                                      style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
-                                    ),
-
-                                    SizedBox(width: screenWidth / 35,),
-
-                                    Text(
-                                      "-36.8",
-                                      style: TextStyle(fontSize: 15, color: Colors.blue, fontWeight: FontWeight.bold),
-                                    ),
-                                    Icon(Icons.arrow_downward, color: Colors.blue,),
-                                  ],
-                                ),
-
+                                  title: Text(
+                                    "1. 감자",
+                                    style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
+                                  ),
+                                  trailing: Text(
+                                    "-36.8%",
+                                    style: TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold),
+                                  ),
                                   tileColor: Colors.red[100],
                                 ),
                               ),
                                 Expanded(
                                   child: ListTile(
-                                    title: Text('쌀'),
+                                    title: Text(
+                                      "2. 바나나",
+                                      style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
+                                    ),
+
+                                    trailing: Text(
+                                      "-24.5%",
+                                      style: TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold),
+                                    ),
+
                                     tileColor: Colors.red[200],
                                 ),
                               ),
                                 Expanded(
                                   child: ListTile(
-                                    title: Text('배'),
+                                    title:
+                                    Text(
+                                        "3. 체리",
+                                        style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
+                                      ),
+
+                                    trailing: Text(
+                                        "-23.4%",
+                                        style: TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold),
+                                      ),
+
                                     tileColor: Colors.red[300],
                                 ),
                               ),

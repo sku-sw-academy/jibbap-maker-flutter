@@ -9,6 +9,8 @@ class MyProfile extends StatefulWidget {
 
 class _MyProfileState extends State<MyProfile> {
   bool _switchValue = false;
+  final String nickname = '닉네임';
+  final String email = 'test@example.com';
 
   @override
   Widget build(BuildContext context) {
@@ -45,24 +47,24 @@ class _MyProfileState extends State<MyProfile> {
                       // 프로필 사진 URL
                   ),
 
-                  SizedBox(width: screenWidth / 100),
+                  SizedBox(width: screenWidth / 50),
 
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '닉네임', // 여기에 닉네임을 넣어주세요
+                        '${nickname}', // 여기에 닉네임을 넣어주세요
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
 
                       SizedBox(height: screenHeight / 80),
 
                       Text(
-                        '이메일: ', // 여기에 닉네임을 넣어주세요
+                        '이메일: ${email}', // 여기에 닉네임을 넣어주세요
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
-
                 ],
               ),
             ),
@@ -128,7 +130,7 @@ class _MyProfileState extends State<MyProfile> {
               padding: EdgeInsets.only(left: screenWidth / 40,
                   top: screenHeight / 90),
               child: Text(
-                "My custom",
+                "My Custom",
                 style: TextStyle(fontSize: 20),
               ),
 

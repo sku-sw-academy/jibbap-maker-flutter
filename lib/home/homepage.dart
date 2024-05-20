@@ -10,6 +10,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isSelected = true;
+  final String date = "2024-05-17";
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               ],
                             ),
                             IconButton(
-                              icon: Icon(Icons.add_chart_outlined),
+                              icon: Icon(Icons.arrow_forward_ios),
                               onPressed: () {
                                 // 아이콘 버튼이 눌렸을 때 실행될 코드 추가
                               },
@@ -180,8 +181,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.end, // 오른쪽 정렬
                   children: [
                     Text(
-                      '가격단위 : 원 기준일 (2024.05.17)',
-                      style: TextStyle(fontSize: 16, color: Colors.black26),
+                      '가격단위 : 원 기준일 ($date)',
+                      style: TextStyle(fontSize: 16,
+                          color: Colors.black,
+                          //decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.bold
+                      ),
                     ),
                   ],
                 ),
@@ -193,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           Container(
             height: screenHeight / 4,
-            color: Colors.lightGreenAccent[100],
+            color: Color(0xFFFCFCF1),
             child: Column(
               children: [
                 Row(),
@@ -206,9 +211,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
           Container(
             height: screenHeight / 4,
-            color: Colors.black12,
+            color: Colors.white70,
             child: Card(
-              color: Colors.greenAccent[100],
+              color: Colors.lightGreenAccent[100],
             ),
           ),
         ],

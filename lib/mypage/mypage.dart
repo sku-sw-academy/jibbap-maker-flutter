@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_splim/recipeview/recipeview.dart';
 import 'package:flutter_splim/search/search.dart';
+import 'package:flutter_splim/mypage/myprofile.dart';
 
 class MyPage extends StatelessWidget {
 
@@ -11,29 +12,12 @@ class MyPage extends StatelessWidget {
       length: 4, // 탭의 개수
       initialIndex: 3, // 초기화할 탭의 인덱스 (0부터 시작)
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('MyProfile'),
-          backgroundColor: Colors.blue,
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SearchPage()),
-                );
-              },
-            ),
-          ],
-        ),
-
         body: TabBarView(
           children: [
             Container(),
             Container(),
             Container(),
-            MyScreen(), // 마이페이지
+            MyProfile (), // 마이페이지
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -79,15 +63,6 @@ class MyPage extends StatelessWidget {
           },
         ),
       ),
-    );
-  }
-}
-
-class MyScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('My Screen'),
     );
   }
 }

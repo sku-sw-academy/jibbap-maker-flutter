@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_splim/search/search.dart';
+import 'package:flutter_splim/mypage/prefer.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -71,10 +72,10 @@ class _MyProfileState extends State<MyProfile> {
               width: double.infinity,
               height: screenHeight / 15,
               padding: EdgeInsets.only(left: screenWidth / 40,
-              top: screenHeight / 100),
+              top: screenHeight / 90),
               child: Text(
                 "Notification",
-                style: TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: 20),
               ),
 
             ),
@@ -94,10 +95,10 @@ class _MyProfileState extends State<MyProfile> {
               width: double.infinity,
               height: screenHeight / 15,
               padding: EdgeInsets.only(left: screenWidth / 40,
-                  top: screenHeight / 100),
+                  top: screenHeight / 90),
               child: Text(
                 "My Account Information",
-                style: TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: 20),
               ),
 
             ),
@@ -125,10 +126,10 @@ class _MyProfileState extends State<MyProfile> {
               width: double.infinity,
               height: screenHeight / 15,
               padding: EdgeInsets.only(left: screenWidth / 40,
-                  top: screenHeight / 100),
+                  top: screenHeight / 90),
               child: Text(
                 "My custom",
-                style: TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: 20),
               ),
 
             ),
@@ -147,7 +148,9 @@ class _MyProfileState extends State<MyProfile> {
                 title: Text("식재료"),
                 trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MyPrefer()),
+                );
               },
             ),
 
@@ -156,10 +159,10 @@ class _MyProfileState extends State<MyProfile> {
               width: double.infinity,
               height: screenHeight / 15,
               padding: EdgeInsets.only(left: screenWidth / 40,
-                  top: screenHeight / 100),
+                  top: screenHeight / 90),
               child: Text(
                 "Support",
-                style: TextStyle(fontSize: 24),
+                style: TextStyle(fontSize: 20),
               ),
 
             ),
@@ -176,19 +179,28 @@ class _MyProfileState extends State<MyProfile> {
 
             Center(
               child: Container(
-                width: screenWidth / 5, // 버튼의 폭 설정
+                width: screenWidth / 3, // 버튼의 폭 설정
                 height: screenHeight / 15,
                 color: Colors.white,
-                margin: EdgeInsets.only(top: screenHeight / 60),
+                margin: EdgeInsets.only(top: screenHeight / 80, bottom: screenHeight / 80),
                 child: ElevatedButton(
                   onPressed: () {
                     // 버튼 동작 추가
                   },
-                  child: Text("Log out", style: TextStyle(color: Colors.black),),
+                  style: ElevatedButton.styleFrom(
+                    // 버튼 패딩
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10), // 버튼의 모양을 조절하는 부분
+                    ),
+                    textStyle: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  child: Text("Log out", style: TextStyle(color: Colors.black)),
                 ),
               ),
             ),
-
           ],
       ),
     );

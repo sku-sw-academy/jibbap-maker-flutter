@@ -42,7 +42,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> fetchSuggestions() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8080/items/names'));
+    final response = await http.get(Uri.parse('http://localhost:8080/items/names'));
     if (response.statusCode == 200) {
       setState(() {
         suggestions = List<String>.from(json.decode(response.body));
@@ -66,6 +66,14 @@ class _SearchPageState extends State<SearchPage> {
           ),
           style: TextStyle(color: Colors.black), // 검색어 색상 설정
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              // 검색 버튼이 눌렸을 때 실행되는 동작 추가
+            },
+          ),
+        ],
       ),
 
       body: ListView(

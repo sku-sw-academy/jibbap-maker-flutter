@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ListView(
         children: [
           Container(
-            margin: EdgeInsets.all(screenWidth / 27),
+            margin: EdgeInsets.all(screenWidth / 40),
             child: Row(
               children: [
                 Expanded(
@@ -50,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         Row(
                           children: [
+                            //SizedBox(width: screenWidth / 90,),
                             ToggleButtons(
                               isSelected: [isSelected, !isSelected],
                               onPressed: (index) {
@@ -57,18 +58,19 @@ class _MyHomePageState extends State<MyHomePage> {
                                   isSelected = index == 0 ? true : false;
                                 });
                               },
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(17),
                               constraints: BoxConstraints.tightFor(
-                                width: screenWidth / 6.5,
-                                height: screenHeight / 18.5,
+                                width: screenWidth / 6.2,
+                                height: screenHeight / 20.5,
                               ),
                               children: [
-                                Text("알뜰"),
-                                Text("맞춤")
+                                Text("알뜰 소비"),
+                                Text("맞춤 가격")
                               ],
                             ),
+
                             IconButton(
-                              icon: Icon(Icons.arrow_forward_ios),
+                              icon: Icon(Icons.list),
                               onPressed: () {
                                 // 아이콘 버튼이 눌렸을 때 실행될 코드 추가
                               },
@@ -81,8 +83,24 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: [
                                Expanded(
                                 child: ListTile(
-                                  leading: Icon(Icons.favorite),
-                                  title: Text('사과'),
+                                  title:
+                                  Row(
+                                  children: [
+                                    Text(
+                                      "1. 감자",
+                                      style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
+                                    ),
+
+                                    SizedBox(width: screenWidth / 35,),
+
+                                    Text(
+                                      "-36.8",
+                                      style: TextStyle(fontSize: 15, color: Colors.blue, fontWeight: FontWeight.bold),
+                                    ),
+                                    Icon(Icons.arrow_downward, color: Colors.blue,),
+                                  ],
+                                ),
+
                                   tileColor: Colors.red[100],
                                 ),
                               ),
@@ -127,6 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
+
                 SizedBox(width: screenWidth / 23),
 
                 Expanded(child:
@@ -214,6 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Colors.white70,
             child: Card(
               color: Colors.lightGreenAccent[100],
+              elevation: 5.0,
             ),
           ),
         ],

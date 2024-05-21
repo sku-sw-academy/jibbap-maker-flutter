@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_splim/search/search.dart';
-import 'package:flutter_splim/home/paint.dart';
 
 class MyHomePage extends StatefulWidget {
   @override

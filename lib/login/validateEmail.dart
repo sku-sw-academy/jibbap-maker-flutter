@@ -182,7 +182,7 @@ class ValidateEmail extends StatelessWidget {
                               TextButton(
                                 onPressed: (){
                                   Navigator.of(context).popUntil((route) => route.isFirst);
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
                                 },
                                 child: Text("확인", style: TextStyle(
                                   color: Colors.white,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_splim/login/signup.dart';
 import 'package:flutter_splim/login/findpassword.dart';
 
-class LoginScreen extends StatelessWidget{
+class LoginPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

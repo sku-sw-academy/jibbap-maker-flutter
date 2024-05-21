@@ -78,7 +78,7 @@ class _SearchPageState extends State<SearchPage> {
 
       body: ListView(
         children: [
-          // 검색어가 비어있지 않고 자동 완성 결과가 있을 때만 표시합니다.
+
           if (searchText.isEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,7 +108,7 @@ class _SearchPageState extends State<SearchPage> {
                       return recentSearchList.isEmpty
                           ? Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
+                           child: Text(
                           "검색어가 없습니다",
                           style: TextStyle(
                             fontStyle: FontStyle.italic,

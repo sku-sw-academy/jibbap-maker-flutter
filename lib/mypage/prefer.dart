@@ -35,22 +35,7 @@ class _MyPreferState extends State<MyPrefer>{
         child :
         Scaffold(
           appBar: AppBar(
-            title: TextField(
-            onChanged: handleSearchChange, // 입력이 변경될 때마다 호출됨
-            decoration: InputDecoration(
-            hintText: "검색어를 입력하세요",
-            border: InputBorder.none,
-          ),
-            style: TextStyle(color: Colors.black), // 검색어 색상 설정
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-              // 검색 버튼이 눌렸을 때 실행되는 동작 추가
-              },
-            ),
-          ],
+            title: Text("식재료 목록"),
             bottom: TabBar(
                tabs: [
                 Tab(text: 'All'),

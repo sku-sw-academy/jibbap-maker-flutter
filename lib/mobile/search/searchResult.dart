@@ -14,8 +14,8 @@ class SelectedPage extends StatefulWidget {
 class _SelectedPageState extends State<SelectedPage> {
   List<String> kinds = [];
   List<List<String>> ranks = [];
-  String? selectedKind;
-
+  int? selectedKindIndex;
+  int? selectedRankIndex;
 
   @override
   void initState() {
@@ -34,13 +34,29 @@ class _SelectedPageState extends State<SelectedPage> {
       setState(() {
         String responsebody = utf8.decode(response.bodyBytes);
         kinds = List<String>.from(json.decode(responsebody));
-        // 기본값 설정
         if (kinds.isNotEmpty) {
-          selectedKind = kinds.first;
+          selectedKindIndex = 0;
+          fetchRanks(selectedKindIndex!); // 초기 선택된 종류의 등급을 가져옴
         }
       });
     } else {
-      throw Exception('Failed to load suggestions');
+      print('Failed to load kinds: ${response.statusCode}');
+    }
+  }
+
+  Future<void> fetchRanks(int kindIndex) async {
+    final response = await http.get(
+      Uri.parse('http://121.165.186.226:8080/prices/ranks/${kinds[kindIndex]}'),
+    );
+    if (response.statusCode == 200) {
+      setState(() {
+        String responsebody = utf8.decode(response.bodyBytes);
+        List<String> rankList = List<String>.from(json.decode(responsebody));
+        ranks.insert(kindIndex, rankList);
+        selectedRankIndex = 0; // 등급 리스트의 첫 번째 값을 선택
+      });
+    } else {
+      print('Failed to load ranks for ${kinds[kindIndex]}: ${response.statusCode}');
     }
   }
 
@@ -54,40 +70,46 @@ class _SelectedPageState extends State<SelectedPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (kinds.isNotEmpty) // 데이터를 가져오면 첫 번째 DropdownButton을 보여줌
-              DropdownButton<String>(
-                value: selectedKind,
-                onChanged: (String? newValue) {
+            if (kinds.isNotEmpty)
+              DropdownButton<int>(
+                value: selectedKindIndex,
+                onChanged: (int? newIndex) {
                   setState(() {
-                    selectedKind = newValue;
+                    selectedKindIndex = newIndex;
+                    if (newIndex != null) {
+                      fetchRanks(newIndex); // 선택된 종류에 따라 등급 리스트 업데이트
+                    }
                   });
                 },
-                items: kinds
-                    .map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
+                items: List.generate(kinds.length, (index) {
+                  return DropdownMenuItem<int>(
+                    value: index,
+                    child: Text(kinds[index]),
+                    key: Key(kinds[index]),
                   );
-                }).toList(),
+                }),
               )
-            else // 데이터가 없으면 로딩 중을 표시
+            else
               CircularProgressIndicator(),
             SizedBox(height: 20),
-            DropdownButton<String>(
-              value: 'Item A', // 초기값 설정
-              onChanged: (String? newValue) {
-                // 선택된 값에 따라 동작 설정
-                // 여기서는 콘솔에 선택된 값을 출력하도록 함
-                print('Selected item: $newValue');
-              },
-              items: <String>['Item A', 'Item B', 'Item C']
-                  .map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
+
+            if (selectedKindIndex != null && ranks[selectedKindIndex!] != null)
+              DropdownButton<int>(
+                value: selectedRankIndex,
+                onChanged: (int? newIndex) {
+                  setState(() {
+                    selectedRankIndex = newIndex;
+                  });
+                  print('Selected item: ${ranks[selectedKindIndex!][selectedRankIndex!]}');
+                },
+                items: List.generate(ranks[selectedKindIndex!].length, (index) {
+                  return DropdownMenuItem<int>(
+                    value: index,
+                    child: Text(ranks[selectedKindIndex!][index]),
+                    key: Key(ranks[selectedKindIndex!][index]),
+                  );
+                }),
+              ),
           ],
         ),
       ),

@@ -45,7 +45,7 @@ class _MyProfileState extends State<MyProfile> {
               child: Row(
                 children: [
                   CircleAvatar(
-                    radius: 50,
+                    radius: 60,
                       // 프로필 사진 URL
                   ),
 
@@ -193,7 +193,7 @@ class _MyProfileState extends State<MyProfile> {
                 margin: EdgeInsets.only(top: screenHeight / 80, bottom: screenHeight / 80),
                 child: ElevatedButton(
                   onPressed: () {
-                    // 버튼 동작 추가
+
                   },
                   style: ElevatedButton.styleFrom(
                     // 버튼 패딩

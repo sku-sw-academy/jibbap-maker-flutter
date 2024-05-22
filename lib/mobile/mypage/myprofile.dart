@@ -4,6 +4,7 @@ import 'package:flutter_splim/mobile/mypage/prefer.dart';
 import 'package:flutter_splim/mobile/mypage/changeprofile.dart';
 import 'package:flutter_splim/mobile/mypage/changepassword.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
 
 class MyProfile extends StatefulWidget {
   @override

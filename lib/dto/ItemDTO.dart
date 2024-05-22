@@ -1,4 +1,4 @@
-import 'package:flutter_splim/DTO/CateogryDTO.dart';
+import 'package:flutter_splim/dto/CateogryDTO.dart';
 
 class ItemCodeDTO {
   final String itemName;

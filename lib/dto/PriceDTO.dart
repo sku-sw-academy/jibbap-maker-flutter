@@ -1,4 +1,4 @@
-import 'package:flutter_splim/DTO/ItemDTO.dart';
+import 'package:flutter_splim/dto/ItemDTO.dart';
 
 class PriceDTO {
   final String id;

@@ -15,7 +15,7 @@ class Account {
 }
 
 class ValidateEmail extends StatelessWidget {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _authController = TextEditingController();
   //final String authkey;
 
   final String email;
@@ -121,7 +121,7 @@ class ValidateEmail extends StatelessWidget {
                           ),
                           // 다른 속성들 설정
                         ),
-                        controller: _emailController,
+                        controller: _authController,
                       ),
                     ),
                   ],
@@ -143,7 +143,7 @@ class ValidateEmail extends StatelessWidget {
                   onPressed: () async{
                     // 로그인 버튼이 눌렸을 때의 처리
                     // 아이디와 비밀번호를 사용하여 로그인을 시도하고 결과에 따라 처리
-                    String num = _emailController.text.toString();
+                    String num = _authController.text.toString();
 
                     Map<String, dynamic> signUpData = {
                       'email': email,

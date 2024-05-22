@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_splim/search/search.dart';
+import 'package:flutter_splim/mobile/search/search.dart';
+import 'package:flutter_splim/mobile/login/signout.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_splim/secure_storage/secure_service.dart';
+import 'package:intl/intl.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -9,7 +13,22 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isSelected = true;
-  final String date = "2024-05-17";
+  String? date;
+
+  void initState(){
+    super.initState();
+    date = getDate();
+  }
+
+  String getDate(){
+    DateTime now = DateTime.now();
+    if(now.hour < 16){
+      DateTime previousDay = now.subtract(Duration(days: 1));
+      return DateFormat('yyyy-MM-dd').format(previousDay);
+    }else{
+      return DateFormat('yyyy-MM-dd').format(now);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +72,34 @@ class _MyHomePageState extends State<MyHomePage> {
                             //SizedBox(width: screenWidth / 90,),
                             ToggleButtons(
                               isSelected: [isSelected, !isSelected],
-                              onPressed: (index) {
+                              onPressed: (index) async {
+                                if (index == 1) {
+                                  final storageService =
+                                  Provider.of<SecureService>(context, listen: false);
+                                  String? token = await storageService.readToken();
+                                  if (token == null || token.isEmpty) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('로그인 필요'),
+                                        content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text('확인'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => LoginPage()),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                }
                                 setState(() {
                                   isSelected = index == 0 ? true : false;
                                 });
@@ -68,9 +114,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 Text("맞춤 가격")
                               ],
                             ),
-
                           ],
                         ),
+
                         Expanded(
                           child: isSelected
                               ? Column(

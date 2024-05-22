@@ -3,6 +3,7 @@ import 'package:flutter_splim/mobile/login/signup.dart';
 import 'package:flutter_splim/mobile/login/findpassword.dart';
 
 class LoginPage extends StatelessWidget{
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -241,4 +242,3 @@ class LoginPage extends StatelessWidget{
     );
   }
 }
-

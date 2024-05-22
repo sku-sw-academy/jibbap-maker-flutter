@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_splim/mobile/search/search.dart';
 import 'package:flutter_splim/mobile/mypage/prefer.dart';
+import 'package:flutter_splim/mobile/mypage/changeprofile.dart';
+import 'package:flutter_splim/mobile/mypage/changepassword.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -109,7 +111,9 @@ class _MyProfileState extends State<MyProfile> {
               title: Text("프로필 수정"),
                 trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChangeProfilePage()),
+                );
               },
             ),
 
@@ -119,7 +123,9 @@ class _MyProfileState extends State<MyProfile> {
               title: Text("비밀번호 변경"),
                 trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+                );
               },
             ),
 

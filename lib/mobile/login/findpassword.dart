@@ -46,11 +46,7 @@ class FindPasswordScreen extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           // 배경색상 설정
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment(-0.00, -1.00),
-              end: Alignment(0, 1),
-              colors: [Color(0xA545B0C5), Color(0xFF4681C6), Color(0xFF4681C6)],
-            ),
+
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -63,7 +59,7 @@ class FindPasswordScreen extends StatelessWidget {
                     Text(
                       '이메일',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 16,
                         fontFamily: 'GowunBatang',
                         fontWeight: FontWeight.w700,

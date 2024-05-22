@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_splim/search/search.dart';
-import 'package:flutter_splim/mypage/prefer.dart';
+import 'package:flutter_splim/mobile/search/search.dart';
+import 'package:flutter_splim/mobile/mypage/prefer.dart';
 
 class MyProfile extends StatefulWidget {
   @override

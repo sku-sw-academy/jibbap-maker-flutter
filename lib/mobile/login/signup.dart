@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_splim/login/validate.dart';
-import 'package:flutter_splim/login/validateEmail.dart';
-
+import 'package:flutter_splim/mobile/login/validate.dart';
+import 'package:flutter_splim/mobile/login/validateEmail.dart';
 
 class CreateAccountScreen extends StatelessWidget {
   final TextEditingController _emailController = TextEditingController();

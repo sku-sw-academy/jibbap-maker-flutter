@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_splim/DB/DBHelper.dart';
-import 'package:flutter_splim/search/searchResult.dart';
+import 'package:flutter_splim/mobile/DB/DBHelper.dart';
+import 'package:flutter_splim/mobile/search/searchResult.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

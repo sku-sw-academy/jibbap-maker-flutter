@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_splim/search/search.dart';
+import 'package:flutter_splim/mobile/search/search.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_splim/login/signout.dart';
+import 'package:flutter_splim/mobile/login/signout.dart';
 
 class MyHomePage extends StatefulWidget {
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_splim/login/signup.dart';
-import 'package:flutter_splim/login/findpassword.dart';
+import 'package:flutter_splim/mobile/login/signup.dart';
+import 'package:flutter_splim/mobile/login/findpassword.dart';
 
 class LoginPage extends StatelessWidget{
   @override

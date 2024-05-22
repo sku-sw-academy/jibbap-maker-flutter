@@ -111,17 +111,21 @@ class _MainPageState extends State<MainPage> {
                 MaterialPageRoute(builder: (context) => RecipeView()),
               );
             }else if (index == 3) {
-              if (_isLoggedIn) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyPage()),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
-              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyPage()),
+              );
+              // if (_isLoggedIn) {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => MyPage()),
+              //   );
+              // } else {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (context) => LoginPage()),
+              //   );
+              // }
             }
           },
         ),

@@ -4,6 +4,7 @@ import 'package:flutter_splim/mobile/search/search.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/mobile/login/signout.dart';
+import 'package:intl/intl.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -12,7 +13,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isSelected = true;
-  final String date = "2024-05-17";
+  String? date;
+
+  @override
+  void initState() {
+    super.initState();
+    date = getDate();
+  }
+
+  String getDate() {
+    DateTime now = DateTime.now();
+    if (now.hour < 16) {
+      // 16시 이전이면 전날 날짜 반환
+      DateTime previousDay = now.subtract(Duration(days: 1));
+      return DateFormat('yyyy-MM-dd').format(previousDay);
+    } else {
+      // 16시 이후면 오늘 날짜 반환
+      return DateFormat('yyyy-MM-dd').format(now);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

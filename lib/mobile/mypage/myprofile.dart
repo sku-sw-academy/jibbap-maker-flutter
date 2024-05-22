@@ -48,6 +48,8 @@ class _MyProfileState extends State<MyProfile> {
                 children: [
                   CircleAvatar(
                     radius: 60,
+                    backgroundColor: Colors.blue[200],
+                    child: Icon(Icons.person, color: Colors.grey, size: 70),
                       // 프로필 사진 URL
                   ),
 

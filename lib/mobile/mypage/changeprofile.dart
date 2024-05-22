@@ -88,8 +88,6 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
           SizedBox(height: 30, width: double.infinity),
           _buildPhotoArea(),
           SizedBox(height: 20),
-          _buildButton(),
-          SizedBox(height: 20,),
           _buildTextField(),
         ],
       ),
@@ -97,50 +95,47 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   }
 
   Widget _buildPhotoArea() {
-
-    return _image != null
-        ? CircleAvatar(
-         radius: 70,
-          backgroundImage: FileImage(File(_croppedFile!.path),),
-        )
-        : CircleAvatar(
-            radius: 70,
-            child: Icon(Icons.person, color: Colors.grey, size: 70,),
-        );
-    }
-
-  Widget _buildButton() {
-    double screenWidth = MediaQuery.of(context).size.width;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            getImage(ImageSource.camera); // getImage 함수를 호출해서 갤러리에서 사진 가져오기
-          },
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero, // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
+    return GestureDetector(
+      onTap: () {
+        showSheet(context);
+      },
+      child: Stack(
+        children: [
+          _image != null
+              ? CircleAvatar(
+              radius: 70,
+              backgroundImage: FileImage(File(_croppedFile!.path)),
+          )
+              : CircleAvatar(
+                radius: 70,
+                backgroundColor: Colors.blue[200],
+                child: Icon(Icons.person, color: Colors.grey, size: 70),
+          ),
+          Positioned(
+            right: 5,
+            bottom: 9,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5), // 그림자 색상
+                    spreadRadius: 2, // 그림자의 확산 범위
+                    blurRadius: 5, // 그림자의 흐림 정도
+                    offset: Offset(0, 3), // 그림자의 위치 조절
+                  ),
+                ],
+              ),
+              child: CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 20,
+                child: Icon(Icons.camera_alt),
+              ),
             ),
           ),
-          child: Icon(Icons.photo_camera),
-        ),
 
-        SizedBox(width: screenWidth / 30),
-
-        ElevatedButton(
-          onPressed: () {
-            getImage(ImageSource.gallery); // getImage 함수를 호출해서 갤러리에서 사진 가져오기
-          },
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero, // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
-            ),
-          ),
-          child: Icon(Icons.photo),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -174,5 +169,74 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
     );
   }
 
+  void showSheet(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text('프로필 사진 변경'),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {
+                getImage(ImageSource.camera); // 카메라 열기
+                Navigator.pop(context); // BottomSheet 닫기
+              },
+              child: ListTile(
+                leading: Icon(Icons.photo_camera),
+                title: Text('카메라로 찍기'),
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                getImage(ImageSource.gallery); // 갤러리에서 이미지 선택
+                Navigator.pop(context); // BottomSheet 닫기
+              },
+              child: ListTile(
+                leading: Icon(Icons.photo),
+                title: Text('갤러리에서 선택'),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
 }
+
+
+// Widget _buildButton() {
+//   double screenWidth = MediaQuery.of(context).size.width;
+//
+//   return Row(
+//     mainAxisAlignment: MainAxisAlignment.center,
+//     children: [
+//       ElevatedButton(
+//         onPressed: () {
+//           getImage(ImageSource.camera); // getImage 함수를 호출해서 갤러리에서 사진 가져오기
+//         },
+//         style: ElevatedButton.styleFrom(
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.zero, // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
+//           ),
+//         ),
+//         child: Icon(Icons.photo_camera),
+//       ),
+//
+//       SizedBox(width: screenWidth / 30),
+//
+//       ElevatedButton(
+//         onPressed: () {
+//           getImage(ImageSource.gallery); // getImage 함수를 호출해서 갤러리에서 사진 가져오기
+//         },
+//         style: ElevatedButton.styleFrom(
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.zero, // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
+//           ),
+//         ),
+//         child: Icon(Icons.photo),
+//       ),
+//     ],
+//   );
+// }

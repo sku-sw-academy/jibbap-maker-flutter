@@ -16,6 +16,12 @@ class _MyProfileState extends State<MyProfile> {
   final String nickname = '닉네임';
   final String email = 'test@example.com';
   final SecureService _secureService = SecureService();
+  late UserDTO _userDTO;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

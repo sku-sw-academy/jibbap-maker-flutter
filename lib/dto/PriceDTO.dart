@@ -14,7 +14,7 @@ class PriceDTO {
   final String dpr6;
   final String dpr7;
   final String regday;
-  final double values;
+  final double value;
   final bool status;
 
   PriceDTO({
@@ -31,7 +31,7 @@ class PriceDTO {
     required this.dpr6,
     required this.dpr7,
     required this.regday,
-    required this.values,
+    required this.value,
     required this.status,
   });
 
@@ -51,7 +51,7 @@ class PriceDTO {
       dpr6: json['dpr6'],
       dpr7: json['dpr7'],
       regday: json['regday'],
-      values: json['values'],
+      value: json['value'],
       status: json['status'],
     );
   }

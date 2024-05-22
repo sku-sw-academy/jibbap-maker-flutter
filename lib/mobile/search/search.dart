@@ -42,10 +42,11 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> fetchSuggestions() async {
-    final response = await http.get(Uri.parse('http://localhost:8080/items/names'));
+    final response = await http.get(Uri.parse('http://121.165.186.226:8080/items/names'));
     if (response.statusCode == 200) {
       setState(() {
-        suggestions = List<String>.from(json.decode(response.body));
+        String responsebody = utf8.decode(response.bodyBytes);
+        suggestions = List<String>.from(json.decode(responsebody));
       });
     } else {
       throw Exception('Failed to load suggestions');

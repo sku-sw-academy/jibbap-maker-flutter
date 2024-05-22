@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               onPressed: (index) async {
                                 if (index == 1) {
                                   final storageService =
-                                  Provider.of<StorageService>(context, listen: false);
+                                  Provider.of<SecureService>(context, listen: false);
                                   String? token = await storageService.readToken();
                                   if (token == null || token.isEmpty) {
                                     showDialog(

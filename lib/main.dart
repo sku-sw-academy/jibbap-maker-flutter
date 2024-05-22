@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<StorageService>(create: (_) => StorageService()),
+        Provider<SecureService>(create: (_) => SecureService()),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -53,7 +53,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _checkLoginStatus() async {
-    final storageService = Provider.of<StorageService>(context, listen: false);
+    final storageService = Provider.of<SecureService>(context, listen: false);
     String? token = await storageService.readToken();
     setState(() {
       _isLoggedIn = token != null && token.isNotEmpty;

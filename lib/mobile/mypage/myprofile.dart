@@ -3,6 +3,7 @@ import 'package:flutter_splim/mobile/search/search.dart';
 import 'package:flutter_splim/mobile/mypage/prefer.dart';
 import 'package:flutter_splim/mobile/mypage/changeprofile.dart';
 import 'package:flutter_splim/mobile/mypage/changepassword.dart';
+import 'package:flutter_splim/secure_storage/secure_service.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _MyProfileState extends State<MyProfile> {
   bool _switchValue = false;
   final String nickname = '닉네임';
   final String email = 'test@example.com';
+  final SecureService _secureService = SecureService();
 
   @override
   Widget build(BuildContext context) {
@@ -192,8 +194,9 @@ class _MyProfileState extends State<MyProfile> {
                 color: Colors.white,
                 margin: EdgeInsets.only(top: screenHeight / 80, bottom: screenHeight / 80),
                 child: ElevatedButton(
-                  onPressed: () {
-
+                  onPressed: () async {
+                    await _secureService.deleteToken();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                   style: ElevatedButton.styleFrom(
                     // 버튼 패딩

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_splim/recipeview/recipeview.dart';
-import 'package:flutter_splim/search/search.dart';
-import 'package:flutter_splim/mypage/myprofile.dart';
+import 'package:flutter_splim/mobile/recipeview/recipeview.dart';
+import 'package:flutter_splim/mobile/search/search.dart';
+import 'package:flutter_splim/mobile/mypage/myprofile.dart';
 
 class MyPage extends StatelessWidget {
 

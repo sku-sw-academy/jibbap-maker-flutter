@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_splim/home/homepage.dart';
-import 'package:flutter_splim/search/search.dart';
-import 'package:flutter_splim/mypage/mypage.dart';
-import 'package:flutter_splim/recipeview/recipeview.dart';
-import 'package:flutter_splim/db/DBHelper.dart';
+import 'package:flutter_splim/mobile/home/homepage.dart';
+import 'package:flutter_splim/mobile/search/search.dart';
+import 'package:flutter_splim/mobile/mypage/mypage.dart';
+import 'package:flutter_splim/mobile/recipeview/recipeview.dart';
+import 'package:flutter_splim/mobile/DB/DBHelper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_splim/login/signout.dart';
+import 'package:flutter_splim/mobile/login/signout.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,11 +26,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<StorageService>(create: (_) => StorageService()),
+        Provider<SecureService>(create: (_) => SecureService()),
       ],
       child: MaterialApp(
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.cyanAccent),
           useMaterial3: true,
         ),
         home: MainPage(),
@@ -53,7 +53,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _checkLoginStatus() async {
-    final storageService = Provider.of<StorageService>(context, listen: false);
+    final storageService = Provider.of<SecureService>(context, listen: false);
     String? token = await storageService.readToken();
     setState(() {
       _isLoggedIn = token != null && token.isNotEmpty;

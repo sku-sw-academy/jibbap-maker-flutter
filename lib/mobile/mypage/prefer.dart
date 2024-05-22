@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_splim/mypage/preference/all.dart';
-import 'package:flutter_splim/mypage/preference/favorite.dart';
-import 'package:flutter_splim/mypage/preference/banned.dart';
+import 'package:flutter_splim/mobile/mypage/preference/all.dart';
+import 'package:flutter_splim/mobile/mypage/preference/favorite.dart';
+import 'package:flutter_splim/mobile/mypage/preference/banned.dart';
 
 class MyPrefer extends StatefulWidget {
   @override

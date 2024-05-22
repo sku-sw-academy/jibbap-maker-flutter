@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_splim/search/search.dart';
-import 'package:flutter_splim/mypage/prefer.dart';
+import 'package:flutter_splim/mobile/search/search.dart';
+import 'package:flutter_splim/mobile/mypage/prefer.dart';
+import 'package:flutter_splim/mobile/mypage/changeprofile.dart';
+import 'package:flutter_splim/mobile/mypage/changepassword.dart';
+import 'package:flutter_splim/secure_storage/secure_service.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -11,6 +15,13 @@ class _MyProfileState extends State<MyProfile> {
   bool _switchValue = false;
   final String nickname = '닉네임';
   final String email = 'test@example.com';
+  final SecureService _secureService = SecureService();
+  late UserDTO _userDTO;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +54,9 @@ class _MyProfileState extends State<MyProfile> {
               child: Row(
                 children: [
                   CircleAvatar(
-                    radius: 50,
+                    radius: 60,
+                    backgroundColor: Colors.blue[200],
+                    child: Icon(Icons.person, color: Colors.grey, size: 70),
                       // 프로필 사진 URL
                   ),
 
@@ -109,7 +122,9 @@ class _MyProfileState extends State<MyProfile> {
               title: Text("프로필 수정"),
                 trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChangeProfilePage()),
+                );
               },
             ),
 
@@ -119,7 +134,9 @@ class _MyProfileState extends State<MyProfile> {
               title: Text("비밀번호 변경"),
                 trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+                );
               },
             ),
 
@@ -186,8 +203,9 @@ class _MyProfileState extends State<MyProfile> {
                 color: Colors.white,
                 margin: EdgeInsets.only(top: screenHeight / 80, bottom: screenHeight / 80),
                 child: ElevatedButton(
-                  onPressed: () {
-                    // 버튼 동작 추가
+                  onPressed: () async {
+                    await _secureService.deleteToken();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                   style: ElevatedButton.styleFrom(
                     // 버튼 패딩

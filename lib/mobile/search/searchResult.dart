@@ -13,7 +13,9 @@ class SelectedPage extends StatefulWidget {
 
 class _SelectedPageState extends State<SelectedPage> {
   List<String> kinds = [];
+  List<List<String>> ranks = [];
   String? selectedKind;
+
 
   @override
   void initState() {
@@ -22,10 +24,16 @@ class _SelectedPageState extends State<SelectedPage> {
   }
 
   Future<void> fetchKinds() async {
-    final response = await http.get(Uri.parse('http://localhost:8080/prices/kinds/${widget.itemname}'));
+    final response = await http.get(
+      Uri.parse('http://121.165.186.226:8080/prices/kinds/${widget.itemname}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
     if (response.statusCode == 200) {
       setState(() {
-        kinds = List<String>.from(json.decode(response.body));
+        String responsebody = utf8.decode(response.bodyBytes);
+        kinds = List<String>.from(json.decode(responsebody));
         // 기본값 설정
         if (kinds.isNotEmpty) {
           selectedKind = kinds.first;

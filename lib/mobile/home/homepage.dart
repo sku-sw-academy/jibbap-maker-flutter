@@ -5,9 +5,9 @@ import 'package:flutter_splim/mobile/login/signout.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:intl/intl.dart';
-import 'dart:convert';
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
+import 'package:flutter_splim/mobile/home/detail.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -162,8 +162,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                             color: Colors.blueAccent,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      tileColor: Colors.green[
-                                      (prices.indexOf(price) + 1) * 100],
+                                      tileColor: Colors.green[(prices.indexOf(price) + 1) * 100],
+                                      onTap: (){
+                                          Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => DetailPage(regday: date!)),
+                                          );
+                                      },
                                     );
                                   }).toList(),
                                 );

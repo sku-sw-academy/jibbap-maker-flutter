@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'package:flutter_splim/mobile/home/detail.dart';
+import 'package:flutter_splim/mobile/home/market.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -285,12 +286,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
           SizedBox(height: screenHeight / 40,),
 
-          Container(
+        GestureDetector(
+          onTap: () {
+          Navigator.push(
+          context,  MaterialPageRoute(builder: (context) => MarketPage()),
+          );
+        },
+          child: Container(
             height: screenHeight / 4,
             color: Colors.white70,
             child: Card(
-              color: Colors.lightGreenAccent[100],
-              elevation: 5.0,
+            color: Colors.lightGreenAccent[100],
+            elevation: 8.0,
+                // 카드 내용 추가
+              ),
             ),
           ),
         ],

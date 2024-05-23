@@ -17,6 +17,7 @@ class _MyProfileState extends State<MyProfile> {
   final String email = 'test@example.com';
   final SecureService _secureService = SecureService();
   late UserDTO _userDTO;
+  String key = "";
 
   @override
   void initState() {
@@ -204,7 +205,7 @@ class _MyProfileState extends State<MyProfile> {
                 margin: EdgeInsets.only(top: screenHeight / 80, bottom: screenHeight / 80),
                 child: ElevatedButton(
                   onPressed: () async {
-                    await _secureService.deleteToken();
+                    await _secureService.deleteToken(key);
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                   style: ElevatedButton.styleFrom(

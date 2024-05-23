@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 
+
 class DetailPage extends StatefulWidget {
   final String regday;
 
@@ -46,7 +47,7 @@ class _DetailPageState extends State<DetailPage> {
               child: SingleChildScrollView(
                     child: DataTable(
                       headingRowColor:
-                      MaterialStateColor.resolveWith((states) => Colors.greenAccent),
+                        MaterialStateColor.resolveWith((states) => Colors.greenAccent),
                       border: TableBorder.all(
                         width: 3.0,
                         color:Colors.black12,

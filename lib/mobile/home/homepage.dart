@@ -19,6 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? date;
   late Future<List<PriceDTO>> futurePrices;
   final PriceService priceService = PriceService();
+  String key = "";
 
   void initState(){
     super.initState();
@@ -83,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 if (index == 1) {
                                   final storageService =
                                   Provider.of<SecureService>(context, listen: false);
-                                  String? token = await storageService.readToken();
+                                  String? token = await storageService.readToken(key);
                                   if (token == null || token.isEmpty) {
                                     showDialog(
                                       context: context,
@@ -130,8 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               ? FutureBuilder<List<PriceDTO>>(
                             future: futurePrices,
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
                                 return Center(
                                     child:
                                     CircularProgressIndicator());

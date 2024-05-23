@@ -45,6 +45,7 @@ class MainPage extends StatefulWidget{
 
 class _MainPageState extends State<MainPage> {
   bool _isLoggedIn = false;
+  String key = "";
 
   @override
   void initState() {
@@ -54,7 +55,7 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> _checkLoginStatus() async {
     final storageService = Provider.of<SecureService>(context, listen: false);
-    String? token = await storageService.readToken();
+    String? token = await storageService.readToken(key);
     setState(() {
       _isLoggedIn = token != null && token.isNotEmpty;
     });

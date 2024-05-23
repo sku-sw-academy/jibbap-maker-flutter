@@ -46,7 +46,7 @@ class _SelectedPageState extends State<SelectedPage> {
 
   Future<void> fetchRanks(int kindIndex) async {
     final response = await http.get(
-      Uri.parse('http://121.165.186.226:8080/prices/ranks/${kinds[kindIndex]}'),
+      Uri.parse('http://192.168.0.54:8080/prices/ranks/${kinds[kindIndex]}'),
     );
     if (response.statusCode == 200) {
       setState(() {

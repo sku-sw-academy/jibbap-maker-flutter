@@ -9,14 +9,10 @@ class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4, // 탭의 개수
-      initialIndex: 3, // 초기화할 탭의 인덱스 (0부터 시작)
+      length: 1, // 탭의 개수// 초기화할 탭의 인덱스 (0부터 시작)
       child: Scaffold(
         body: TabBarView(
           children: [
-            Container(),
-            Container(),
-            Container(),
             MyProfile (), // 마이페이지
           ],
         ),

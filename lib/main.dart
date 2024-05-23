@@ -63,14 +63,11 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 1,
       child: Scaffold(
         body: TabBarView(
           children: [
             MyHomePage(), // 홈 화면
-            Container(),
-            Container(),
-            Container()
           ],
         ),
 

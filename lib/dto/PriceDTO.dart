@@ -3,9 +3,11 @@ import 'package:flutter_splim/dto/ItemDTO.dart';
 class PriceDTO {
   final String id;
   final String name;
-  final ItemCodeDTO itemCode;
+  final ItemDTO itemCode;
   final String kindName;
+  final int kindCode;
   final String rankName;
+  final int rankCode;
   final String unit;
   final String dpr1;
   final String dpr2;
@@ -22,7 +24,9 @@ class PriceDTO {
     required this.name,
     required this.itemCode,
     required this.kindName,
+    required this.kindCode,
     required this.rankName,
+    required this.rankCode,
     required this.unit,
     required this.dpr1,
     required this.dpr2,
@@ -40,9 +44,11 @@ class PriceDTO {
     return PriceDTO(
       id: json['id'],
       name: json['name'],
-      itemCode: ItemCodeDTO.fromJson(json['itemCode']),
+      itemCode: ItemDTO.fromJson(json['itemCode']),
       kindName: json['kindName'],
+      kindCode: json['kindCode'],
       rankName: json['rankName'],
+      rankCode: json['rankCode'],
       unit: json['unit'],
       dpr1: json['dpr1'],
       dpr2: json['dpr2'],
@@ -51,7 +57,7 @@ class PriceDTO {
       dpr6: json['dpr6'],
       dpr7: json['dpr7'],
       regday: json['regday'],
-      value: json['value'],
+      value: json['values'],
       status: json['status'],
     );
   }

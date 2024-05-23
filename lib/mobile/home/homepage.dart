@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
+import 'package:flutter_splim/service/priceservice.dart';
+import 'package:flutter_splim/dto/PriceDTO.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -15,10 +17,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool isSelected = true;
   String? date;
+  late Future<List<PriceDTO>> futurePrices;
+  final PriceService priceService = PriceService();
 
   void initState(){
     super.initState();
     date = getDate();
+    futurePrices = priceService.fetchPriceTop3(date!);
   }
 
   String getDate(){
@@ -63,15 +68,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: Container(
                     width: double.infinity,
-                    height: screenHeight / 4,
+                    height: screenHeight / 3.3,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Row(
                           children: [
-                            //SizedBox(width: screenWidth / 90,),
-                            ToggleButtons(
+                            SizedBox(width: screenWidth / 20),
+                            Expanded(
+                              child: ToggleButtons(
                               isSelected: [isSelected, !isSelected],
                               onPressed: (index) async {
                                 if (index == 1) {
@@ -113,61 +119,57 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: [
                                 Text("알뜰 소비"),
                                 Text("맞춤 가격")
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
 
                         Expanded(
                           child: isSelected
-                              ? Column(
-                              children: [
-                               Expanded(
-                                child: ListTile(
-                                  title: Text(
-                                    "1. 감자",
-                                    style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
-                                  ),
-                                  trailing: Text(
-                                    "-36.8%",
-                                    style: TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold),
-                                  ),
-                                  tileColor: Colors.red[100],
-                                ),
-                              ),
-                                Expanded(
-                                  child: ListTile(
-                                    title: Text(
-                                      "2. 바나나",
-                                      style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
-                                    ),
-
-                                    trailing: Text(
-                                      "-24.5%",
-                                      style: TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold),
-                                    ),
-
-                                    tileColor: Colors.red[200],
-                                ),
-                              ),
-                                Expanded(
-                                  child: ListTile(
-                                    title:
-                                    Text(
-                                        "3. 체리",
-                                        style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
+                              ? FutureBuilder<List<PriceDTO>>(
+                            future: futurePrices,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                    child:
+                                    CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                    child: Text(
+                                        'Error: ${snapshot.error}'));
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
+                                return Center(
+                                    child: Text('No data found'));
+                              } else {
+                                List<PriceDTO> prices = snapshot.data!;
+                                return Column(
+                                  children: prices.map((price) {
+                                    return ListTile(
+                                      title: Text(
+                                        "${prices.indexOf(price) + 1}. ${price.itemCode.itemName}",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
                                       ),
-
-                                    trailing: Text(
-                                        "-23.4%",
-                                        style: TextStyle(fontSize: 12, color: Colors.blue, fontWeight: FontWeight.bold),
+                                      trailing: Text(
+                                        "${price.value}%",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.blueAccent,
+                                            fontWeight: FontWeight.bold),
                                       ),
-
-                                    tileColor: Colors.red[300],
-                                ),
-                              ),
-                            ],
-                          ) : Column(
+                                      tileColor: Colors.green[
+                                      (prices.indexOf(price) + 1) * 100],
+                                    );
+                                  }).toList(),
+                                );
+                              }
+                            },
+                          ): Column(
                               children: [
                                 Expanded(
                                   child: ListTile(

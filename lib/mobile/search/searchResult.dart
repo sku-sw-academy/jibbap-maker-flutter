@@ -25,7 +25,7 @@ class _SelectedPageState extends State<SelectedPage> {
 
   Future<void> fetchKinds() async {
     final response = await http.get(
-      Uri.parse('http://121.165.186.226:8080/prices/kinds/${widget.itemname}'),
+      Uri.parse('http://192.168.0.54:8080/prices/kinds/${widget.itemname}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

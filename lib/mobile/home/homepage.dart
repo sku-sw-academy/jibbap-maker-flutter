@@ -9,6 +9,7 @@ import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'package:flutter_splim/mobile/home/detail.dart';
 import 'package:flutter_splim/mobile/home/shopping.dart';
+import 'package:flutter_splim/dto/Shop.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -18,14 +19,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool isSelected = true;
   String? date;
-  late Future<List<PriceDTO>> futurePrices;
-  final PriceService priceService = PriceService();
   String key = "";
+  final PriceService priceService = PriceService();
+  late Future<List<PriceDTO>> futurePrices;
+  late Future<List<Shop>> _increaseValues;
+  late Future<List<Shop>> _decreaseValues;
 
   void initState(){
     super.initState();
     date = getDate();
     futurePrices = priceService.fetchPriceTop3(date!);
+    _increaseValues = priceService.fetchPriceIncreaseValues(date!);
+    _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
   }
 
   String getDate(){
@@ -289,17 +294,73 @@ class _MyHomePageState extends State<MyHomePage> {
         GestureDetector(
           onTap: () {
           Navigator.push(
-          context,  MaterialPageRoute(builder: (context) => ShoppingPage(regday: date!,)),
+          context,  MaterialPageRoute(builder: (context) => ShoppingPage(increaseValues: _increaseValues, decreaseValues: _decreaseValues,)),
           );
         },
-          child: Container(
-            height: screenHeight / 4,
-            color: Colors.white70,
-            child: Card(
-            color: Colors.lightGreenAccent[100],
-            elevation: 8.0,
-                // 카드 내용 추가
-              ),
+          child: FutureBuilder<List<List<Shop>>>(
+            future: Future.wait([_increaseValues, _decreaseValues]),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.hasData) {
+                List<Shop> increaseValues = snapshot.data![0];
+                List<Shop> decreaseValues = snapshot.data![1];
+                return Container(
+                  height: screenHeight / 4,
+                  color: Colors.white70,
+                  child: Card(
+                    color: Colors.lightGreenAccent[200],
+                    elevation: 8.0,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 35, // 원형의 크기 조절
+                          backgroundColor: Colors.white, // 원형의 배경색
+                          child: Text(
+                            "Weekly", // 원형 안에 들어갈 글자
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 12), // 원형과 텍스트 사이의 간격 조절
+                        Text(
+                          "알뜰장보기",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "${increaseValues[0].name}, ${increaseValues[1].name}, ${decreaseValues[0].name}, ${decreaseValues[1].name}",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  return Center(child: Text('No data found'));
+                }
+              },
             ),
           ),
         ],

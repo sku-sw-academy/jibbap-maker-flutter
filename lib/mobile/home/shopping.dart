@@ -1,26 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/Shop.dart';
 
 class ShoppingPage extends StatefulWidget {
-  final String regday;
-
-  ShoppingPage({required this.regday});
+  final Future<List<Shop>> increaseValues;
+  final Future<List<Shop>> decreaseValues;
+  ShoppingPage({required this.increaseValues, required this.decreaseValues});
 
   @override
   _ShoppingPageState createState() => _ShoppingPageState();
 }
 
 class _ShoppingPageState extends State<ShoppingPage> {
-  late Future<List<Shop>> _increaseValues;
-  late Future<List<Shop>> _decreaseValues;
-  final PriceService priceService = PriceService();
 
   @override
   void initState() {
     super.initState();
-    _increaseValues = priceService.fetchPriceIncreaseValues(widget.regday);
-    _decreaseValues = priceService.fetchPriceDecreaseValues(widget.regday);
   }
 
   @override
@@ -33,13 +27,13 @@ class _ShoppingPageState extends State<ShoppingPage> {
       ),
       body: ListView(
         children: [
-          buildCategory("이번주 동향(상승)", _increaseValues),
+          buildCategory("이번주 동향(상승)", widget.increaseValues),
           Divider(
             height: 1,
             thickness: 1,
             color: Colors.grey,
           ),
-          buildCategory("이번주 동향(하락)", _decreaseValues),
+          buildCategory("이번주 동향(하락)", widget.decreaseValues),
         ],
       ),
     );
@@ -73,13 +67,13 @@ class _ShoppingPageState extends State<ShoppingPage> {
               List<Shop> shops = snapshot.data!;
               return Column(
                 children:
-                  [
+                [
                   Row(
                     children: [
                     buildShopCard(shops[0]),
                     SizedBox(width: 8), // 카드 사이 간격 조절
                     buildShopCard(shops[1]),
-                  ],
+                    ],
                   ),
                     Row(
                       children: [
@@ -110,7 +104,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
               color: Colors.grey[300], // 회색 배경색
               child: Placeholder(), // 이미지 위젯을 대신하여 회색 영역을 나타냅니다.
             ),
-            SizedBox(height: 8),
+            SizedBox(height: 10),
             Text(
               shop.name + "\("+  shop.unit + "\)",
               style: TextStyle(
@@ -118,7 +112,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text("품종: ${shop.kind}"),
+            Text("품종: ${shop.kind}, 상태: ${shop.rank}"),
             Text("이번주: ${shop.price}원"),
             Text("지난주: ${shop.week_price}원"),
             Text(

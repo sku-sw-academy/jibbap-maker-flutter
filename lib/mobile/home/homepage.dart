@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'package:flutter_splim/mobile/home/detail.dart';
-import 'package:flutter_splim/mobile/home/market.dart';
+import 'package:flutter_splim/mobile/home/shopping.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -289,7 +289,7 @@ class _MyHomePageState extends State<MyHomePage> {
         GestureDetector(
           onTap: () {
           Navigator.push(
-          context,  MaterialPageRoute(builder: (context) => MarketPage()),
+          context,  MaterialPageRoute(builder: (context) => ShoppingPage(regday: date!,)),
           );
         },
           child: Container(

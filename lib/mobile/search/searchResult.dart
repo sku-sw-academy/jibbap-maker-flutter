@@ -236,12 +236,12 @@ class _SelectedPageState extends State<SelectedPage> {
           LineChartData(
             lineBarsData: [
               LineChartBarData(
-                spots: _getSpots(searchData),
+                spots: _getSpots(searchData.reversed.toList()),
                 isCurved: true,
-                color: Colors.blue,
+                color: Colors.blueAccent,
                 barWidth: 4,
-                isStrokeCapRound: true,
-                belowBarData: BarAreaData(show: false),
+                isStrokeCapRound: false,
+                belowBarData: BarAreaData(show: true, color: Colors.lightBlue.withOpacity(0.3)),
               ),
             ],
             titlesData: FlTitlesData(
@@ -307,7 +307,8 @@ class _SelectedPageState extends State<SelectedPage> {
     int dataSize = searchData.length;
     if (dataSize > 0) {
       // searchData에서 regday 값을 가져옵니다.
-      String regday = searchData[value.toInt()].regday.substring(5,10).replaceAll("-", "/");
+      List<PriceDTO> reverse = searchData.reversed.toList();
+      String regday = reverse[value.toInt()].regday.substring(5,10).replaceAll("-", "/");
       // 가져온 regday 값을 사용하여 텍스트 위젯 생성
       text = Text(regday, style: style);
     } else {

@@ -5,7 +5,7 @@ import 'dart:convert';
 
 class PriceService{
   Future<List<PriceDTO>> fetchPriceDetails(String regday) async {
-    final response = await http.get(Uri.parse('http://192.168.0.54:8080/prices/saving/detail/$regday'));
+    final response = await http.get(Uri.parse('http://172.30.1.22:8080/prices/saving/detail/$regday'));
 
     if (response.statusCode == 200) {
       var responsebody = utf8.decode(response.bodyBytes);
@@ -17,7 +17,7 @@ class PriceService{
   }
 
   Future<List<PriceDTO>> fetchPriceTop3(String regday) async {
-    final response = await http.get(Uri.parse('http://192.168.0.54:8080/prices/saving/top3/$regday'));
+    final response = await http.get(Uri.parse('http://172.30.1.22:8080/prices/saving/top3/$regday'));
 
     if (response.statusCode == 200) {
       var responsebody = utf8.decode(response.bodyBytes);
@@ -29,7 +29,7 @@ class PriceService{
   }
 
   Future<List<Shop>> fetchPriceIncreaseValues(String regday) async {
-    final response = await http.get(Uri.parse('http://192.168.0.54:8080/prices/shopping/increase/$regday'));
+    final response = await http.get(Uri.parse('http://172.30.1.22:8080/prices/shopping/increase/$regday'));
 
     if (response.statusCode == 200) {
       var responsebody = utf8.decode(response.bodyBytes);
@@ -41,7 +41,7 @@ class PriceService{
   }
 
   Future<List<Shop>> fetchPriceDecreaseValues(String regday) async {
-    final response = await http.get(Uri.parse('http://192.168.0.54:8080/prices/shopping/decrease/$regday'));
+    final response = await http.get(Uri.parse('http://172.30.1.22:8080/prices/shopping/decrease/$regday'));
 
     if (response.statusCode == 200) {
       var responsebody = utf8.decode(response.bodyBytes);
@@ -53,7 +53,7 @@ class PriceService{
   }
 
   Future<List<PriceDTO>> fetchSearchdata(String itemName, String kindName, String rankName) async{
-    final response = await http.get(Uri.parse('http://192.168.0.54:8080/prices/search/$itemName/$kindName/$rankName'));
+    final response = await http.get(Uri.parse('http://172.30.1.22:8080/prices/search/$itemName/$kindName/$rankName'));
 
     if (response.statusCode == 200) {
       var responsebody = utf8.decode(response.bodyBytes);

@@ -42,7 +42,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> fetchSuggestions() async {
-    final response = await http.get(Uri.parse('http://192.168.0.54:8080/items/names'));
+    final response = await http.get(Uri.parse('http://172.30.1.22:8080/items/names'));
     if (response.statusCode == 200) {
       setState(() {
         String responsebody = utf8.decode(response.bodyBytes);

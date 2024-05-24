@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_splim/service/priceservice.dart';
+import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'dart:convert';
 
 class SelectedPage extends StatefulWidget {
@@ -16,10 +18,20 @@ class _SelectedPageState extends State<SelectedPage> {
   List<List<String>> ranks = [];
   int? selectedKindIndex;
   int? selectedRankIndex;
+  late DataTable dataTable;
+  final PriceService priceService = PriceService();
 
   @override
   void initState() {
     super.initState();
+    dataTable = DataTable(
+      columns: [
+        DataColumn(label: Text('날짜')),
+        DataColumn(label: Text('가격')),
+        DataColumn(label: Text('등락률')),
+      ],
+      rows: [],
+    );
     fetchKinds();
   }
 
@@ -36,7 +48,7 @@ class _SelectedPageState extends State<SelectedPage> {
         kinds = List<String>.from(json.decode(responsebody));
         if (kinds.isNotEmpty) {
           selectedKindIndex = 0;
-          fetchRanks(selectedKindIndex!); // 초기 선택된 종류의 등급을 가져옴
+          fetchRanks(selectedKindIndex!);// 초기 선택된 종류의 등급을 가져옴
         }
       });
     } else {
@@ -46,17 +58,59 @@ class _SelectedPageState extends State<SelectedPage> {
 
   Future<void> fetchRanks(int kindIndex) async {
     final response = await http.get(
-      Uri.parse('http://192.168.0.54:8080/prices/ranks/${kinds[kindIndex]}'),
+      Uri.parse('http://192.168.0.54:8080/prices/ranks/${widget.itemname}/${kinds[kindIndex]}'),
     );
     if (response.statusCode == 200) {
       setState(() {
         String responsebody = utf8.decode(response.bodyBytes);
         List<String> rankList = List<String>.from(json.decode(responsebody));
-        ranks.insert(kindIndex, rankList);
-        selectedRankIndex = 0; // 등급 리스트의 첫 번째 값을 선택
+        if (ranks.length > kindIndex) {
+          ranks[kindIndex] = rankList;
+        } else {
+          ranks.add(rankList);
+        }
+        selectedRankIndex = 0;
+        updateDataTable();// 등급 리스트의 첫 번째 값을 선택
       });
     } else {
       print('Failed to load ranks for ${kinds[kindIndex]}: ${response.statusCode}');
+    }
+  }
+
+  void updateDataTable() async {
+    if (selectedKindIndex != null && selectedRankIndex != null) {
+      try {
+        List<PriceDTO> searchData = await priceService.fetchSearchdata(
+            widget.itemname,
+            kinds[selectedKindIndex!],
+            ranks[selectedKindIndex!][selectedRankIndex!]
+        );
+        setState(() {
+          dataTable = DataTable(
+            headingRowColor: MaterialStateColor.resolveWith((states) => Colors.black26),
+            border: TableBorder.all(
+              width: 3.0,
+              color: Colors.black12,
+            ),
+            columns: [
+              DataColumn(label: Expanded(child: Text('날짜', textAlign: TextAlign.center),)),
+              DataColumn(label: Expanded(child: Text('가격', textAlign: TextAlign.center))),
+              DataColumn(label: Expanded(child: Text('등락률', textAlign: TextAlign.center))),
+            ],
+            rows: searchData.map((price) {
+              return DataRow(
+                cells: [
+                  DataCell(Text(price.regday, textAlign: TextAlign.center)),
+                  DataCell(Text(price.dpr1, textAlign: TextAlign.center)),
+                  DataCell(Text(price.value.toString(), textAlign: TextAlign.center)),
+                ],
+              );
+            }).toList(),
+          );
+        });
+      } catch (e) {
+        print('Failed to load search data: $e');
+      }
     }
   }
 
@@ -65,53 +119,126 @@ class _SelectedPageState extends State<SelectedPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.itemname}'),
+        centerTitle: true,
+        backgroundColor: Colors.limeAccent,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (kinds.isNotEmpty)
-              DropdownButton<int>(
-                value: selectedKindIndex,
-                onChanged: (int? newIndex) {
-                  setState(() {
-                    selectedKindIndex = newIndex;
-                    if (newIndex != null) {
-                      fetchRanks(newIndex); // 선택된 종류에 따라 등급 리스트 업데이트
-                    }
-                  });
-                },
-                items: List.generate(kinds.length, (index) {
-                  return DropdownMenuItem<int>(
-                    value: index,
-                    child: Text(kinds[index]),
-                    key: Key(kinds[index]),
-                  );
-                }),
-              )
-            else
-              CircularProgressIndicator(),
-            SizedBox(height: 20),
+      body: ListView(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (kinds.isNotEmpty)
+                    DropdownButton<int>(
+                      value: selectedKindIndex,
+                      onChanged: (int? newIndex) {
+                        setState(() {
+                          selectedKindIndex = newIndex;
+                          if (newIndex != null) {
+                            fetchRanks(newIndex);
+                          }
+                        });
+                      },
+                      items: List.generate(kinds.length, (index) {
+                        return DropdownMenuItem<int>(
+                          value: index,
+                          child: Text(kinds[index]),
+                          key: Key(kinds[index]),
+                        );
+                      }),
+                    )
+                  else
+                    DropdownButton<int>(
+                      items: [], // 빈 리스트 전달하여 빈 드롭다운 버튼 생성
+                      onChanged: null, // onChanged를 null로 설정하여 클릭 불가능하게 함
+                    ),
+                  SizedBox(width: 20),
 
-            if (selectedKindIndex != null && ranks[selectedKindIndex!] != null)
-              DropdownButton<int>(
-                value: selectedRankIndex,
-                onChanged: (int? newIndex) {
-                  setState(() {
-                    selectedRankIndex = newIndex;
-                  });
-                  print('Selected item: ${ranks[selectedKindIndex!][selectedRankIndex!]}');
-                },
-                items: List.generate(ranks[selectedKindIndex!].length, (index) {
-                  return DropdownMenuItem<int>(
-                    value: index,
-                    child: Text(ranks[selectedKindIndex!][index]),
-                    key: Key(ranks[selectedKindIndex!][index]),
-                  );
-                }),
+                  if (selectedKindIndex != null && ranks.length > selectedKindIndex! && ranks[selectedKindIndex!] != null && ranks[selectedKindIndex!].isNotEmpty)
+                    DropdownButton<int>(
+                      value: selectedRankIndex,
+                      onChanged: (int? newIndex) {
+                        setState(() {
+                          selectedRankIndex = newIndex;
+                        });
+                        print('Selected item: ${ranks[selectedKindIndex!][selectedRankIndex!]}');
+                      },
+                      items: List.generate(ranks[selectedKindIndex!].length, (index) {
+                        return DropdownMenuItem<int>(
+                          value: index,
+                          child: Text(ranks[selectedKindIndex!][index]),
+                          key: Key(ranks[selectedKindIndex!][index]),
+                        );
+                      }),
+                    )
+                  else
+                    DropdownButton<int>(
+                      items: [], // 빈 리스트 전달하여 빈 드롭다운 버튼 생성
+                      onChanged: null, // onChanged를 null로 설정하여 클릭 불가능하게 함
+                    ),
+                ],
               ),
-          ],
-        ),
+
+              SizedBox(width: 20),
+
+              ElevatedButton(
+                onPressed: () async {
+                  if (selectedKindIndex != null && selectedRankIndex != null) {
+                    try {
+                      List<PriceDTO> searchData = await priceService.fetchSearchdata(
+                          widget.itemname,
+                          kinds[selectedKindIndex!],
+                          ranks[selectedKindIndex!][selectedRankIndex!]
+                      );
+                      setState(() {
+                        dataTable = DataTable(
+                          headingRowColor: MaterialStateColor.resolveWith((states) => Colors.black26),
+                          border: TableBorder.all(
+                            width: 3.0,
+                            color: Colors.black12,
+                          ),
+                          columns: [
+                            DataColumn(label: Expanded(child: Text('날짜', textAlign: TextAlign.center),)),
+                            DataColumn(label: Expanded(child: Text('가격', textAlign: TextAlign.center))),
+                            DataColumn(label: Expanded(child: Text('등락률', textAlign: TextAlign.center))),
+                          ],
+                          rows: searchData.map((price) {
+                            return DataRow(
+                              cells: [
+                                DataCell(Text(price.regday, textAlign: TextAlign.center)),
+                                DataCell(Text(price.dpr1, textAlign: TextAlign.center)),
+                                DataCell(Text(price.value.toString(), textAlign: TextAlign.center)),
+                              ],
+                            );
+                          }).toList(),
+                        );
+                      });
+                    } catch (e) {
+                      print('Failed to load search data: $e');
+                    }
+                  }
+                },
+                child: Text('검색'),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // 사각형 모양의 버튼을 원하는 경우 원하는 모양의 BorderRadius 설정
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+
+          Center(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: dataTable,
+            ),
+          )
+        ],
       ),
     );
   }

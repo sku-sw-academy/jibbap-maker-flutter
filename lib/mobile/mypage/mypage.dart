@@ -20,25 +20,25 @@ class MyPage extends StatelessWidget {
           currentIndex: 3,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home, color: Colors.blue),
+              icon: Icon(Icons.home, color: Colors.blueAccent),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.search, color: Colors.blue),
+                icon: Icon(Icons.search, color: Colors.blueAccent),
                 label: 'Search',
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.grid_view, color: Colors.blue),
+                icon: Icon(Icons.grid_view, color: Colors.blueAccent),
                 label: 'Recipe',
             ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.person, color: Colors.blue),
+                icon: Icon(Icons.person, color: Colors.redAccent),
                 label: 'My Page',
-                backgroundColor: Colors.amber
+                backgroundColor: Colors.limeAccent
             ),
           ],
 
-          selectedItemColor: Colors.blue,
+          selectedItemColor: Colors.redAccent,
 
           onTap: (int index) {
             if (index == 0) {

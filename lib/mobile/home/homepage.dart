@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('알뜰집밥'),
         centerTitle: true,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.limeAccent,
         actions: [
           IconButton(
             icon: Icon(Icons.search),

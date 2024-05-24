@@ -79,7 +79,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
     return Scaffold(
       appBar: AppBar(
         title: Text("프로필 수정"),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.limeAccent,
         centerTitle: true,
       ),
       body: Column(

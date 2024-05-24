@@ -9,23 +9,6 @@ class MyPrefer extends StatefulWidget {
 }
 
 class _MyPreferState extends State<MyPrefer>{
-  String searchText = '';
-
-  List<String> suggestions = [];
-
-  List<String> getFilteredSuggestions(String searchTerm) {
-    // 입력된 검색어와 일치하는 자동완성 결과를 필터링하여 반환합니다.
-    return suggestions
-        .where((suggestion) =>
-        suggestion.toLowerCase().contains(searchTerm.toLowerCase()))
-        .toList();
-  }
-
-  void handleSearchChange(String searchTerm) {
-    setState(() {
-      searchText = searchTerm;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +19,8 @@ class _MyPreferState extends State<MyPrefer>{
         Scaffold(
           appBar: AppBar(
             title: Text("식재료 목록"),
+            centerTitle: true,
+            backgroundColor: Colors.limeAccent,
             bottom: TabBar(
                tabs: [
                 Tab(text: 'All'),

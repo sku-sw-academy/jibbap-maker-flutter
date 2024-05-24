@@ -23,7 +23,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("비밀번호 변경"),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.limeAccent,
         centerTitle: true,
       ),
       body: Padding(

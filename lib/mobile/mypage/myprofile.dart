@@ -5,6 +5,7 @@ import 'package:flutter_splim/mobile/mypage/changeprofile.dart';
 import 'package:flutter_splim/mobile/mypage/changepassword.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
+import 'package:flutter_splim/mobile/mypage/customerCenter/center.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -32,7 +33,7 @@ class _MyProfileState extends State<MyProfile> {
     return Scaffold(
       appBar: AppBar(
         title: Text('MyProfile'),
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.limeAccent,
         centerTitle: true,
         actions: [
           IconButton(
@@ -191,7 +192,9 @@ class _MyProfileState extends State<MyProfile> {
                 title: Text("고객센터"),
                 trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-
+                Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CenterPage()),
+                );
               },
             ),
 

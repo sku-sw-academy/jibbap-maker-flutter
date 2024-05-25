@@ -83,7 +83,6 @@ class _ShoppingPageState extends State<ShoppingPage> {
               return Column(
                 children:
                 [
-
                   SizedBox(height: 10,),
 
                   Row(

@@ -10,6 +10,7 @@ import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'package:flutter_splim/mobile/home/detail.dart';
 import 'package:flutter_splim/mobile/home/shopping.dart';
 import 'package:flutter_splim/dto/Shop.dart';
+import 'package:flutter_splim/mobile/mypage/prefer.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -88,8 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               isSelected: [isSelected, !isSelected],
                               onPressed: (index) async {
                                 if (index == 1) {
-                                  final storageService =
-                                  Provider.of<SecureService>(context, listen: false);
+                                  final storageService = Provider.of<SecureService>(context, listen: false);
                                   String? token = await storageService.readToken(key);
                                   if (token == null || token.isEmpty) {
                                     showDialog(
@@ -180,28 +180,63 @@ class _MyHomePageState extends State<MyHomePage> {
                                 );
                               }
                             },
-                          ): Column(
-                              children: [
-                                Expanded(
-                                  child: ListTile(
-                                    leading: Icon(Icons.favorite),
-                                    title: Text('사과'),
-                                    tileColor: Colors.blue[100],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: ListTile(
-                                    title: Text('사과'),
-                                    tileColor: Colors.blue[200],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: ListTile(
-                                    title: Text('사과'),
-                                    tileColor: Colors.blue[300],
-                                  ),
-                                ),
-                              ],
+                          ): FutureBuilder<List<Shop>>(
+                            future: _increaseValues,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return Center(child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Center(child: Text('Error: ${snapshot.error}'));
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return Center(child: Text('No data found'));
+                              } else {
+                                List<Shop> increaseValues = snapshot.data!;
+
+                                return Column(
+                                  children: [
+                                    if (increaseValues.length < 3) ...[
+                                      ListTile(
+                                        leading: Icon(Icons.info),
+                                        title: Text('식재료를 \n'
+                                            '3가지 이상 \n선택하세요', textAlign: TextAlign.center,),
+                                        tileColor: Colors.grey[200],
+                                        onTap: (){
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => MyPrefer()),
+                                          );
+                                        },
+                                      ),
+                                    ] else ...[
+                                      Expanded(
+                                        child: ListTile(
+                                          leading: Icon(Icons.arrow_upward),
+                                          title: Text(increaseValues[0].name),
+                                          trailing: Text('${increaseValues[0].price} 원'),
+                                          tileColor: Colors.yellowAccent[100],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: ListTile(
+                                          leading: Icon(Icons.arrow_upward),
+                                          title: Text(increaseValues[1].name),
+                                          trailing: Text('${increaseValues[1].price} 원'),
+                                          tileColor: Colors.yellowAccent[200],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: ListTile(
+                                          leading: Icon(Icons.arrow_upward),
+                                          title: Text(increaseValues[2].name),
+                                          trailing: Text('${increaseValues[2].price} 원'),
+                                          tileColor: Colors.yellow,
+                                        ),
+                                      ),
+                                    ]
+                                  ],
+                                );
+                              }
+                            },
                           ),
                         ),
                       ],
@@ -276,84 +311,171 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
 
-          SizedBox(height: screenHeight / 40,),
+          SizedBox(height: screenHeight / 50,),
 
           Container(
-            height: screenHeight / 4,
+            height: screenHeight / 3,
             color: Color(0xFFFCFCF1),
-            child: Column(
+            child: GridView.count(
+              crossAxisCount: 3, // 가로 방향으로 3개의 카드씩 배치
+              childAspectRatio: 3 / 3, // 카드의 가로 세로 비율 설정
               children: [
-                Row(),
-                Row(),
+                GestureDetector(
+                  onTap: () {
+                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
+                  },
+                  child: Card(
+                    // 첫 번째 Card
+                    color: Colors.white,
+                    elevation: 4.0,
+                    child: Center(
+                      child: Text('Card 1'), // Card에 들어갈 내용
+                    ),
+                  ),
+                ),GestureDetector(
+                  onTap: () {
+                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
+                  },
+                  child: Card(
+                    // 첫 번째 Card
+                    color: Colors.white,
+                    elevation: 4.0,
+                    child: Center(
+                      child: Text('Card 1'), // Card에 들어갈 내용
+                    ),
+                  ),
+                ),GestureDetector(
+                  onTap: () {
+                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
+                  },
+                  child: Card(
+                    // 첫 번째 Card
+                    color: Colors.white,
+                    elevation: 4.0,
+                    child: Center(
+                      child: Text('Card 1'), // Card에 들어갈 내용
+                    ),
+                  ),
+                ),GestureDetector(
+                  onTap: () {
+                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
+                  },
+                  child: Card(
+                    // 첫 번째 Card
+                    color: Colors.white,
+                    elevation: 4.0,
+                    child: Center(
+                      child: Text('Card 1'), // Card에 들어갈 내용
+                    ),
+                  ),
+                ),GestureDetector(
+                  onTap: () {
+                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
+                  },
+                  child: Card(
+                    // 첫 번째 Card
+                    color: Colors.white,
+                    elevation: 4.0,
+                    child: Center(
+                      child: Text('Card 1'), // Card에 들어갈 내용
+                    ),
+                  ),
+                ),GestureDetector(
+                  onTap: () {
+                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
+                  },
+                  child: Card(
+                    // 첫 번째 Card
+                    color: Colors.white,
+                    elevation: 4.0,
+                    child: Center(
+                      child: Text('Card 1'), // Card에 들어갈 내용
+                    ),
+                  ),
+                ),
+                // 나머지 카드들에 대한 코드를 여기에 추가하세요.
               ],
             ),
           ),
 
           SizedBox(height: screenHeight / 40,),
 
-        GestureDetector(
-          onTap: () {
-          Navigator.push(
-          context,  MaterialPageRoute(builder: (context) => ShoppingPage(increaseValues: _increaseValues, decreaseValues: _decreaseValues,)),
-          );
-        },
-          child: FutureBuilder<List<List<Shop>>>(
-            future: Future.wait([_increaseValues, _decreaseValues]),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (snapshot.hasData) {
-                List<Shop> increaseValues = snapshot.data![0];
-                List<Shop> decreaseValues = snapshot.data![1];
-                return Container(
-                  height: screenHeight / 4,
-                  color: Colors.white70,
-                  child: Card(
-                    color: Colors.lightGreenAccent[200],
-                    elevation: 8.0,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 35, // 원형의 크기 조절
-                          backgroundColor: Colors.white, // 원형의 배경색
-                          child: Text(
-                            "Weekly", // 원형 안에 들어갈 글자
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 12), // 원형과 텍스트 사이의 간격 조절
-                        Text(
-                          "알뜰장보기",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ShoppingPage(increaseValues: _increaseValues, decreaseValues: _decreaseValues)),
+              );
+            },
+            child: FutureBuilder<List<List<Shop>>>(
+              future: Future.wait([_increaseValues, _decreaseValues]),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  List<Shop> increaseValues = snapshot.data![0];
+                  List<Shop> decreaseValues = snapshot.data![1];
+                  return Container(
+                    height: screenHeight / 4,
+                    color: Colors.white70,
+                    child: Card(
+                      color: Colors.redAccent,
+                      elevation: 8.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              "${increaseValues[0].name}, ${increaseValues[1].name}, ${decreaseValues[0].name}, ${decreaseValues[1].name}",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Image.asset(
+                                'asset/food/market.png', // 이미지 경로
+                                fit: BoxFit.cover, // 이미지가 적절하게 확장되도록 설정
                               ),
+                            ),
+                            SizedBox(width: 20),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 35, // 원형의 크기 조절
+                                  backgroundColor: Colors.white, // 원형의 배경색
+                                  child: Text(
+                                    "Weekly", // 원형 안에 들어갈 글자
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+
+                                Text(
+                                  "알뜰장보기",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                    textAlign: TextAlign.center
+                                ),
+                                SizedBox(height: 12),
+                                Text(
+                                  "${increaseValues[0].name}, ${increaseValues[1].name}, ${decreaseValues[0].name}, ${decreaseValues[1].name}",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-
-                        ],
                       ),
                     ),
                   );
@@ -363,6 +485,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
           ),
+          SizedBox(height: 15),
         ],
       ),
     );

@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 
-
 class DetailPage extends StatefulWidget {
   final String regday;
 

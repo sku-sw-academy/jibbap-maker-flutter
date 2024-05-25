@@ -155,19 +155,20 @@ class _MyHomePageState extends State<MyHomePage> {
                                   children: prices.map((price) {
                                     return ListTile(
                                       title: Text(
-                                        "${prices.indexOf(price) + 1}. ${price.itemCode.itemName}",
+                                        "${price.itemCode.itemName}(${price.unit})",
                                         style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 14,
                                             color: Colors.black,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       trailing: Text(
                                         "${price.value}%",
                                         style: TextStyle(
-                                            fontSize: 12,
+                                            fontSize: 10,
                                             color: Colors.blueAccent,
                                             fontWeight: FontWeight.bold),
                                       ),
+
                                       tileColor: Colors.green[(prices.indexOf(price) + 1) * 100],
                                       onTap: (){
                                           Navigator.push(

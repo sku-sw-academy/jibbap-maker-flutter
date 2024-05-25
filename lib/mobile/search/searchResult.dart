@@ -30,9 +30,9 @@ class _SelectedPageState extends State<SelectedPage> {
     super.initState();
     dataTable = DataTable(
       columns: [
-        DataColumn(label: Text('날짜')),
-        DataColumn(label: Text('가격')),
-        DataColumn(label: Text('등락률')),
+        DataColumn(label: Text('')),
+        DataColumn(label: Text('')),
+        DataColumn(label: Text('')),
       ],
       rows: [],
     );
@@ -213,11 +213,14 @@ class _SelectedPageState extends State<SelectedPage> {
 
           SizedBox(height: 20),
 
-          Text("$itemName/$kindName/$rankName/$unit", style: TextStyle(
-            fontSize: 20, // 폰트 크기
-            fontWeight: FontWeight.bold, // 폰트 굵기
-            color: Colors.black, // 폰트 색상
-          ),),
+          Center(
+            child: Text("(소매가격)$itemName/$kindName/$rankName/$unit", style: TextStyle(
+              fontSize: 18, // 폰트 크기
+              fontWeight: FontWeight.bold, // 폰트 굵기
+              color: Colors.black, // 폰트 색상
+            ),
+            ),
+          ),
 
           SizedBox(height: 20),
 

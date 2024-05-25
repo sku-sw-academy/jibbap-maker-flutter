@@ -28,9 +28,9 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
     super.initState();
     dataTable = DataTable(
       columns: [
-        DataColumn(label: Text('날짜')),
-        DataColumn(label: Text('가격')),
-        DataColumn(label: Text('등락률')),
+        DataColumn(label: Text('')),
+        DataColumn(label: Text('')),
+        DataColumn(label: Text('')),
       ],
       rows: [],
     );
@@ -76,6 +76,11 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
 
   @override
   Widget build(BuildContext context) {
+    String itemName = searchData.isNotEmpty && searchData[0].itemCode != null ? searchData[0].itemCode.itemName : "";
+    String rankName = searchData.isNotEmpty && searchData[0].rankName != null ? searchData[0].rankName : "";
+    String kindName = searchData.isNotEmpty && searchData[0].kindName != null ? searchData[0].kindName : "";
+    String unit = searchData.isNotEmpty && searchData[0].unit != null ? searchData[0].unit : "";
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.itemname}'),
@@ -84,6 +89,18 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
       ),
       body: ListView(
         children: [
+          SizedBox(height: 20,),
+
+          Center(
+            child: Text("(소매가격)$itemName/$kindName/$rankName/$unit", style: TextStyle(
+              fontSize: 18, // 폰트 크기
+              fontWeight: FontWeight.bold, // 폰트 굵기
+              color: Colors.black, // 폰트 색상
+            ),
+            ),
+          ),
+
+          SizedBox(height: 20),
 
           Center(
             child: SingleChildScrollView(

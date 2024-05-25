@@ -84,7 +84,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
                 children:
                 [
 
-                  SizedBox(height: 15,),
+                  SizedBox(height: 10,),
 
                   Row(
                     children: [
@@ -93,6 +93,9 @@ class _ShoppingPageState extends State<ShoppingPage> {
                     buildShopCard(shops[1]),
                     ],
                   ),
+
+                  SizedBox(height: 10,),
+
                     Row(
                       children: [
                         buildShopCard(shops[2]),
@@ -101,7 +104,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
                       ],
                     ),
 
-                  SizedBox(height: 15,),
+                  SizedBox(height: 10,),
                 ],
               );
             } else {
@@ -122,6 +125,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
               MaterialPageRoute(builder: (context) => ShoppingResultPage(itemname: shop.name, kindname: shop.kind, rankname: shop.rank)));
         },
         child: Card(
+          elevation: 4.0,
           child: Column(
             children: [
               Container(

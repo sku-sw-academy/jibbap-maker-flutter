@@ -47,7 +47,7 @@ class _DetailPageState extends State<DetailPage> {
               child: SingleChildScrollView(
                     child: DataTable(
                       headingRowColor:
-                        MaterialStateColor.resolveWith((states) => Colors.greenAccent),
+                        MaterialStateColor.resolveWith((states) => Colors.grey),
                       border: TableBorder.all(
                         width: 3.0,
                         color:Colors.black12,

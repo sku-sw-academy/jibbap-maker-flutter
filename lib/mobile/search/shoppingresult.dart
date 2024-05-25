@@ -6,20 +6,18 @@ import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:io';
 
-class SelectedPage extends StatefulWidget {
+class ShoppingResultPage extends StatefulWidget {
   final String itemname;
+  final String kindname;
+  final String rankname;
 
-  SelectedPage({required this.itemname});
+  ShoppingResultPage({required this.itemname, required this.kindname, required this.rankname});
 
   @override
-  _SelectedPageState createState() => _SelectedPageState();
+  _ShoppingResultPageState createState() => _ShoppingResultPageState();
 }
 
-class _SelectedPageState extends State<SelectedPage> {
-  List<String> kinds = [];
-  List<List<String>> ranks = [];
-  int? selectedKindIndex;
-  int? selectedRankIndex;
+class _ShoppingResultPageState extends State<ShoppingResultPage> {
   late DataTable dataTable;
   final PriceService priceService = PriceService();
   List<PriceDTO> searchData = [];
@@ -36,58 +34,15 @@ class _SelectedPageState extends State<SelectedPage> {
       ],
       rows: [],
     );
-    fetchKinds();
-  }
-
-  Future<void> fetchKinds() async {
-    final response = await http.get(
-      Uri.parse('http://172.30.1.22:8080/prices/kinds/${widget.itemname}'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-    if (response.statusCode == 200) {
-      setState(() {
-        String responsebody = utf8.decode(response.bodyBytes);
-        kinds = List<String>.from(json.decode(responsebody));
-        if (kinds.isNotEmpty) {
-          selectedKindIndex = 0;
-          fetchRanks(selectedKindIndex!);// 초기 선택된 종류의 등급을 가져옴
-        }
-      });
-    } else {
-      print('Failed to load kinds: ${response.statusCode}');
-    }
-  }
-
-  Future<void> fetchRanks(int kindIndex) async {
-    final response = await http.get(
-      Uri.parse('http://172.30.1.22:8080/prices/ranks/${widget.itemname}/${kinds[kindIndex]}'),
-    );
-    if (response.statusCode == 200) {
-      setState(() {
-        String responsebody = utf8.decode(response.bodyBytes);
-        List<String> rankList = List<String>.from(json.decode(responsebody));
-        if (ranks.length > kindIndex) {
-          ranks[kindIndex] = rankList;
-        } else {
-          ranks.add(rankList);
-        }
-        selectedRankIndex = 0;
-        updateDataTable();// 등급 리스트의 첫 번째 값을 선택
-      });
-    } else {
-      print('Failed to load ranks for ${kinds[kindIndex]}: ${response.statusCode}');
-    }
+    updateDataTable();
   }
 
   void updateDataTable() async {
-    if (selectedKindIndex != null && selectedRankIndex != null) {
       try {
         searchData = await priceService.fetchSearchdata(
             widget.itemname,
-            kinds[selectedKindIndex!],
-            ranks[selectedKindIndex!][selectedRankIndex!]
+            widget.kindname,
+            widget.rankname
         );
         setState((){
           dataTable = DataTable(
@@ -117,16 +72,10 @@ class _SelectedPageState extends State<SelectedPage> {
       } catch (e) {
         print('Failed to load search data: $e');
       }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    String itemName = searchData.isNotEmpty && searchData[0].itemCode != null ? searchData[0].itemCode.itemName : "";
-    String rankName = searchData.isNotEmpty && searchData[0].rankName != null ? searchData[0].rankName : "";
-    String kindName = searchData.isNotEmpty && searchData[0].kindName != null ? searchData[0].kindName : "";
-    String unit = searchData.isNotEmpty && searchData[0].unit != null ? searchData[0].unit : "";
-
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.itemname}'),
@@ -135,91 +84,6 @@ class _SelectedPageState extends State<SelectedPage> {
       ),
       body: ListView(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 50),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (kinds.isNotEmpty)
-                    DropdownButton<int>(
-                      value: selectedKindIndex,
-                      onChanged: (int? newIndex) {
-                        setState(() {
-                          selectedKindIndex = newIndex;
-                          if (newIndex != null) {
-                            fetchRanks(newIndex);
-                          }
-                        });
-                      },
-                      items: List.generate(kinds.length, (index) {
-                        return DropdownMenuItem<int>(
-                          value: index,
-                          child: Text(kinds[index]),
-                          key: Key(kinds[index]),
-                        );
-                      }),
-                    )
-                  else
-                    DropdownButton<int>(
-                      items: [], // 빈 리스트 전달하여 빈 드롭다운 버튼 생성
-                      onChanged: null, // onChanged를 null로 설정하여 클릭 불가능하게 함
-                    ),
-                  SizedBox(width: 20),
-
-                  if (selectedKindIndex != null && ranks.length > selectedKindIndex! && ranks[selectedKindIndex!] != null && ranks[selectedKindIndex!].isNotEmpty)
-                    DropdownButton<int>(
-                      value: selectedRankIndex,
-                      onChanged: (int? newIndex) {
-                        setState(() {
-                          selectedRankIndex = newIndex;
-                        });
-                        print('Selected item: ${ranks[selectedKindIndex!][selectedRankIndex!]}');
-                      },
-                      items: List.generate(ranks[selectedKindIndex!].length, (index) {
-                        return DropdownMenuItem<int>(
-                          value: index,
-                          child: Text(ranks[selectedKindIndex!][index]),
-                          key: Key(ranks[selectedKindIndex!][index]),
-                        );
-                      }),
-                    )
-                  else
-                    DropdownButton<int>(
-                      items: [], // 빈 리스트 전달하여 빈 드롭다운 버튼 생성
-                      onChanged: null, // onChanged를 null로 설정하여 클릭 불가능하게 함
-                    ),
-                ],
-              ),
-
-              SizedBox(width: 20),
-
-              ElevatedButton(
-                onPressed: () async {
-                  if (selectedKindIndex != null && selectedRankIndex != null) {
-                    updateDataTable();
-                  }
-                },
-                child: Text('검색'),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // 사각형 모양의 버튼을 원하는 경우 원하는 모양의 BorderRadius 설정
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 20),
-
-          Text("$itemName/$kindName/$rankName/$unit", style: TextStyle(
-            fontSize: 20, // 폰트 크기
-            fontWeight: FontWeight.bold, // 폰트 굵기
-            color: Colors.black, // 폰트 색상
-          ),),
-
-          SizedBox(height: 20),
 
           Center(
             child: SingleChildScrollView(

@@ -27,7 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initState(){
     super.initState();
-    date = getDate();
+    date = "2024-05-24";
     futurePrices = priceService.fetchPriceTop3(date!);
     _increaseValues = priceService.fetchPriceIncreaseValues(date!);
     _decreaseValues = priceService.fetchPriceDecreaseValues(date!);

@@ -4,6 +4,7 @@ import 'package:flutter_splim/mobile/search/searchResult.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_splim/service/itemservice.dart';
 import 'package:mysql_client/mysql_client.dart';
 
 class SearchPage extends StatefulWidget {
@@ -13,7 +14,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final DatabaseHelper dbHelper = DatabaseHelper();
-
+  final ItemService itemService = ItemService();
   String searchText = '';
   List<String> suggestions = []; // 예시 자동완성 목록
 
@@ -79,7 +80,6 @@ class _SearchPageState extends State<SearchPage> {
 
       body: ListView(
         children: [
-
           if (searchText.isEmpty)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,6 +142,8 @@ class _SearchPageState extends State<SearchPage> {
                                 // suggestion이 존재하지 않으면 데이터베이스에 삽입
                                 await dbHelper.insertRecord(Record(name: recentSearch, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
                               }
+
+                              await itemService.incrementItemCount(recentSearch);
 
                               setState(() {
                                 recentSearches = dbHelper.getRecords();
@@ -208,6 +210,8 @@ class _SearchPageState extends State<SearchPage> {
                         recentSearches = dbHelper.getRecords();
                       });
                     }
+
+                    await itemService.incrementItemCount(suggestion);
 
                     Navigator.push(
                       context,

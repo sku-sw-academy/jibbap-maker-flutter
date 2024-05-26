@@ -278,6 +278,94 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
 
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ShoppingPage(increaseValues: _increaseValues, decreaseValues: _decreaseValues)),
+              );
+            },
+            child: FutureBuilder<List<List<Shop>>>(
+              future: Future.wait([_increaseValues, _decreaseValues]),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  List<Shop> increaseValues = snapshot.data![0];
+                  List<Shop> decreaseValues = snapshot.data![1];
+                  return Container(
+                    height: screenHeight / 4,
+                    color: Colors.white70,
+                    child: Card(
+                      color: Colors.redAccent,
+                      elevation: 8.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Image.asset(
+                                'asset/food/market.png', // 이미지 경로
+                                fit: BoxFit.cover, // 이미지가 적절하게 확장되도록 설정
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 35, // 원형의 크기 조절
+                                  backgroundColor: Colors.white, // 원형의 배경색
+                                  child: Text(
+                                    "Weekly", // 원형 안에 들어갈 글자
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+
+                                Text(
+                                    "알뜰장보기",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontStyle: FontStyle.italic,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center
+                                ),
+                                SizedBox(height: 12),
+                                Text(
+                                  "${increaseValues[0].name}, ${increaseValues[1].name}, ${decreaseValues[0].name}, ${decreaseValues[1].name}",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+                  return Center(child: Text('No data found'));
+                }
+              },
+            ),
+          ),
+
+          SizedBox(height: 20,),
+
           Column(
             children: [
               Container(
@@ -399,93 +487,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
 
-          SizedBox(height: screenHeight / 40,),
-
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ShoppingPage(increaseValues: _increaseValues, decreaseValues: _decreaseValues)),
-              );
-            },
-            child: FutureBuilder<List<List<Shop>>>(
-              future: Future.wait([_increaseValues, _decreaseValues]),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.hasData) {
-                  List<Shop> increaseValues = snapshot.data![0];
-                  List<Shop> decreaseValues = snapshot.data![1];
-                  return Container(
-                    height: screenHeight / 4,
-                    color: Colors.white70,
-                    child: Card(
-                      color: Colors.redAccent,
-                      elevation: 8.0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Image.asset(
-                                'asset/food/market.png', // 이미지 경로
-                                fit: BoxFit.cover, // 이미지가 적절하게 확장되도록 설정
-                              ),
-                            ),
-                            SizedBox(width: 20),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CircleAvatar(
-                                  radius: 35, // 원형의 크기 조절
-                                  backgroundColor: Colors.white, // 원형의 배경색
-                                  child: Text(
-                                    "Weekly", // 원형 안에 들어갈 글자
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-
-                                Text(
-                                  "알뜰장보기",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                    textAlign: TextAlign.center
-                                ),
-                                SizedBox(height: 12),
-                                Text(
-                                  "${increaseValues[0].name}, ${increaseValues[1].name}, ${decreaseValues[0].name}, ${decreaseValues[1].name}",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                } else {
-                  return Center(child: Text('No data found'));
-                }
-              },
-            ),
-          ),
           SizedBox(height: 15),
         ],
       ),

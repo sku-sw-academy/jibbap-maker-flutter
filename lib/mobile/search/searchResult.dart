@@ -4,6 +4,7 @@ import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_splim/constant.dart';
 import 'dart:io';
 
 class SelectedPage extends StatefulWidget {
@@ -41,7 +42,7 @@ class _SelectedPageState extends State<SelectedPage> {
 
   Future<void> fetchKinds() async {
     final response = await http.get(
-      Uri.parse('http://172.30.1.22:8080/prices/kinds/${widget.itemname}'),
+      Uri.parse('${Constants.baseUrl}/prices/kinds/${widget.itemname}'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -62,7 +63,7 @@ class _SelectedPageState extends State<SelectedPage> {
 
   Future<void> fetchRanks(int kindIndex) async {
     final response = await http.get(
-      Uri.parse('http://172.30.1.22:8080/prices/ranks/${widget.itemname}/${kinds[kindIndex]}'),
+      Uri.parse('${Constants.baseUrl}/prices/ranks/${widget.itemname}/${kinds[kindIndex]}'),
     );
     if (response.statusCode == 200) {
       setState(() {

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_splim/service/itemservice.dart';
+import 'package:flutter_splim/constant.dart';
 import 'package:mysql_client/mysql_client.dart';
 
 class SearchPage extends StatefulWidget {
@@ -43,7 +44,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> fetchSuggestions() async {
-    final response = await http.get(Uri.parse('http://172.30.1.22:8080/items/names'));
+    final response = await http.get(Uri.parse('${Constants.baseUrl}/items/names'));
     if (response.statusCode == 200) {
       setState(() {
         String responsebody = utf8.decode(response.bodyBytes);

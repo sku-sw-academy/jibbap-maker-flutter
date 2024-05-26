@@ -97,7 +97,18 @@ class _DetailPageState extends State<DetailPage> {
                           DataCell(Text(price.unit, textAlign:TextAlign.center)),
                           DataCell(Text(price.rankName, textAlign:TextAlign.center)),
                           DataCell(Text(price.dpr1, textAlign:TextAlign.center)),
-                          DataCell(Text(price.value.toString(), textAlign:TextAlign.center)),
+                          DataCell(
+                          Text( price.value.toString(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                          color: price.value < 0
+                          ? Colors.blue
+                              : price.value == 0
+                          ? Colors.black
+                              : Colors.red,
+                            ),
+                          ),
+                        ),
                           DataCell(Text(price.regday, textAlign:TextAlign.center)),
                           // Add more cells as needed
                         ]

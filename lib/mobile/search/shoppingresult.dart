@@ -187,16 +187,19 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
       fontWeight: FontWeight.bold,
       fontSize: 10,
     );
+
     double maxY = _calculateMaxY(searchData);
+    double minY = _calculateMinY(searchData);
+    double result = maxY - minY;
     String text = "";
 
-    if(maxY <= 10000){
+    if(result <= 1000){
       if(value.toInt() % 200 == 0){
         text = (value.toDouble() / 1000).toString() + "k";
       }else{
         text = "";
       }
-    }else if(maxY <= 50000){
+    }else if(result <= 5000){
       if(value.toInt() % 500 == 0){
         text = (value.toDouble() / 1000).toString() + "k";
       }else{

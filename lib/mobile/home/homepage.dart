@@ -30,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initState(){
     super.initState();
-    date = "2024-05-24";
+    date = getDate();
     futurePrices = priceService.fetchPriceTop3(date!);
     _increaseValues = priceService.fetchPriceIncreaseValues(date!);
     _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
@@ -136,113 +136,144 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
 
                         Expanded(
-                          child: isSelected
-                              ? FutureBuilder<List<PriceDTO>>(
-                            future: futurePrices,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Center(
-                                    child:
-                                    CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return Center(
-                                    child: Text(
-                                        'Error: ${snapshot.error}'));
-                              } else if (!snapshot.hasData ||
-                                  snapshot.data!.isEmpty) {
-                                return Center(
-                                    child: Text('No data found'));
-                              } else {
-                                List<PriceDTO> prices = snapshot.data!;
-                                return Column(
-                                  children: prices.map((price) {
-                                    return ListTile(
-                                      title: Text(
-                                        "${price.itemCode.itemName}(${price.unit})",
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      trailing: Text(
-                                        "${price.value}%",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.blueAccent,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-
-                                      tileColor: Colors.green[(prices.indexOf(price) + 1) * 100],
-                                      onTap: (){
-                                          Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => DetailPage(regday: date!)),
+                          child: Column(
+                            children: [
+                              if (isSelected) ...[
+                                FutureBuilder<List<PriceDTO>>(
+                                  future: futurePrices,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Center(child: CircularProgressIndicator());
+                                    } else if (snapshot.hasError) {
+                                      return Center(child: Text('Error: ${snapshot.error}'));
+                                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                      return Center(child: Text('No data found'));
+                                    } else {
+                                      List<PriceDTO> prices = snapshot.data!;
+                                      return Column(
+                                        children: prices.map((price) {
+                                          return Container(
+                                            height: 60, // 고정 높이
+                                            decoration: BoxDecoration(
+                                              border: Border.all(color: Colors.black), // 경계선 색상
+                                            ),
+                                            child: ListTile(
+                                              title: Text(
+                                                "${price.itemCode.itemName}-${price.kindName}",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontStyle: FontStyle.italic
+                                                ),
+                                              ),
+                                              trailing: Text(
+                                                "${price.rankName}",
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontStyle: FontStyle.italic
+                                                ),
+                                              ),
+                                              tileColor: Colors.red[(prices.indexOf(price) + 1) * 100],
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => DetailPage(regday: date!)),
+                                                );
+                                              },
+                                            ),
                                           );
-                                      },
-                                    );
-                                  }).toList(),
-                                );
-                              }
-                            },
-                          ): FutureBuilder<List<Shop>>(
-                            future: _increaseValues,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return Center(child: CircularProgressIndicator());
-                              } else if (snapshot.hasError) {
-                                return Center(child: Text('Error: ${snapshot.error}'));
-                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return Center(child: Text('No data found'));
-                              } else {
-                                List<Shop> increaseValues = snapshot.data!;
-
-                                return Column(
-                                  children: [
-                                    if (increaseValues.length < 3) ...[
-                                      ListTile(
-                                        leading: Icon(Icons.info),
-                                        title: Text('식재료를 \n'
-                                            '3가지 이상 \n선택하세요', textAlign: TextAlign.center,),
-                                        tileColor: Colors.grey[200],
-                                        onTap: (){
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => MyPrefer()),
-                                          );
-                                        },
-                                      ),
-                                    ] else ...[
-                                      Expanded(
-                                        child: ListTile(
-                                          leading: Icon(Icons.arrow_upward),
-                                          title: Text(increaseValues[0].name),
-                                          trailing: Text('${increaseValues[0].price} 원'),
-                                          tileColor: Colors.yellowAccent[100],
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: ListTile(
-                                          leading: Icon(Icons.arrow_upward),
-                                          title: Text(increaseValues[1].name),
-                                          trailing: Text('${increaseValues[1].price} 원'),
-                                          tileColor: Colors.yellowAccent[200],
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: ListTile(
-                                          leading: Icon(Icons.arrow_upward),
-                                          title: Text(increaseValues[2].name),
-                                          trailing: Text('${increaseValues[2].price} 원'),
-                                          tileColor: Colors.yellow,
-                                        ),
-                                      ),
-                                    ]
-                                  ],
-                                );
-                              }
-                            },
+                                        }).toList(),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ] else ...[
+                                FutureBuilder<List<Shop>>(
+                                  future: _increaseValues,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Center(child: CircularProgressIndicator());
+                                    } else if (snapshot.hasError) {
+                                      return Center(child: Text('Error: ${snapshot.error}'));
+                                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                      return Center(child: Text('No data found'));
+                                    } else {
+                                      List<Shop> increaseValues = snapshot.data!;
+                                      return Column(
+                                        children: [
+                                          if (increaseValues.length < 3) ...[
+                                            Container(
+                                              height: 60, // 고정 높이
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: Colors.grey), // 경계선 색상
+                                              ),
+                                              child: ListTile(
+                                                leading: Icon(Icons.info),
+                                                title: Text(
+                                                  '식재료를 \n'
+                                                      '3가지 이상 \n선택하세요',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                tileColor: Colors.grey[200],
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => MyPrefer()),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ] else ...[
+                                            Container(
+                                              height: 60, // 고정 높이
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: Colors.black), // 경계선 색상
+                                              ),
+                                              child: ListTile(
+                                                leading: Icon(Icons.arrow_upward),
+                                                title: Text(increaseValues[0].name),
+                                                trailing: Text('${increaseValues[0].price} 원'),
+                                                tileColor: Colors.yellowAccent[100],
+                                              ),
+                                            ),
+                                            Container(
+                                              height: 60, // 고정 높이
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: Colors.black), // 경계선 색상
+                                              ),
+                                              child: ListTile(
+                                                leading: Icon(Icons.arrow_upward),
+                                                title: Text(increaseValues[1].name),
+                                                trailing: Text('${increaseValues[1].price} 원'),
+                                                tileColor: Colors.yellowAccent[200],
+                                              ),
+                                            ),
+                                            Container(
+                                              height: 60, // 고정 높이
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: Colors.black), // 경계선 색상
+                                              ),
+                                              child: ListTile(
+                                                leading: Icon(Icons.arrow_upward),
+                                                title: Text(increaseValues[2].name),
+                                                trailing: Text('${increaseValues[2].price} 원'),
+                                                tileColor: Colors.yellow,
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ],
                           ),
                         ),
+
                       ],
                     ),
                   ),
@@ -349,7 +380,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   "${increaseValues[0].name}, ${increaseValues[1].name}, ${decreaseValues[0].name}, ${decreaseValues[1].name}",
                                   style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: 18,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
@@ -378,7 +409,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     Text(
                       '관심있는 품목 소비자 가격은?',
-                      style: TextStyle(fontSize: 20, color: Colors.amber),
+                      style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -394,7 +425,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: TextStyle(fontSize: 16,
                           color: Colors.black,
                           //decoration: TextDecoration.underline,
-                          fontWeight: FontWeight.bold
+                          fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic
                       ),
                     ),
                   ],

@@ -65,8 +65,8 @@ class PriceService{
     }
   }
 
-  Future<List<PriceDTO>> fetchPopularItemPrices() async {
-    final response = await http.get(Uri.parse('${Constants.baseUrl}/popular/prices'));
+  Future<List<PriceDTO>> fetchPopularItemPrices6() async {
+    final response = await http.get(Uri.parse('${Constants.baseUrl}/prices/popular6/names'));
 
     if (response.statusCode == 200) {
       var responsebody = utf8.decode(response.bodyBytes);

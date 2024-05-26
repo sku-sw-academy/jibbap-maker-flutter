@@ -11,6 +11,7 @@ import 'package:flutter_splim/mobile/home/detail.dart';
 import 'package:flutter_splim/mobile/home/shopping.dart';
 import 'package:flutter_splim/dto/Shop.dart';
 import 'package:flutter_splim/mobile/mypage/prefer.dart';
+import 'package:flutter_splim/mobile/search/searchResult.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -25,6 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<PriceDTO>> futurePrices;
   late Future<List<Shop>> _increaseValues;
   late Future<List<Shop>> _decreaseValues;
+  late Future<List<PriceDTO>> _futurePopularNames;
 
   void initState(){
     super.initState();
@@ -32,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
     futurePrices = priceService.fetchPriceTop3(date!);
     _increaseValues = priceService.fetchPriceIncreaseValues(date!);
     _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
+    _futurePopularNames = priceService.fetchPopularItemPrices6();
   }
 
   String getDate(){
@@ -402,90 +405,94 @@ class _MyHomePageState extends State<MyHomePage> {
 
           SizedBox(height: screenHeight / 50,),
 
-          Container(
-            height: screenHeight / 3,
-            color: Color(0xFFFCFCF1),
-            child: GridView.count(
-              crossAxisCount: 3, // 가로 방향으로 3개의 카드씩 배치
-              childAspectRatio: 3 / 3, // 카드의 가로 세로 비율 설정
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
-                  },
-                  child: Card(
-                    // 첫 번째 Card
-                    color: Colors.white,
-                    elevation: 4.0,
-                    child: Center(
-                      child: Text('Card 1'), // Card에 들어갈 내용
-                    ),
+          FutureBuilder<List<PriceDTO>>(
+            future: _futurePopularNames,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(child: Text('No data found'));
+              } else {
+                List<PriceDTO> popularPrices = snapshot.data!;
+                return Container(
+                  height: screenHeight / 3,
+                  color: Color(0xFFFCFCF1),
+                  child: GridView.count(
+                    crossAxisCount: 3, // 가로 방향으로 3개의 카드씩 배치
+                    childAspectRatio: 3 / 3, // 카드의 가로 세로 비율 설정
+                    children: popularPrices.map((price) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(context,
+                          MaterialPageRoute(builder: (contex) => SelectedPage(itemname: price.itemCode.itemName)),
+                          );
+                        },
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 4.0,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(width: 23,),
+                                    Text(
+                                      price.itemCode.itemName,
+                                      style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                SizedBox(height: 5,),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '${price.unit} ',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10,)
+                                  ],
+                                ),
+
+                                SizedBox(height: 6,),
+
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '${price.dpr1} 원',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10,)
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
-                ),GestureDetector(
-                  onTap: () {
-                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
-                  },
-                  child: Card(
-                    // 첫 번째 Card
-                    color: Colors.white,
-                    elevation: 4.0,
-                    child: Center(
-                      child: Text('Card 1'), // Card에 들어갈 내용
-                    ),
-                  ),
-                ),GestureDetector(
-                  onTap: () {
-                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
-                  },
-                  child: Card(
-                    // 첫 번째 Card
-                    color: Colors.white,
-                    elevation: 4.0,
-                    child: Center(
-                      child: Text('Card 1'), // Card에 들어갈 내용
-                    ),
-                  ),
-                ),GestureDetector(
-                  onTap: () {
-                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
-                  },
-                  child: Card(
-                    // 첫 번째 Card
-                    color: Colors.white,
-                    elevation: 4.0,
-                    child: Center(
-                      child: Text('Card 1'), // Card에 들어갈 내용
-                    ),
-                  ),
-                ),GestureDetector(
-                  onTap: () {
-                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
-                  },
-                  child: Card(
-                    // 첫 번째 Card
-                    color: Colors.white,
-                    elevation: 4.0,
-                    child: Center(
-                      child: Text('Card 1'), // Card에 들어갈 내용
-                    ),
-                  ),
-                ),GestureDetector(
-                  onTap: () {
-                    // 첫 번째 Card를 클릭했을 때 실행되는 동작
-                  },
-                  child: Card(
-                    // 첫 번째 Card
-                    color: Colors.white,
-                    elevation: 4.0,
-                    child: Center(
-                      child: Text('Card 1'), // Card에 들어갈 내용
-                    ),
-                  ),
-                ),
-                // 나머지 카드들에 대한 코드를 여기에 추가하세요.
-              ],
-            ),
+                );
+              }
+            },
           ),
+
 
           SizedBox(height: 15),
         ],

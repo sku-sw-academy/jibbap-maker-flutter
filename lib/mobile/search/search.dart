@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_splim/service/itemservice.dart';
 import 'package:flutter_splim/constant.dart';
+import 'package:flutter_splim/service/priceservice.dart';
+import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'package:mysql_client/mysql_client.dart';
 
 class SearchPage extends StatefulWidget {
@@ -16,16 +18,18 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final DatabaseHelper dbHelper = DatabaseHelper();
   final ItemService itemService = ItemService();
+  final PriceService priceService = PriceService();
   String searchText = '';
   List<String> suggestions = []; // 예시 자동완성 목록
-
-  //List<String> recentSearches = ['사과'];
   late Future<List<Record>> recentSearches;
+  late Future<List<PriceDTO>> futurePopularNames;
+
 
   @override
   void initState() {
     super.initState(); // widget에서 dbHelper를 가져와서 초기화
     recentSearches = dbHelper.getRecords();
+    futurePopularNames = priceService.fetchPopularItemPrices9();
     fetchSuggestions();
   }
 
@@ -58,6 +62,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     List<String> filteredSuggestions = getFilteredSuggestions(searchText);
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
@@ -152,8 +158,7 @@ class _SearchPageState extends State<SearchPage> {
 
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => SelectedPage(itemname: recentSearch),
+                                MaterialPageRoute(builder: (context) => SelectedPage(itemname: recentSearch),
                                 ),
                               );
                             },
@@ -171,22 +176,98 @@ class _SearchPageState extends State<SearchPage> {
                   endIndent: 16.0,
                 ),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: Text(
-                    "추천 검색어",
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Column(
+                FutureBuilder<List<PriceDTO>>(
+                  future: futurePopularNames,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text('No data found'));
+                    } else {
+                      List<PriceDTO> popularPrices = snapshot.data!;
+                      return Container(
+                        height: screenHeight / 3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                              child: Text(
+                                "추천 검색어",
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
 
+                            for (var i = 0; i < 3; i++)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  for (var j = i * 3; j < (i * 3) + 3; j++)
+                                    Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.white,
+                                            surfaceTintColor: Colors.white,
+                                            foregroundColor: Colors.black,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(30), // 반지름 값을 버튼의 너비 또는 높이보다 작게 지정하여 원형으로 만듭니다.
+                                            ),
+                                            side: BorderSide(color: Colors.black, width: 2),
+                                            elevation: 2.0,
+                                            fixedSize: Size(100, 50),
+                                            // 다른 스타일 속성들...
+                                          ),
+                                          onPressed: () async{
+                                            bool isExisting = await dbHelper.checkIfSuggestionExists(popularPrices[j].itemCode.itemName);
+
+                                            if (isExisting) {
+                                              // suggestion이 이미 존재하면 업데이트 수행
+                                              await dbHelper.updateRecord(Record(name: popularPrices[j].itemCode.itemName, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                                            }
+
+                                            else {
+                                              // suggestion이 존재하지 않으면 데이터베이스에 삽입
+                                              await dbHelper.insertRecord(Record(name: popularPrices[j].itemCode.itemName, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                                            }
+
+                                            await itemService.incrementItemCount(popularPrices[j].itemCode.itemName);
+
+                                            setState(() {
+                                              recentSearches = dbHelper.getRecords();
+                                            });
+
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => SelectedPage(itemname: popularPrices[j].itemCode.itemName),
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            popularPrices[j].itemCode.itemName,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                ],
+                              ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
                 ),
               ],
             ),
-
 
           if (searchText.isNotEmpty && filteredSuggestions.isNotEmpty)
             Column(

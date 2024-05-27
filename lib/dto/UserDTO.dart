@@ -30,4 +30,18 @@ class UserDTO{
     );
   }
 
+  Map<String, dynamic> toJson() => {
+    'id' : id,
+    'email': email,
+    'nickname': nickname,
+    'password': password,
+    'profile' : profile,
+    'enabled' : enabled,
+    'push' : push,
+    'log' : log,
+    'fcm_token' : fcm_token,
+    'acces_token' : access_token,
+    'refresh_token' : refresh_token,
+  };
+
 }

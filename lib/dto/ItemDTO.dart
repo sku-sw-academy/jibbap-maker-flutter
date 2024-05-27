@@ -25,4 +25,12 @@ class ItemDTO {
       count: json['count']
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'item_name' : itemName,
+    'item_code' : itemCode,
+    'category' : category,
+    'imagePath' : imagePath,
+    'count' : count,
+  };
 }

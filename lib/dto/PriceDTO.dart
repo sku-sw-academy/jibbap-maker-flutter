@@ -61,4 +61,24 @@ class PriceDTO {
       status: json['status'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id' : id,
+    'name': name,
+    'itemCode' : itemCode,
+    'kindName' : kindName,
+    'kindCode' : kindCode,
+    'rankName' : rankName,
+    'rankCode' : rankCode,
+    'unit' : unit,
+    'dpr1' : dpr1,
+    'dpr2' : dpr2,
+    'dpr3' : dpr3,
+    'dpr5' : dpr5,
+    'dpr6' : dpr6,
+    'dpr7' : dpr7,
+    'regday' : regday,
+    'values' : value,
+    'status' : status,
+  };
 }

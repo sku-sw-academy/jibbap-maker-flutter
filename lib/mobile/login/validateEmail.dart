@@ -6,7 +6,6 @@ import 'package:flutter_splim/service/userservice.dart';
 
 class ValidateEmail extends StatelessWidget {
   final TextEditingController _authController = TextEditingController();
-  //final String authkey;
   final UserService _userService = UserService();
   final String email;
   final String nickname;
@@ -130,57 +129,58 @@ class ValidateEmail extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8.0), // 원하는 값으로 조절
                     ),
                   ),
-                  onPressed: () async{
-                    // 로그인 버튼이 눌렸을 때의 처리
-                    // 아이디와 비밀번호를 사용하여 로그인을 시도하고 결과에 따라 처리
-                    String num = _authController.text.toString();
+                  onPressed: () async {
+                    String authCode = _authController.text.toString();
 
+                    try {
+                      // 여기에서 서버에 인증 코드 확인 요청을 보냅니다.
+                      // 이 예제에서는 생략하고 바로 회원가입 요청을 보냅니다.
 
-
-                    // 회원가입 데이터를 JSON 형태로 변환
-
-
-                    // MySQL 서버 URL
-                    String url = 'http://your_mysql_server_url';
-
-                    showDialog(
+                      final result = await _userService.register(email, nickname, password);
+                      if (result == 'OK') {
+                        showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
                             backgroundColor: Color(0xFFF4F9FA),
-                            title: Text("인증 되었습니다.",style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: 'GowunBatang',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                              letterSpacing: -0.40,
-                            ),),
-                            content: Text("", style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: 'GowunBatang',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
-                              letterSpacing: -0.40,
-                            ),),
+                            title: Text(
+                              "인증 되었습니다.",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontFamily: 'GowunBatang',
+                                fontWeight: FontWeight.w700,
+                                height: 0,
+                                letterSpacing: -0.40,
+                              ),
+                            ),
+                            content: Text(""),
                             actions: [
                               TextButton(
-                                onPressed: (){
+                                onPressed: () {
                                   Navigator.of(context).popUntil((route) => route.isFirst);
                                   Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
                                 },
-                                child: Text("확인", style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontFamily: 'GowunBatang',
-                                  fontWeight: FontWeight.w700,
-                                  height: 0,
-                                  letterSpacing: -0.40,
-                                ),),
+                                child: Text(
+                                  "확인",
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontFamily: 'GowunBatang',
+                                    fontWeight: FontWeight.w700,
+                                    height: 0,
+                                    letterSpacing: -0.40,
+                                  ),
+                                ),
                               )
                             ],
-                          )
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to register: $e')),
                       );
+                    }
                   },
                   child: Container(
                     alignment: Alignment.center,

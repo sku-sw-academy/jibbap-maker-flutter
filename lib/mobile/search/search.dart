@@ -74,6 +74,16 @@ class _SearchPageState extends State<SearchPage> {
             hintText: "검색어를 입력하세요",
             border: InputBorder.none,
           ),
+          onSubmitted: (String searchText){
+            if (searchText.isNotEmpty) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
+                ),
+              );
+            }
+          },
           style: TextStyle(color: Colors.black), // 검색어 색상 설정
         ),
         actions: [
@@ -87,9 +97,6 @@ class _SearchPageState extends State<SearchPage> {
                     builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
                   ),
                 );
-              } else {
-                // 검색어가 없는 경우에 대한 처리
-                // 예: Toast 메시지 또는 다른 알림을 표시하여 사용자에게 알림
               }
             },
           ),

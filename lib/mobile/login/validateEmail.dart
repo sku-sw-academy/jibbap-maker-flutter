@@ -1,23 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_splim/mobile/login/signout.dart';
 import 'package:http/http.dart' as http;
-
-class Account {
-  String? email;
-  String? nickname;
-  String? password;
-
-  Account({
-    this.email,
-    this.nickname,
-    this.password,
-  });
-}
+import 'package:flutter_splim/dto/RegisterDTO.dart';
+import 'package:flutter_splim/service/userservice.dart';
 
 class ValidateEmail extends StatelessWidget {
   final TextEditingController _authController = TextEditingController();
   //final String authkey;
-
+  final UserService _userService = UserService();
   final String email;
   final String nickname;
   final String password;
@@ -145,12 +135,7 @@ class ValidateEmail extends StatelessWidget {
                     // 아이디와 비밀번호를 사용하여 로그인을 시도하고 결과에 따라 처리
                     String num = _authController.text.toString();
 
-                    Map<String, dynamic> signUpData = {
-                      'email': email,
-                      'nickname': nickname,
-                      'password': password,
-                      // 다른 필요한 데이터도 추가할 수 있음
-                    };
+
 
                     // 회원가입 데이터를 JSON 형태로 변환
 

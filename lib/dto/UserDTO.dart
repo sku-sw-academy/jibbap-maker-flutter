@@ -3,6 +3,7 @@ class UserDTO{
   final String email;
   final String nickname;
   final String profile;
+  final String password;
   final bool enabled;
   final bool push;
   final bool log;
@@ -10,7 +11,7 @@ class UserDTO{
   final String access_token;
   final String refresh_token;
 
-  UserDTO({required this.id, required this.email, required this.nickname, required this.profile, required this.enabled,
+  UserDTO({required this.id, required this.email, required this.nickname, required this.profile, required this.enabled, required this.password,
   required this.push, required this.log, required this.fcm_token, required this.access_token, required this.refresh_token});
 
   factory UserDTO.fromJson(Map<String, dynamic> json) {
@@ -18,6 +19,7 @@ class UserDTO{
       id: json['id'],
       email: json['email'],
       nickname: json['nickname'],
+      password: json['password'],
       profile: json['profile'],
       enabled: json['enabled'],
       push: json['push'],

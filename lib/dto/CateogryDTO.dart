@@ -14,4 +14,10 @@ class CategoryDTO {
       categoryCode: json['categoryCode'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'categoryName' : categoryName,
+    'categoryCode' : categoryCode
+  };
+
 }

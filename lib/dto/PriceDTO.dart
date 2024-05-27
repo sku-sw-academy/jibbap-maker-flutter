@@ -65,7 +65,7 @@ class PriceDTO {
   Map<String, dynamic> toJson() => {
     'id' : id,
     'name': name,
-    'itemCode' : itemCode,
+    'itemCode' : itemCode.toJson(),
     'kindName' : kindName,
     'kindCode' : kindCode,
     'rankName' : rankName,

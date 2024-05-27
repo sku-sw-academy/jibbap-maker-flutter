@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_splim/mobile/login/signup.dart';
 import 'package:flutter_splim/mobile/login/findpassword.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_splim/secure_storage/secure_service.dart';
+import 'package:flutter_splim/provider/userprovider.dart';
 
 class LoginPage extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    void _loginSuccess(UserDTO user) {
+      userProvider.updateUser(user);
+      // 로그인 후에 홈 화면으로 이동하거나 다른 작업을 수행할 수 있습니다.
+    }
+
     final TextEditingController _emailController = TextEditingController();
     final TextEditingController _passwordController = TextEditingController();
 

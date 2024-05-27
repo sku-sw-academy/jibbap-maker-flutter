@@ -9,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:flutter_splim/mobile/login/signout.dart';
 
 void main() async{
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<SecureService>(create: (_) => SecureService()),
+        ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(

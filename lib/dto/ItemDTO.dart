@@ -29,7 +29,7 @@ class ItemDTO {
   Map<String, dynamic> toJson() => {
     'item_name' : itemName,
     'item_code' : itemCode,
-    'category' : category,
+    'category' : category.toJson(),
     'imagePath' : imagePath,
     'count' : count,
   };

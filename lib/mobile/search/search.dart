@@ -8,6 +8,7 @@ import 'package:flutter_splim/service/itemservice.dart';
 import 'package:flutter_splim/constant.dart';
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
+import 'package:flutter_splim/mobile/search/result.dart';
 import 'package:mysql_client/mysql_client.dart';
 
 class SearchPage extends StatefulWidget {
@@ -79,7 +80,17 @@ class _SearchPageState extends State<SearchPage> {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-              // 검색 버튼이 눌렸을 때 실행되는 동작 추가
+              if (searchText.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
+                  ),
+                );
+              } else {
+                // 검색어가 없는 경우에 대한 처리
+                // 예: Toast 메시지 또는 다른 알림을 표시하여 사용자에게 알림
+              }
             },
           ),
         ],
@@ -110,9 +121,7 @@ class _SearchPageState extends State<SearchPage> {
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
-                      List<String> recentSearchList = snapshot.data!
-                          .map((todo) => todo.name)
-                          .toList();
+                      List<String> recentSearchList = snapshot.data!.map((todo) => todo.name).toList();
                       return recentSearchList.isEmpty
                           ? Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),

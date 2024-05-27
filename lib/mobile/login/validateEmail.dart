@@ -4,9 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_splim/dto/RegisterDTO.dart';
 import 'package:flutter_splim/service/userservice.dart';
 
-class ValidateEmail extends StatelessWidget {
-  final TextEditingController _authController = TextEditingController();
-  final UserService _userService = UserService();
+class ValidateEmail extends StatefulWidget{
   final String email;
   final String nickname;
   final String password;
@@ -16,6 +14,26 @@ class ValidateEmail extends StatelessWidget {
     required this.nickname,
     required this.password,
   });
+
+  @override
+  _ValidateEmailState createState() => _ValidateEmailState();
+}
+
+class _ValidateEmailState extends State<ValidateEmail> {
+  final TextEditingController _authController = TextEditingController();
+  final UserService _userService = UserService();
+  String code = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  void _init() async {
+    code = await _userService.sendAuthEmail(widget.email);
+    setState(() {}); // UI 업데이트를 위해 상태를 갱신
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,11 +151,8 @@ class ValidateEmail extends StatelessWidget {
                     String authCode = _authController.text.toString();
 
                     try {
-                      // 여기에서 서버에 인증 코드 확인 요청을 보냅니다.
-                      // 이 예제에서는 생략하고 바로 회원가입 요청을 보냅니다.
 
-                      final result = await _userService.register(email, nickname, password);
-                      if (result == 'OK') {
+                      if(authCode == code){
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
@@ -176,6 +191,47 @@ class ValidateEmail extends StatelessWidget {
                           ),
                         );
                       }
+
+                      // final result = await _userService.register(widget.email, widget.nickname, widget.password);
+                      // if (result == 'OK') {
+                      //   showDialog(
+                      //     context: context,
+                      //     builder: (context) => AlertDialog(
+                      //       backgroundColor: Color(0xFFF4F9FA),
+                      //       title: Text(
+                      //         "인증 되었습니다.",
+                      //         style: TextStyle(
+                      //           color: Colors.black,
+                      //           fontSize: 16,
+                      //           fontFamily: 'GowunBatang',
+                      //           fontWeight: FontWeight.w700,
+                      //           height: 0,
+                      //           letterSpacing: -0.40,
+                      //         ),
+                      //       ),
+                      //       content: Text(""),
+                      //       actions: [
+                      //         TextButton(
+                      //           onPressed: () {
+                      //             Navigator.of(context).popUntil((route) => route.isFirst);
+                      //             Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                      //           },
+                      //           child: Text(
+                      //             "확인",
+                      //             style: TextStyle(
+                      //               color: Colors.black,
+                      //               fontSize: 16,
+                      //               fontFamily: 'GowunBatang',
+                      //               fontWeight: FontWeight.w700,
+                      //               height: 0,
+                      //               letterSpacing: -0.40,
+                      //             ),
+                      //           ),
+                      //         )
+                      //       ],
+                      //     ),
+                      //   );
+                      // }
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Failed to register: $e')),

@@ -29,4 +29,18 @@ class UserService{
     }
   }
 
+  Future<String> sendAuthEmail(String email) async {
+    final response = await http.post(
+      Uri.parse('${Constants.baseUrl}/email/auth'),
+      body: {'to': email},
+    );
+
+    if (response.statusCode == 200) {
+      // 서버로부터 받은 인증 번호를 반환
+      return response.body;
+    } else {
+      throw Exception('Failed to send email');
+    }
+  }
+
 }

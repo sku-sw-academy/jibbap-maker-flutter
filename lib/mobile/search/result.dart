@@ -32,45 +32,69 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
     List<String> filteredSuggestions = getFilteredSuggestions(widget.searchText);
 
-  return Scaffold(
-    body: ListView.builder(
-      itemCount: filteredSuggestions.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(filteredSuggestions[index]),
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("통합검색 결과"),
+          centerTitle: true,
+          backgroundColor: Colors.limeAccent,
+        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
 
-          onTap: () async{
-            bool isExisting = await dbHelper.checkIfSuggestionExists(filteredSuggestions[index]);
-
-            if (isExisting) {
-              // suggestion이 이미 존재하면 업데이트 수행
-              await dbHelper.updateRecord(Record(name: filteredSuggestions[index], date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
-            }
-
-            else {
-              // suggestion이 존재하지 않으면 데이터베이스에 삽입
-              await dbHelper.insertRecord(Record(name: filteredSuggestions[index], date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
-            }
-
-            await itemService.incrementItemCount(filteredSuggestions[index]);
-
-            setState(() {
-              recentSearches = dbHelper.getRecords();
-            });
-
-            Navigator.push(
-              context, MaterialPageRoute(builder: (context) => SelectedPage(itemname: filteredSuggestions[index]),
+          Padding(
+            padding: EdgeInsets.only(
+                top: 9,bottom: 4,
+            left: 12),
+            child: Text(
+              '검색 결과: (${filteredSuggestions.length})',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-            );
-          },
-        );
-      },
-    ),
-  );
-}
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredSuggestions.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(filteredSuggestions[index]),
+                  onTap: () async{
+                    bool isExisting = await dbHelper.checkIfSuggestionExists(filteredSuggestions[index]);
+                    if (isExisting) {
+                      await dbHelper.updateRecord(Record(name: filteredSuggestions[index], date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                    }
+
+                    else {
+                      await dbHelper.insertRecord(Record(name: filteredSuggestions[index], date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                    }
+
+                    await itemService.incrementItemCount(filteredSuggestions[index]);
+
+                    setState(() {
+                      recentSearches = dbHelper.getRecords();
+                    });
+
+                    Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => SelectedPage(itemname: filteredSuggestions[index]),
+                    ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+
+  }
 
   List<String> getFilteredSuggestions(String searchTerm) {
   // 입력된 검색어와 일치하는 자동완성 결과를 필터링하여 반환합니다.
   return widget.suggestions.where((suggestion) => suggestion.toLowerCase().contains(searchTerm.toLowerCase())).toList();
   }
 }
+
+

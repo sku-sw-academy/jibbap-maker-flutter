@@ -125,7 +125,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
               ),
             ),
             Text("품종: ${shop.kind}"),
-            Text("상태: ${shop.rank}"),
+            Text("등급: ${shop.rank}"),
             Text("이번주: ${shop.price}원"),
             Text("지난주: ${shop.week_price}원"),
             Text(

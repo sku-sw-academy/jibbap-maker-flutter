@@ -471,18 +471,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    SizedBox(width: 23,),
+                                    SizedBox(width: 10,),
                                     Text(
                                       price.itemCode.itemName,
                                       style: TextStyle(
-                                        fontSize: 25,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
                                 ),
 
-                                SizedBox(height: 5,),
+                                SizedBox(height: 8,),
 
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,

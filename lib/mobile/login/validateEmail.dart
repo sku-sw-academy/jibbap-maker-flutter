@@ -151,14 +151,55 @@ class _ValidateEmailState extends State<ValidateEmail> {
                     String authCode = _authController.text.toString();
 
                     try {
-
                       if(authCode == code){
+                        final result = await _userService.register(widget.email, widget.nickname, widget.password);
+                        if (result == 'OK') {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              backgroundColor: Color(0xFFF4F9FA),
+                              title: Text(
+                                "인증 되었습니다.",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontFamily: 'GowunBatang',
+                                  fontWeight: FontWeight.w700,
+                                  height: 0,
+                                  letterSpacing: -0.40,
+                                ),
+                              ),
+                              content: Text(""),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).popUntil((route) => route.isFirst);
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                                  },
+                                  child: Text(
+                                    "확인",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontFamily: 'GowunBatang',
+                                      fontWeight: FontWeight.w700,
+                                      height: 0,
+                                      letterSpacing: -0.40,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        }
+                      }else{
+                        code = await _userService.sendAuthEmail(widget.email);
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
                             backgroundColor: Color(0xFFF4F9FA),
                             title: Text(
-                              "인증 되었습니다.",
+                              "인증번호을 다시 보냅니다.",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
@@ -172,8 +213,7 @@ class _ValidateEmailState extends State<ValidateEmail> {
                             actions: [
                               TextButton(
                                 onPressed: () {
-                                  Navigator.of(context).popUntil((route) => route.isFirst);
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                                  Navigator.pop(context);
                                 },
                                 child: Text(
                                   "확인",
@@ -192,46 +232,6 @@ class _ValidateEmailState extends State<ValidateEmail> {
                         );
                       }
 
-                      // final result = await _userService.register(widget.email, widget.nickname, widget.password);
-                      // if (result == 'OK') {
-                      //   showDialog(
-                      //     context: context,
-                      //     builder: (context) => AlertDialog(
-                      //       backgroundColor: Color(0xFFF4F9FA),
-                      //       title: Text(
-                      //         "인증 되었습니다.",
-                      //         style: TextStyle(
-                      //           color: Colors.black,
-                      //           fontSize: 16,
-                      //           fontFamily: 'GowunBatang',
-                      //           fontWeight: FontWeight.w700,
-                      //           height: 0,
-                      //           letterSpacing: -0.40,
-                      //         ),
-                      //       ),
-                      //       content: Text(""),
-                      //       actions: [
-                      //         TextButton(
-                      //           onPressed: () {
-                      //             Navigator.of(context).popUntil((route) => route.isFirst);
-                      //             Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
-                      //           },
-                      //           child: Text(
-                      //             "확인",
-                      //             style: TextStyle(
-                      //               color: Colors.black,
-                      //               fontSize: 16,
-                      //               fontFamily: 'GowunBatang',
-                      //               fontWeight: FontWeight.w700,
-                      //               height: 0,
-                      //               letterSpacing: -0.40,
-                      //             ),
-                      //           ),
-                      //         )
-                      //       ],
-                      //     ),
-                      //   );
-                      // }
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Failed to register: $e')),

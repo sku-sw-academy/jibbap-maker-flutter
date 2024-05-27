@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_splim/service/userservice.dart';
 
-class FindPasswordScreen extends StatelessWidget {
+class FindPasswordScreen extends StatefulWidget{
   FindPasswordScreen({super.key});
+
+  @override
+  _FindPasswordScreenState createState() => _FindPasswordScreenState();
+}
+
+class _FindPasswordScreenState extends State<FindPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
+  final UserService userService = UserService();
+  String password = '';
+
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
@@ -116,10 +126,9 @@ class FindPasswordScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async{
-                    // 로그인 버튼이 눌렸을 때의 처리
-                    // 아이디와 비밀번호를 사용하여 로그인을 시도하고 결과에 따라 처리
                     String email = _emailController.text.toString();
-                    //await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+                    password = await userService.sendPassword(email);
+
                     showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
@@ -144,6 +153,7 @@ class FindPasswordScreen extends StatelessWidget {
                             TextButton(
                               onPressed: (){
                                 Navigator.pop(context);
+                                Navigator.pop(context);
                               },
                               child: Text("확인", style: TextStyle(
                                 color: Colors.white,
@@ -157,7 +167,6 @@ class FindPasswordScreen extends StatelessWidget {
                           ],
                         )
                     );
-                    // Navigator.pop(context);
                   },
                   child: Container(
                     alignment: Alignment.center,

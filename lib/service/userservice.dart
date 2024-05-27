@@ -52,6 +52,9 @@ class UserService{
     if (response.statusCode == 200) {
       // 서버로부터 받은 인증 번호를 반환
       return response.body;
+    } else if (response.statusCode == 400) {
+      // 유효하지 않은 이메일 주소에 대한 오류 처리
+      throw Exception('Invalid email address');
     } else {
       throw Exception('Failed to send email');
     }

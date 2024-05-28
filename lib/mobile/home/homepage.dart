@@ -273,7 +273,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             ],
                           ),
                         ),
-
                       ],
                     ),
                   ),
@@ -281,33 +280,91 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 SizedBox(width: screenWidth / 23),
 
-                Expanded(child:
-                  Container(
-                  height: screenHeight / 4.2,
-                    child: Card(
-                      elevation: 5.0,
-                      color: Colors.limeAccent[100],
-                      child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                          child:
-                          Text(
-                            '오늘의 추천 레시피',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                            ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () async {
+                      final storageService = Provider.of<SecureService>(context, listen: false);
+                      String? token = await storageService.readToken(key);
+                      if (token == null || token.isEmpty) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('로그인 필요'),
+                            content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('확인'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => LoginPage()),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        ),
-                          SizedBox(height: 8.0),
-                        // 나머지 카드 내용을 추가하세요.
+                        );
+                        return;
+                      } else {
+                        // 추가적인 액션을 여기에 추가하세요.
+                      }
+                    },
+                    child: Container(
+                      height: screenHeight / 4.2,
+
+                      child: Card(
+                        elevation: 5.0,
+                        color: Colors.transparent, // 카드 배경색을 투명으로 설정
+                        child: Container(
+                          decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                          colors: [
+                            Colors.blue,
+                            Colors.tealAccent,
+                            Colors.amberAccent,
+                            Colors.redAccent,
                         ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0), // 카드 모서리 둥글게
+                          ),
+                          child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '오늘의 추천 레시피',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                fontStyle: FontStyle.italic,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: 10.0),
+                            Icon(
+                              Icons.receipt_long,
+                              size: 80.0,
+                              color: Colors.black54,
+                            ),
+                            SizedBox(height: 10.0),
+                              Text(
+                                'AI 기반 맞춤 레시피를\n  확인해보세요!',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 13.0,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ),),
               ],
             ),
           ),

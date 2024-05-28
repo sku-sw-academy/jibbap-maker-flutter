@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_splim/dto/Shop.dart';
 import 'package:flutter_splim/constant.dart';
 import 'dart:convert';
+import 'package:encrypt/encrypt.dart';
 
 class PriceService{
   Future<List<PriceDTO>> fetchPriceDetails(String regday) async {

@@ -55,6 +55,7 @@ dependencies:
   fl_chart: ^0.68.0
   flutter_sticky_header: ^0.6.5
   data_table_2: ^2.5.12
+  encrypt: ^5.0.3
 
 dev_dependencies:
   flutter_test:

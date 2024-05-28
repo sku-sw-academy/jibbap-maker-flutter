@@ -5,13 +5,13 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 
-class SharePage extends StatefulWidget {
+class RecipePage extends StatefulWidget {
 
   @override
-  _SharePageState createState() => _SharePageState();
+  _RecipePageState createState() => _RecipePageState();
 }
 
-class _SharePageState extends State<SharePage> {
+class _RecipePageState extends State<RecipePage> {
   String _review = '후기';
   XFile? _image;
   CroppedFile? _croppedFile;
@@ -54,29 +54,10 @@ class _SharePageState extends State<SharePage> {
                 hintText: _review,
                 hintStyle: TextStyle(color: Colors.black),
                 border: OutlineInputBorder(),
-            ),
+              ),
             ),
           ),
 
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ModifyPage()),);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                surfaceTintColor: Colors.white,
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
-                ),
-                side: BorderSide(color: Colors.black, width: 1),
-                fixedSize: Size(100, 50),
-                // 다른 스타일 속성들...
-              ),
-              child: Text("수정하기"),
-            ),
-          ),
           SizedBox(height: 20),
 
         ],

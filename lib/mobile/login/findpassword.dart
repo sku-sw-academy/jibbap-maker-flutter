@@ -126,47 +126,87 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
                     ),
                   ),
                   onPressed: () async{
-                    String email = _emailController.text.toString();
-                    password = await userService.sendPassword(email);
+                    try {
+                      String email = _emailController.text.toString();
+                      password = await userService.sendPassword(email);
 
-                    showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor: Color(0xFF45B0C5),
-                          title: Text("전송완료",style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontFamily: 'GowunBatang',
-                            fontWeight: FontWeight.w700,
-                            height: 0,
-                            letterSpacing: -0.40,
-                          ),),
-                          content: Text("해당 이메일로 비밀번호 재설정\n링크를 전송하였습니다.", style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontFamily: 'GowunBatang',
-                            fontWeight: FontWeight.w700,
-                            height: 0,
-                            letterSpacing: -0.40,
-                          ),),
-                          actions: [
-                            TextButton(
-                              onPressed: (){
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              },
-                              child: Text("확인", style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontFamily: 'GowunBatang',
-                                fontWeight: FontWeight.w700,
-                                height: 0,
-                                letterSpacing: -0.40,
-                              ),),
-                            )
-                          ],
-                        )
-                    );
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: Color(0xFF45B0C5),
+                            title: Text("전송완료",style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'GowunBatang',
+                              fontWeight: FontWeight.w700,
+                              height: 0,
+                              letterSpacing: -0.40,
+                            ),),
+                            content: Text("해당 이메일로 비밀번호 재설정\n링크를 전송하였습니다.", style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'GowunBatang',
+                              fontWeight: FontWeight.w700,
+                              height: 0,
+                              letterSpacing: -0.40,
+                            ),),
+                            actions: [
+                              TextButton(
+                                onPressed: (){
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                child: Text("확인", style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontFamily: 'GowunBatang',
+                                  fontWeight: FontWeight.w700,
+                                  height: 0,
+                                  letterSpacing: -0.40,
+                                ),),
+                              )
+                            ],
+                          )
+                      );
+                    } catch (e) {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: Color(0xFF45B0C5),
+                            title: Text("오류", style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'GowunBatang',
+                              fontWeight: FontWeight.w700,
+                              height: 0,
+                              letterSpacing: -0.40,
+                            ),),
+                            content: Text(e.toString(), style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'GowunBatang',
+                              fontWeight: FontWeight.w700,
+                              height: 0,
+                              letterSpacing: -0.40,
+                            ),),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("확인", style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontFamily: 'GowunBatang',
+                                  fontWeight: FontWeight.w700,
+                                  height: 0,
+                                  letterSpacing: -0.40,
+                                ),),
+                              )
+                            ],
+                          )
+                      );
+                    }
                   },
                   child: Container(
                     alignment: Alignment.center,

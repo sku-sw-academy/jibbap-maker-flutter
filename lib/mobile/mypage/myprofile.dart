@@ -6,6 +6,8 @@ import 'package:flutter_splim/mobile/mypage/changepassword.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/mobile/mypage/customerCenter/center.dart';
+import 'package:flutter_splim/mobile/mypage/recipe/modify.dart';
+import 'package:flutter_splim/mobile/mypage/recipe/recipelist.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -159,7 +161,10 @@ class _MyProfileState extends State<MyProfile> {
                 title: Text("레시피"),
                 trailing: Icon(Icons.arrow_forward_ios),
               onTap: () {
-
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ModifyPage()),
+                );
               },
             ),
 

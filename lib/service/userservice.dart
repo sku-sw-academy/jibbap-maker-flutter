@@ -32,7 +32,8 @@ class UserService{
   Future<String> sendAuthEmail(String email) async {
     final response = await http.post(
       Uri.parse('${Constants.baseUrl}/email/auth'),
-      body: {'to': email},
+      body: json.encode({'to': email}),
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
@@ -46,15 +47,16 @@ class UserService{
   Future<String> sendPassword(String email) async {
     final response = await http.post(
       Uri.parse('${Constants.baseUrl}/email/password'),
-      body: {'to': email},
+      body: json.encode({'to': email}),
+      headers: {'Content-Type': 'application/json'},
     );
 
     if (response.statusCode == 200) {
       // 서버로부터 받은 인증 번호를 반환
       return response.body;
-    } else if (response.statusCode == 400) {
+    } else if (response.statusCode == 404) {
       // 유효하지 않은 이메일 주소에 대한 오류 처리
-      throw Exception('Invalid email address');
+      throw Exception('User not found');
     } else {
       throw Exception('Failed to send email');
     }

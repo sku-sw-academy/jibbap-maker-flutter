@@ -10,6 +10,7 @@ import 'firebase_options.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:flutter_splim/mobile/recipeview/recipe.dart';
 import 'package:flutter_splim/mobile/login/signout.dart';
 
 void main() async{
@@ -108,7 +109,7 @@ class _MainPageState extends State<MainPage> {
               // 탭 인덱스를 이용하여 화면을 전환합니다.
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RecipeView()),
+                MaterialPageRoute(builder: (context) => RecipePage()),
               );
             }else if (index == 3) {
               Navigator.push(

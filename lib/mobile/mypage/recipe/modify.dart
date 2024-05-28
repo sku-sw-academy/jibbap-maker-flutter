@@ -94,6 +94,7 @@ class _ModifyPageState extends State<ModifyPage> {
           _buildPhotoArea(),
           SizedBox(height: 15,),
           Divider(),
+
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -106,7 +107,7 @@ class _ModifyPageState extends State<ModifyPage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
-              maxLines: 5,
+              maxLines: 3,
               decoration: InputDecoration(
                 hintText: '후기를 작성해주세요...',
                 border: OutlineInputBorder(),

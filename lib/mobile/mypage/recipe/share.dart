@@ -48,7 +48,7 @@ class _SharePageState extends State<SharePage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
-              maxLines: 5,
+              maxLines: 3,
               enabled: false,
               decoration: InputDecoration(
                 hintText: _review,

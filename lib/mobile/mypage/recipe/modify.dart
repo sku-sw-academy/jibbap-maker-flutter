@@ -6,6 +6,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter_splim/mobile/mypage/recipe/share.dart';
 
 class ModifyPage extends StatefulWidget {
+
   @override
   _ModifyPageState createState() => _ModifyPageState();
 }
@@ -91,8 +92,7 @@ class _ModifyPageState extends State<ModifyPage> {
         children: [
           SizedBox(height: 20),
           _buildPhotoArea(),
-          SizedBox(height: 20,),
-          _buildButton(),
+          SizedBox(height: 15,),
           Divider(),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -142,6 +142,17 @@ class _ModifyPageState extends State<ModifyPage> {
                   );
                 }
               },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.white,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
+                ),
+                side: BorderSide(color: Colors.black, width: 1),
+                fixedSize: Size(100, 50),
+                // 다른 스타일 속성들...
+              ),
               child: Text("공유하기"),
             ),
           ),
@@ -155,60 +166,93 @@ class _ModifyPageState extends State<ModifyPage> {
   Widget _buildPhotoArea() {
     return Center(
       child: GestureDetector(// 이미지 선택 기능 추가
-        child: Container(
-          width: 300,
-          height: 300,
-          decoration: BoxDecoration(
-            color: Colors.blue[200],
-            image: _croppedFile != null
-                ? DecorationImage(
-              image: FileImage(File(_croppedFile!.path)),
-              fit: BoxFit.cover,
-            )
-                : null,
-          ),
-          child: _croppedFile == null
-              ? Icon(Icons.food_bank, color: Colors.grey, size: 70)
-              : null,
+        onTap: () {
+          showSheet(context);
+        },
+        child: Stack(
+          children: [
+            Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                color: Colors.cyan,
+                image: _croppedFile != null
+                    ? DecorationImage(
+                  image: FileImage(File(_croppedFile!.path)),
+                  fit: BoxFit.cover,
+                )
+                    : null,
+              ),
+              child: _croppedFile == null
+                  ? Icon(Icons.food_bank, color: Colors.grey, size: 70)
+                  : null,
+            ),
+            Positioned(
+              right: 5,
+              bottom: 9,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5), // 그림자 색상
+                      spreadRadius: 2, // 그림자의 확산 범위
+                      blurRadius: 5, // 그림자의 흐림 정도
+                      offset: Offset(0, 3), // 그림자의 위치 조절
+                    ),
+                  ],
+                ),
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: 20,
+                  child: Icon(Icons.camera_alt),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-Widget _buildButton() {
-  double screenWidth = MediaQuery.of(context).size.width;
-
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      ElevatedButton(
-        onPressed: () {
-          getImage(ImageSource.camera); // getImage 함수를 호출해서 갤러리에서 사진 가져오기
-        },
-        style: ElevatedButton.styleFrom(
+  void showSheet(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          backgroundColor: Colors.white,
+          // 배경색상을 변경
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero, // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
+            borderRadius: BorderRadius.circular(10), // 경계선을 둥글게 만듦
+            // 경계선 색상 및 두께 설정
           ),
-        ),
-        child: Icon(Icons.photo_camera),
-      ),
-
-      SizedBox(width: screenWidth / 30),
-
-      ElevatedButton(
-        onPressed: () {
-          getImage(ImageSource.gallery); // getImage 함수를 호출해서 갤러리에서 사진 가져오기
-        },
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero, // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
-          ),
-        ),
-        child: Icon(Icons.photo),
-      ),
-    ],
-  );
-}
-
+          elevation: 5.0,
+          title: Text('레시피 사진'),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {
+                getImage(ImageSource.camera); // 카메라 열기
+                Navigator.pop(context); // BottomSheet 닫기
+              },
+              child: ListTile(
+                leading: Icon(Icons.photo_camera),
+                title: Text('카메라로 찍기'), 
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                getImage(ImageSource.gallery); // 갤러리에서 이미지 선택
+                Navigator.pop(context); // BottomSheet 닫기
+              },
+              child: ListTile(
+                leading: Icon(Icons.photo),
+                title: Text('갤러리에서 선택'),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
 }

@@ -217,16 +217,17 @@ class _MyProfileState extends State<MyProfile> {
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                   style: ElevatedButton.styleFrom(
-                    // 버튼 패딩
+                    backgroundColor: Colors.white,
+                    surfaceTintColor: Colors.white,
+                    foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10), // 버튼의 모양을 조절하는 부분
+                      borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
                     ),
-                    textStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    side: BorderSide(color: Colors.black, width: 1),
+                    fixedSize: Size(80, 30),
+                    // 다른 스타일 속성들...
                   ),
-                  child: Text("Log out", style: TextStyle(color: Colors.black)),
+                  child: Text("Log out", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15)),
                 ),
               ),
             ),

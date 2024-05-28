@@ -174,6 +174,13 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
       context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
+          backgroundColor: Colors.white,
+          // 배경색상을 변경
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10), // 경계선을 둥글게 만듦
+            // 경계선 색상 및 두께 설정
+          ),
+          elevation: 5.0,
           title: Text('프로필 사진 변경'),
           children: <Widget>[
             SimpleDialogOption(

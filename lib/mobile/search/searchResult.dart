@@ -123,8 +123,8 @@ class _SelectedPageState extends State<SelectedPage> {
 
   @override
   Widget build(BuildContext context) {
-    String rankName = searchData.isNotEmpty && searchData[0].rankName != null ? "종류: " + searchData[0].rankName+", ": "";
-    String kindName = searchData.isNotEmpty && searchData[0].kindName != null ? "등급: " + searchData[0].kindName + ", ": "";
+    String rankName = searchData.isNotEmpty && searchData[0].rankName != null ? "등급: " + searchData[0].rankName+", ": "";
+    String kindName = searchData.isNotEmpty && searchData[0].kindName != null ? "종류: " + searchData[0].kindName + ", ": "";
     String unit = searchData.isNotEmpty && searchData[0].unit != null ? "단위: " + searchData[0].unit : "";
 
     return Scaffold(

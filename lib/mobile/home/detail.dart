@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
+import 'package:flutter/services.dart';
 
 class DetailPage extends StatefulWidget {
   final String regday;
@@ -20,6 +21,21 @@ class _DetailPageState extends State<DetailPage> {
   void initState() {
     super.initState();
     _data = priceService.fetchPriceDetails(widget.regday);
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp, // 세로
+      DeviceOrientation.landscapeLeft, // 가로
+      DeviceOrientation.landscapeRight, // 가로
+    ]);
+  }
+
+  @override
+  void dispose() {
+    // 페이지가 dispose 될 때 기본 회전 모드로 복원
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp, // 세로
+    ]);
+    super.dispose();
   }
 
   @override

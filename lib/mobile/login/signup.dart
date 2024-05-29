@@ -115,7 +115,10 @@ class CreateAccountScreen extends StatelessWidget {
                       validator: (value){
                         if(value == null || value.isEmpty){
                           return '닉네임을 입력하세요.';
-                        }return null;
+                        }else if(value.length > 10){
+                          return '닉네임을 10자 이하로 해주세요.';
+                        }
+                          return null;
                       },
                     ),
                   ),

@@ -12,6 +12,7 @@ import 'package:flutter_splim/mobile/home/shopping.dart';
 import 'package:flutter_splim/dto/Shop.dart';
 import 'package:flutter_splim/mobile/mypage/prefer.dart';
 import 'package:flutter_splim/mobile/search/searchResult.dart';
+import 'package:flutter/services.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -28,14 +29,17 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<Shop>> _decreaseValues;
   late Future<List<PriceDTO>> _futurePopularNames;
 
-  void initState(){
+  @override
+  void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     date = getDate();
     futurePrices = priceService.fetchPriceTop3(date!);
     _increaseValues = priceService.fetchPriceIncreaseValues(date!);
     _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
     _futurePopularNames = priceService.fetchPopularItemPrices6();
   }
+
 
   String getDate(){
     DateTime now = DateTime.now();
@@ -79,12 +83,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: Container(
                     width: double.infinity,
-                    height: screenHeight / 3.3,
+                    height: screenHeight / 3,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(width: screenWidth / 20),
                             Expanded(
@@ -138,6 +143,21 @@ class _MyHomePageState extends State<MyHomePage> {
                         Expanded(
                           child: Column(
                             children: [
+                              Container(
+                                margin: EdgeInsets.only(right: 20, bottom: 8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end, // 오른쪽 정렬
+                                  children: [
+                                    Text(
+                                      '(등락률 기준)',
+                                      style: TextStyle(fontSize: 12,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               if (isSelected) ...[
                                 FutureBuilder<List<PriceDTO>>(
                                   future: futurePrices,
@@ -153,30 +173,31 @@ class _MyHomePageState extends State<MyHomePage> {
                                       return Column(
                                         children: prices.map((price) {
                                           return Container(
-                                            height: 60, // 고정 높이
+                                            height: 61, // 고정 높이
                                             decoration: BoxDecoration(
-                                              border: Border.all(color: Colors.black), // 경계선 색상
+                                              border: Border.all(color: Colors.black),
+                                              borderRadius: BorderRadius.circular(30),// 경계선 색상
                                             ),
                                             child: ListTile(
                                               title: Text(
-                                                "${price.itemCode.itemName}-${price.kindName}",
+                                                "${price.itemCode.itemName}\n${price.kindName}",
                                                 style: TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 11,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold,
-                                                  fontStyle: FontStyle.italic
+
                                                 ),
                                               ),
                                               trailing: Text(
-                                                "${price.rankName}",
+                                                "${price.value}%",
                                                 style: TextStyle(
                                                   fontSize: 12,
-                                                    color: Colors.black,
+                                                    color: Colors.blue,
                                                     fontWeight: FontWeight.bold,
-                                                    fontStyle: FontStyle.italic
+
                                                 ),
                                               ),
-                                              tileColor: Colors.red[(prices.indexOf(price) + 1) * 100],
+                                              tileColor: Colors.white,
                                               onTap: () {
                                                 Navigator.push(
                                                   context,
@@ -208,7 +229,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                             Container(
                                               height: 60, // 고정 높이
                                               decoration: BoxDecoration(
-                                                border: Border.all(color: Colors.grey), // 경계선 색상
+                                                border: Border.all(color: Colors.black),
+                                                borderRadius: BorderRadius.circular(30),// 경계선 색상
                                               ),
                                               child: ListTile(
                                                 leading: Icon(Icons.info),
@@ -278,7 +300,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
 
-                SizedBox(width: screenWidth / 23),
+                SizedBox(width: 20),
 
                 Expanded(
                   child: GestureDetector(
@@ -311,25 +333,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     },
                     child: Container(
-                      height: screenHeight / 4.2,
-
+                      height: screenHeight / 3.5,
+                      width: screenWidth / 100,
                       child: Card(
                         elevation: 5.0,
-                        color: Colors.transparent, // 카드 배경색을 투명으로 설정
+                        color: Colors.lightGreenAccent[100], // 카드 배경색을 투명으로 설정
                         child: Container(
-                          decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                          colors: [
-                            Colors.blue,
-                            Colors.tealAccent,
-                            Colors.amberAccent,
-                            Colors.redAccent,
-                        ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(8.0), // 카드 모서리 둥글게
-                          ),
                           child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -355,7 +364,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                 style: TextStyle(
                                   fontSize: 13.0,
                                   fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.italic,
                                   color: Colors.black,
                               ),
                             ),
@@ -387,31 +395,31 @@ class _MyHomePageState extends State<MyHomePage> {
                   List<Shop> increaseValues = snapshot.data![0];
                   List<Shop> decreaseValues = snapshot.data![1];
                   return Container(
-                    height: screenHeight / 4,
+                    height: screenHeight / 3.8,
                     color: Colors.white70,
                     child: Card(
-                      color: Colors.redAccent,
-                      elevation: 8.0,
+                      color: Colors.white,
+
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            SizedBox(width: 12),
+                            SizedBox(width: 8),
                             Expanded(
                               child: Image.asset(
                                 'asset/food/market.png', // 이미지 경로
                                 fit: BoxFit.cover, // 이미지가 적절하게 확장되도록 설정
                               ),
                             ),
-                            SizedBox(width: 20),
+                            SizedBox(width: 5),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CircleAvatar(
                                   radius: 35, // 원형의 크기 조절
-                                  backgroundColor: Colors.white, // 원형의 배경색
+                                  backgroundColor: Colors.blue[100], // 원형의 배경색
                                   child: Text(
                                     "Weekly", // 원형 안에 들어갈 글자
                                     style: TextStyle(
@@ -425,18 +433,26 @@ class _MyHomePageState extends State<MyHomePage> {
                                 Text(
                                     "알뜰장보기",
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       fontSize: 24,
                                       fontStyle: FontStyle.italic,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     textAlign: TextAlign.center
                                 ),
-                                SizedBox(height: 12),
+                                SizedBox(height: 6),
                                 Text(
-                                  "${increaseValues[0].name}, ${increaseValues[1].name}, ${decreaseValues[0].name}, ${decreaseValues[1].name}",
+                                  "${increaseValues[0].name}, ${increaseValues[1].name}",
                                   style: TextStyle(
-                                    color: Colors.black,
+                                    color: Colors.redAccent,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                                Text(
+                                  "${decreaseValues[0].name}, ${decreaseValues[1].name}",
+                                  style: TextStyle(
+                                    color: Colors.blue,
                                     fontSize: 14,
                                     fontWeight: FontWeight.normal,
                                   ),

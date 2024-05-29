@@ -12,13 +12,17 @@ import 'package:provider/provider.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:flutter_splim/mobile/recipeview/recipe.dart';
 import 'package:flutter_splim/mobile/login/signout.dart';
+import 'package:flutter/services.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {

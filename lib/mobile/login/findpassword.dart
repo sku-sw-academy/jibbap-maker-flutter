@@ -37,7 +37,7 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
             left: widthRatio * 84,
           ),
           child: Text(
-            "비밀번호 재설정",
+            "비밀번호 찾기",
             style: TextStyle(
               color: Colors.black,
               fontSize: 16,
@@ -61,6 +61,57 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Container(
+                margin: EdgeInsets.only(
+                    top: heightRatio * 41, left: widthRatio * 33),
+                child: Row(
+                  children: [
+                    Text(
+                      '닉네임',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'GowunBatang',
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                        letterSpacing: -0.40,
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(
+                          left: widthRatio * 20,
+                          top: heightRatio * 12,
+                          bottom: heightRatio * 9),
+                      decoration: ShapeDecoration(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                      margin: EdgeInsets.only(left: widthRatio * 23),
+                      width: widthRatio * 240,
+                      height: heightRatio * 52,
+                      child: TextFormField(
+                        // TextFormField의 속성들 설정
+                        textInputAction:TextInputAction.next,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: '닉네임을 입력하세요',
+                          hintStyle: TextStyle(
+                            color: Color(0xFFCCCCCC),
+                            fontSize: 13,
+                            fontFamily: 'GowunBatang',
+                            fontWeight: FontWeight.w700,
+                            height: 0,
+                            letterSpacing: -0.33,
+                          ),
+                          // 다른 속성들 설정
+                        ),
+                        controller: _emailController,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Container(
                 margin: EdgeInsets.only(
                     top: heightRatio * 41, left: widthRatio * 33),

@@ -123,6 +123,19 @@ class _SelectedPageState extends State<SelectedPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (searchData.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('${widget.itemname}'),
+          centerTitle: true,
+          backgroundColor: Colors.limeAccent,
+        ),
+        body: Center(
+          child: CircularProgressIndicator(), // 데이터를 로딩하는 동안 로딩 표시기 표시
+        ),
+      );
+    }
+
     String rankName = searchData.isNotEmpty && searchData[0].rankName != null ? "등급: " + searchData[0].rankName+", ": "";
     String kindName = searchData.isNotEmpty && searchData[0].kindName != null ? "종류: " + searchData[0].kindName + ", ": "";
     String unit = searchData.isNotEmpty && searchData[0].unit != null ? "단위: " + searchData[0].unit : "";
@@ -162,10 +175,8 @@ class _SelectedPageState extends State<SelectedPage> {
                       }),
                     )
                   else
-                    DropdownButton<int>(
-                      items: [], // 빈 리스트 전달하여 빈 드롭다운 버튼 생성
-                      onChanged: null, // onChanged를 null로 설정하여 클릭 불가능하게 함
-                    ),
+                    CircularProgressIndicator(),
+
                   SizedBox(width: 20),
 
                   if (selectedKindIndex != null && ranks.length > selectedKindIndex! && ranks[selectedKindIndex!] != null && ranks[selectedKindIndex!].isNotEmpty)
@@ -186,10 +197,7 @@ class _SelectedPageState extends State<SelectedPage> {
                       }),
                     )
                   else
-                    DropdownButton<int>(
-                      items: [], // 빈 리스트 전달하여 빈 드롭다운 버튼 생성
-                      onChanged: null, // onChanged를 null로 설정하여 클릭 불가능하게 함
-                    ),
+                    CircularProgressIndicator(),
                 ],
               ),
 

@@ -288,8 +288,38 @@ class _SearchPageState extends State<SearchPage> {
           if (searchText.isNotEmpty && filteredSuggestions.isNotEmpty)
             Column(
               children: filteredSuggestions.map((suggestion) {
+                List<TextSpan> textSpans = [];
+                int index = 0;
+                String lowerCaseSuggestion = suggestion.toLowerCase();
+                String lowerCaseSearchText = searchText.toLowerCase();
+
+                while (index < suggestion.length) {
+                  int startIndex = lowerCaseSuggestion.indexOf(lowerCaseSearchText, index);
+                  if (startIndex == -1) {
+                    // 검색어와 일치하는 부분이 더 이상 없는 경우 나머지 텍스트를 그대로 추가
+                    textSpans.add(TextSpan(text: suggestion.substring(index)));
+                    break;
+                  }
+
+                  // 검색어 앞에 있는 텍스트 추가
+                  textSpans.add(TextSpan(text: suggestion.substring(index, startIndex)));
+
+                  // 검색어 부분 추가 (빨간색으로 표시)
+                  textSpans.add(TextSpan(
+                    text: suggestion.substring(startIndex, startIndex + searchText.length),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                  ));
+
+                  // 다음 검색 시작 위치 설정
+                  index = startIndex + searchText.length;
+                }
                 return ListTile(
-                  title: Text(suggestion),
+                  title: RichText(
+                    text: TextSpan(
+                      style: TextStyle(color: Colors.black),
+                      children: textSpans,
+                    ),
+                  ),
                   onTap: () async {
                     bool isExisting = await dbHelper.checkIfSuggestionExists(suggestion);
 

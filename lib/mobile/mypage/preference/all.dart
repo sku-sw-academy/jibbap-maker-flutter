@@ -12,7 +12,7 @@ class _IngredientAllState extends State<IngredientAll> {
     ['쌀', '찹쌀'],
     ['배추', '시금치', '오이'],
     ['팽이버섯', '땅콩', '참깨'],
-    ['바나나', '사과', '배'],
+    ['바나나', '사과', '배', '토마토'],
     ['계란', '소'],
     ['굴', '고등어']
   ];
@@ -125,12 +125,39 @@ class _IngredientAllState extends State<IngredientAll> {
               itemCount: filteredItems.length,
               itemBuilder: (context, index) {
                 String item = filteredItems[index];
-                int categoryIndex = _childLists.indexWhere(
-                        (sublist) => sublist.contains(item));
+                int categoryIndex = _childLists.indexWhere((sublist) => sublist.contains(item));
                 int subIndex = _childLists[categoryIndex].indexOf(item);
+                int startIndex = item.toLowerCase().indexOf(searchController.text.toLowerCase());
+                int endIndex = startIndex + searchController.text.length;
+
+                List<TextSpan> textSpans = [];
+                int i = 0;
+                String lowerCaseSuggestion = item.toLowerCase();
+                String lowerCaseSearchText = searchController.text.toLowerCase();
+
+                while (i < item.length) {
+                  int start = lowerCaseSuggestion.indexOf(lowerCaseSearchText, i);
+                  if (start == -1) {
+                    textSpans.add(TextSpan(text: item.substring(i)));
+                    break;
+                  }
+
+                  textSpans.add(TextSpan(text: item.substring(i, start)));
+                  textSpans.add(TextSpan(
+                    text: item.substring(start, start + searchController.text.length),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                  ));
+
+                  i = start + searchController.text.length;
+                }
 
                 return ListTile(
-                  title: Text(item),
+                  title: RichText(
+                    text: TextSpan(
+                      style: TextStyle(color: Colors.black),
+                      children: textSpans,
+                    ),
+                  ),
                   trailing: ToggleButtons(
                     isSelected: isSelect[categoryIndex][subIndex],
                     onPressed: (toggleIndex) {

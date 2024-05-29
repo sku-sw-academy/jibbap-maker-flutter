@@ -133,7 +133,6 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -152,15 +151,20 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
               ),
             ),
           ),
-          SizedBox(width: 20),
+          SizedBox(width: 15),
           ElevatedButton(
             onPressed: () {
               // 저장 버튼을 눌렀을 때의 처리
             },
             style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.white,
+              foregroundColor: Colors.black,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero,
               ),
+              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              side: BorderSide(color: Colors.grey, width: 1),
             ),
             child: Text('저장'),
           ),

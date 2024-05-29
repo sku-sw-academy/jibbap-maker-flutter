@@ -63,14 +63,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 decoration: InputDecoration(
                   labelText: '새 비밀번호',
                   border: OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _showNewPassword = !_showNewPassword;
-                      });
-                    },
-                    icon: Icon(_showNewPassword ? Icons.visibility : Icons.visibility_off),
-                  ),
                 ),
                 obscureText: !_showNewPassword,
                 validator: (value) {
@@ -86,14 +78,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 decoration: InputDecoration(
                   labelText: '새 비밀번호 확인',
                   border: OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _showConfirmPassword = !_showConfirmPassword;
-                      });
-                    },
-                    icon: Icon(_showConfirmPassword ? Icons.visibility : Icons.visibility_off),
-                  ),
                 ),
                 obscureText: !_showConfirmPassword,
                 validator: (value) {

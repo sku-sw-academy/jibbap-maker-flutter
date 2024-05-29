@@ -68,23 +68,27 @@ class _SearchPageState extends State<SearchPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          onChanged: handleSearchChange, // 입력이 변경될 때마다 호출됨
-          decoration: InputDecoration(
-            hintText: "검색어를 입력하세요",
-            border: InputBorder.none,
+        title: Container(
+          width: screenWidth * 0.7, // 너비를 전체 화면 너비의 70%로 설정
+          child: TextField(
+            onChanged: handleSearchChange,
+            decoration: InputDecoration(
+              hintText: "검색어를 입력하세요",
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 10.0), // 내용과 경계 사이의 여백 조정
+            ),
+            onSubmitted: (String searchText) {
+              if (searchText.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
+                  ),
+                );
+              }
+            },
+            style: TextStyle(color: Colors.black),
           ),
-          onSubmitted: (String searchText){
-            if (searchText.isNotEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
-                ),
-              );
-            }
-          },
-          style: TextStyle(color: Colors.black), // 검색어 색상 설정
         ),
         actions: [
           IconButton(
@@ -100,6 +104,7 @@ class _SearchPageState extends State<SearchPage> {
               }
             },
           ),
+          SizedBox(width: 25,)
         ],
       ),
 
@@ -223,20 +228,22 @@ class _SearchPageState extends State<SearchPage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
+                                  SizedBox(width: 10,),
                                   for (var j = i * 3; j < (i * 3) + 3; j++)
                                     Padding(
-                                        padding: const EdgeInsets.all(4),
+                                        padding: const EdgeInsets.all(3),
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.white,
                                             surfaceTintColor: Colors.white,
                                             foregroundColor: Colors.black,
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(30), // 반지름 값을 버튼의 너비 또는 높이보다 작게 지정하여 원형으로 만듭니다.
+                                              borderRadius: BorderRadius.circular(20), // 반지름 값을 버튼의 너비 또는 높이보다 작게 지정하여 원형으로 만듭니다.
                                             ),
                                             side: BorderSide(color: Colors.black, width: 2),
                                             elevation: 2.0,
-                                            fixedSize: Size(100, 50),
+                                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                            minimumSize: Size(80, 40),
                                             // 다른 스타일 속성들...
                                           ),
                                           onPressed: () async{
@@ -268,7 +275,7 @@ class _SearchPageState extends State<SearchPage> {
                                           child: Text(
                                             popularPrices[j].itemCode.itemName,
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),

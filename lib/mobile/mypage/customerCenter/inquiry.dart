@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_splim/mobile/mypage/customerCenter/qustion.dart';
+import 'package:flutter_splim/mobile/mypage/customerCenter/question.dart';
 
 class InquiryPage extends StatefulWidget{
   @override

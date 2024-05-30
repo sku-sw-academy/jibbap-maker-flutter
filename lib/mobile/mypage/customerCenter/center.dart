@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_splim/mobile/mypage/customerCenter/faq.dart';
 import 'package:flutter_splim/mobile/mypage/customerCenter/inquiry.dart';
-import 'package:flutter_splim/mobile/mypage/customerCenter/qustion.dart';
+import 'package:flutter_splim/mobile/mypage/customerCenter/question.dart';
 import 'package:flutter_splim/mobile/mypage/customerCenter/notice.dart';
 
 class CenterPage extends StatefulWidget{

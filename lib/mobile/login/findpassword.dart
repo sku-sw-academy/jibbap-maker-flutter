@@ -10,6 +10,7 @@ class FindPasswordScreen extends StatefulWidget{
 
 class _FindPasswordScreenState extends State<FindPasswordScreen> {
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nickNameController = TextEditingController();
   final UserService userService = UserService();
   String password = '';
 
@@ -106,7 +107,7 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
                           ),
                           // 다른 속성들 설정
                         ),
-                        controller: _emailController,
+                        controller: _nickNameController,
                       ),
                     ),
                   ],
@@ -232,7 +233,7 @@ class _FindPasswordScreenState extends State<FindPasswordScreen> {
                               height: 0,
                               letterSpacing: -0.40,
                             ),),
-                            content: Text(e.toString(), style: TextStyle(
+                            content: Text("다시 입력하세요.", style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
                               fontFamily: 'GowunBatang',

@@ -362,7 +362,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   SizedBox(height: 10.0),
                                   Text(
-                                    'AI 기반 맞춤 레시피를\n  확인해보세요!',
+                                    'AI 기반 맞춤 레시피를\n확인해보세요!',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 13.0,
@@ -602,7 +602,6 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             },
           ),
-
           SizedBox(height: 15),
         ],
       ),

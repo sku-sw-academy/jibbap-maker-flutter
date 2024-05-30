@@ -30,25 +30,38 @@ class UserService{
   }
 
   Future<String> sendAuthEmail(String email) async {
+    final url = Uri.parse('${Constants.baseUrl}/email/auth'); // 엔드포인트를 /email/auth로 설정
+    final headers = {'Content-Type': 'application/x-www-form-urlencoded'}; // 서버가 기대하는 Content-Type
+    final body = 'to=$email'; // 서버가 기대하는 형식으로 body를 구성
+
+    print('Sending POST request to $url');
+    print('Headers: $headers');
+    print('Body: $body');
+
     final response = await http.post(
-      Uri.parse('${Constants.baseUrl}/email/auth'),
-      body: json.encode({'to': email}),
-      headers: {'Content-Type': 'application/json'},
+      url,
+      body: body,
+      headers: headers,
     );
 
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
-      // 서버로부터 받은 인증 번호를 반환
-      return response.body;
+      return response.body; // 인증번호를 그대로 반환
     } else {
-      throw Exception('Failed to send email');
+      throw Exception('Failed to send email: ${response.body}');
     }
   }
 
   Future<String> sendPassword(String email) async {
+    final url = Uri.parse('${Constants.baseUrl}/email/password');
+    final headers = {'Content-Type': 'application/x-www-form-urlencoded'}; // 서버가 기대하는 Content-Type
+    final body = 'to=$email'; // 서버가 기대하는 형식으로 body를 구성
     final response = await http.post(
-      Uri.parse('${Constants.baseUrl}/email/password'),
-      body: json.encode({'to': email}),
-      headers: {'Content-Type': 'application/json'},
+      url,
+      body: body,
+      headers: headers,
     );
 
     if (response.statusCode == 200) {

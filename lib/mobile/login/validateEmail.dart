@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_splim/mobile/login/signout.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_splim/dto/RegisterDTO.dart';
 import 'package:flutter_splim/service/userservice.dart';
 
-class ValidateEmail extends StatefulWidget{
+class ValidateEmail extends StatefulWidget {
   final String email;
   final String nickname;
   final String password;
@@ -23,6 +24,9 @@ class _ValidateEmailState extends State<ValidateEmail> {
   final TextEditingController _authController = TextEditingController();
   final UserService _userService = UserService();
   String code = '';
+  Timer? _timer;
+  int _remainingSeconds = 300; // 5 minutes countdown
+  bool _canResend = false;
 
   @override
   void initState() {
@@ -32,7 +36,39 @@ class _ValidateEmailState extends State<ValidateEmail> {
 
   void _init() async {
     code = await _userService.sendAuthEmail(widget.email);
+    _startTimer();
     setState(() {}); // UI 업데이트를 위해 상태를 갱신
+  }
+
+  void _startTimer() {
+    _remainingSeconds = 300;
+    _canResend = false;
+    _timer?.cancel();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_remainingSeconds > 0) {
+        setState(() {
+          _remainingSeconds--;
+        });
+      } else {
+        setState(() {
+          _canResend = true;
+          code = "";
+        });
+        _timer?.cancel();
+      }
+    });
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -77,9 +113,7 @@ class _ValidateEmailState extends State<ValidateEmail> {
           alignment: Alignment.center,
           clipBehavior: Clip.antiAlias,
           // 배경색상 설정
-          decoration: BoxDecoration(
-
-          ),
+          decoration: BoxDecoration(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -114,7 +148,7 @@ class _ValidateEmailState extends State<ValidateEmail> {
                       height: heightRatio * 52,
                       child: TextFormField(
                         // TextFormField의 속성들 설정
-                        textInputAction:TextInputAction.next,
+                        textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: '인증번호를 입력하세요',
@@ -135,6 +169,18 @@ class _ValidateEmailState extends State<ValidateEmail> {
                 ),
               ),
               Container(
+                margin: EdgeInsets.only(top: heightRatio * 10),
+                child: Text(
+                  '남은 시간: ${_formatTime(_remainingSeconds)}',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontFamily: 'GowunBatang',
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              Container(
                 width: widthRatio * 300,
                 height: heightRatio * 52,
                 margin: EdgeInsets.only(
@@ -151,7 +197,7 @@ class _ValidateEmailState extends State<ValidateEmail> {
                     String authCode = _authController.text.toString();
 
                     try {
-                      if(authCode == code){
+                      if (authCode == code) {
                         final result = await _userService.register(widget.email, widget.nickname, widget.password);
                         if (result == 'OK') {
                           showDialog(
@@ -193,14 +239,13 @@ class _ValidateEmailState extends State<ValidateEmail> {
                             ),
                           );
                         }
-                      }else{
-                        code = await _userService.sendAuthEmail(widget.email);
+                      } else {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
                             backgroundColor: Color(0xFFF4F9FA),
                             title: Text(
-                              "인증번호을 다시 보냅니다.",
+                              "인증번호가 틀렸습니다. 다시 시도해주세요.",
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 16,
@@ -210,7 +255,6 @@ class _ValidateEmailState extends State<ValidateEmail> {
                                 letterSpacing: -0.40,
                               ),
                             ),
-                            content: Text(""),
                             actions: [
                               TextButton(
                                 onPressed: () {
@@ -232,7 +276,6 @@ class _ValidateEmailState extends State<ValidateEmail> {
                           ),
                         );
                       }
-
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Failed to register: $e')),
@@ -255,6 +298,25 @@ class _ValidateEmailState extends State<ValidateEmail> {
                   ),
                 ),
               ),
+              if (_canResend)
+                Container(
+                  margin: EdgeInsets.only(top: heightRatio * 20),
+                  child: TextButton(
+                    onPressed: () async {
+                      code = await _userService.sendAuthEmail(widget.email);
+                      _startTimer();
+                    },
+                    child: Text(
+                      '인증번호 다시 보내기',
+                      style: TextStyle(
+                        color: Color(0xFF46B1C6),
+                        fontSize: 16,
+                        fontFamily: 'GowunBatang',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

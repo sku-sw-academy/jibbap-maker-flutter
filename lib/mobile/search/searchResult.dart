@@ -145,7 +145,7 @@ class _SelectedPageState extends State<SelectedPage> {
         title: Text('${widget.itemname}'),
         centerTitle: true,
         scrolledUnderElevation: 0,
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Colors.lightBlueAccent,
       ),
       body: ListView(
         children: [

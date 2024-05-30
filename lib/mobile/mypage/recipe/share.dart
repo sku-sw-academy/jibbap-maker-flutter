@@ -29,7 +29,7 @@ class _SharePageState extends State<SharePage> {
         scrolledUnderElevation: 0,
         title: Text("레시피"),
         centerTitle: true,
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Colors.lightBlueAccent,
       ),
       body: ListView(
         children: [

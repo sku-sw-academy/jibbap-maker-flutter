@@ -82,7 +82,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: Text("프로필 수정"),
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Colors.lightBlueAccent,
         centerTitle: true,
       ),
       body: Column(

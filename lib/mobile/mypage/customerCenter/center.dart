@@ -20,13 +20,13 @@ class _CenterPageState extends State<CenterPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return DefaultTabController(
-        length: 4,
+        length: 3,
         child :
         Scaffold(
           appBar: AppBar(
             title: Text("고객센터"),
             scrolledUnderElevation: 0,
-            backgroundColor: Colors.amberAccent,
+            backgroundColor: Colors.lightBlueAccent,
             centerTitle: true,
             bottom:
             PreferredSize(
@@ -40,7 +40,7 @@ class _CenterPageState extends State<CenterPage> {
                   indicatorWeight: 3.0, // 선택된 탭의 하단 선 두께
                   tabs: [
                     Tab(text: 'FAQ'),
-                    Tab(text: '문의내역'),
+                    Tab(text: '고객 지원'),
                     Tab(text: '공지사항'),
                   ],
                 ),

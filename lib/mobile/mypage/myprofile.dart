@@ -36,7 +36,7 @@ class _MyProfileState extends State<MyProfile> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: Text('MyProfile'),
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Colors.lightBlueAccent,
         centerTitle: true,
         actions: [
           IconButton(

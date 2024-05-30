@@ -21,7 +21,7 @@ class _MyPreferState extends State<MyPrefer>{
             scrolledUnderElevation: 0,
             title: Text("식재료 목록"),
             centerTitle: true,
-            backgroundColor: Colors.amberAccent,
+            backgroundColor: Colors.lightBlueAccent,
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(48.0),
               child: Container(

@@ -85,7 +85,7 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
         title: Text('${widget.itemname}'),
         centerTitle: true,
         scrolledUnderElevation: 0,
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Colors.lightBlueAccent,
       ),
       body: ListView(
         children: [

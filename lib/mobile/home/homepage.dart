@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
         scrolledUnderElevation: 0,
         title: Text('알뜰집밥'),
         centerTitle: true,
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Colors.lightBlueAccent,
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: Container(
                     width: double.infinity,
-                    height: screenHeight / 3,
+                    height: screenHeight * 0.35,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -334,44 +334,48 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     },
                     child: Container(
-                      height: screenHeight / 3.5,
-                      width: screenWidth / 100,
-                      child: Card(
-                        elevation: 5.0,
-                        color: Colors.lightGreenAccent[100], // 카드 배경색을 투명으로 설정
-                        child: Container(
-                          child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '오늘의 추천 레시피',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.black87,
+                      height: screenHeight * 0.35,
+                      child: Column(
+                        children: [
+                          Card(
+                            elevation: 5.0,
+                            color: Colors.blue[700],
+                            child: Container(
+                              height: screenHeight * 0.25,
+                              width: screenWidth * 0.4,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '오늘의 추천 레시피',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blueAccent[100],
+                                    ),
+                                  ),
+                                  SizedBox(height: 10.0),
+                                  Icon(
+                                    Icons.sticky_note_2_outlined,
+                                    size: 80.0,
+                                    color: Colors.lightBlueAccent,
+                                  ),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    'AI 기반 맞춤 레시피를\n  확인해보세요!',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue[300],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(height: 10.0),
-                            Icon(
-                              Icons.receipt_long,
-                              size: 80.0,
-                              color: Colors.black54,
-                            ),
-                            SizedBox(height: 10.0),
-                              Text(
-                                'AI 기반 맞춤 레시피를\n  확인해보세요!',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 13.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ),
                   ),
                 ),),
               ],

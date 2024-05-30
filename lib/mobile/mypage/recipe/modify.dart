@@ -87,7 +87,7 @@ class _ModifyPageState extends State<ModifyPage> {
         scrolledUnderElevation: 0,
         title: Text("레시피"),
         centerTitle: true,
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Colors.lightBlueAccent,
       ),
       body: ListView(
         children: [

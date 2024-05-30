@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_splim/mobile/mypage/customerCenter/qustion.dart';
 
 class InquiryPage extends StatefulWidget{
   @override
@@ -17,7 +18,13 @@ class _InquiryPageState extends State<InquiryPage> {
     // TODO: implement build
     return Scaffold(
       body: Center(
-        child: Text("문의 내역"),
+        child: ElevatedButton(
+          onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => QuestionPage()));
+          },
+          child: Text("문의하기"),
+
+        ),
       ),
     );
   }

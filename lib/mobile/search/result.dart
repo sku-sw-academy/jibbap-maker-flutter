@@ -36,7 +36,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
         appBar: AppBar(
           title: Text("통합검색 결과"),
           centerTitle: true,
-          backgroundColor: Colors.amberAccent,
+          backgroundColor: Colors.lightBlueAccent,
           scrolledUnderElevation: 0,
         ),
       body: Column(

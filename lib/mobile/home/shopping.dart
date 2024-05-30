@@ -25,7 +25,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
       appBar: AppBar(
         title: Text("알뜰장보기"),
         centerTitle: true,
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Colors.lightBlueAccent,
         scrolledUnderElevation: 0,
         actions: [
           IconButton(

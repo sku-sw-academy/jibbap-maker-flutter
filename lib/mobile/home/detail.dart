@@ -44,7 +44,7 @@ class _DetailPageState extends State<DetailPage> {
       appBar: AppBar(
         title: Text("상세페이지"),
         centerTitle: true,
-        backgroundColor: Colors.amberAccent,
+        backgroundColor: Colors.lightBlueAccent,
         scrolledUnderElevation: 0,
       ),
       body: FutureBuilder<List<PriceDTO>>(

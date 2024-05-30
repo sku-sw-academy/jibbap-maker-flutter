@@ -18,15 +18,26 @@ class _MyPreferState extends State<MyPrefer>{
         child :
         Scaffold(
           appBar: AppBar(
+            scrolledUnderElevation: 0,
             title: Text("식재료 목록"),
             centerTitle: true,
-            backgroundColor: Colors.limeAccent,
-            bottom: TabBar(
-               tabs: [
-                Tab(text: 'All'),
-                Tab(text: 'Favorites'),
-                Tab(text: 'Banned'),
-            ],
+            backgroundColor: Colors.amberAccent,
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(48.0),
+              child: Container(
+                color: Colors.white, // TabBar 배경색 설정
+                child: TabBar(
+                  labelColor: Colors.black, // 선택된 탭의 글자 색상
+                  unselectedLabelColor: Colors.grey, // 선택되지 않은 탭의 글자 색상
+                  indicatorColor: Colors.blue, // 선택된 탭의 하단 선 색상
+                  indicatorWeight: 3.0, // 선택된 탭의 하단 선 두께
+                  tabs: [
+                    Tab(text: 'ALL'),
+                    Tab(text: 'Favorite'),
+                    Tab(text: 'Ban'),
+                  ],
+                ),
+              ),
             ),
           ),
 

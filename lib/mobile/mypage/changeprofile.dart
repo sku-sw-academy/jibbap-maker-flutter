@@ -80,8 +80,9 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text("프로필 수정"),
-        backgroundColor: Colors.limeAccent,
+        backgroundColor: Colors.amberAccent,
         centerTitle: true,
       ),
       body: Column(
@@ -195,7 +196,6 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero,
               ),
-              //padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
               side: BorderSide(color: Colors.grey, width: 1),
               minimumSize: Size(double.infinity, 50),
               padding: EdgeInsets.symmetric(vertical: 20),

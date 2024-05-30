@@ -34,7 +34,7 @@ class MyPage extends StatelessWidget {
             BottomNavigationBarItem(
                 icon: Icon(Icons.person, color: Colors.redAccent),
                 label: 'My Page',
-                backgroundColor: Colors.limeAccent
+                backgroundColor: Colors.amberAccent
             ),
           ],
 

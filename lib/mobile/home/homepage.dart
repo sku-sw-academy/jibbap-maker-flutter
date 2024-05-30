@@ -58,9 +58,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text('알뜰집밥'),
         centerTitle: true,
-        backgroundColor: Colors.limeAccent,
+        backgroundColor: Colors.amberAccent,
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -396,10 +397,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   List<Shop> decreaseValues = snapshot.data![1];
                   return Container(
                     height: screenHeight / 3.8,
-                    color: Colors.white70,
+                    color: Colors.white,
                     child: Card(
                       color: Colors.white,
-
+                      elevation: 1.0,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Row(

@@ -84,7 +84,8 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
       appBar: AppBar(
         title: Text('${widget.itemname}'),
         centerTitle: true,
-        backgroundColor: Colors.limeAccent,
+        scrolledUnderElevation: 0,
+        backgroundColor: Colors.amberAccent,
       ),
       body: ListView(
         children: [

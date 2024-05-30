@@ -25,15 +25,26 @@ class _CenterPageState extends State<CenterPage> {
         Scaffold(
           appBar: AppBar(
             title: Text("고객센터"),
-            backgroundColor: Colors.limeAccent,
+            scrolledUnderElevation: 0,
+            backgroundColor: Colors.amberAccent,
             centerTitle: true,
-            bottom: TabBar(
-              tabs: [
-                Tab(text: 'FAQ'),
-                Tab(text: '문의내역'),
-                Tab(text: '고객의 소리'),
-                Tab(text: '공지사항',)
-              ],
+            bottom:
+            PreferredSize(
+              preferredSize: Size.fromHeight(48.0),
+              child: Container(
+                color: Colors.white, // TabBar 배경색 설정
+                child: TabBar(
+                  labelColor: Colors.black, // 선택된 탭의 글자 색상
+                  unselectedLabelColor: Colors.grey, // 선택되지 않은 탭의 글자 색상
+                  indicatorColor: Colors.blue, // 선택된 탭의 하단 선 색상
+                  indicatorWeight: 3.0, // 선택된 탭의 하단 선 두께
+                  tabs: [
+                    Tab(text: 'FAQ'),
+                    Tab(text: '문의내역'),
+                    Tab(text: '공지사항'),
+                  ],
+                ),
+              ),
             ),
           ),
 
@@ -41,7 +52,6 @@ class _CenterPageState extends State<CenterPage> {
             children: [
               FAQPage(),
               InquiryPage(),
-              QuestionPage(),
               NoticePage()
             ],
           ),

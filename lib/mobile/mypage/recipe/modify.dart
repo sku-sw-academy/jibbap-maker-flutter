@@ -84,9 +84,10 @@ class _ModifyPageState extends State<ModifyPage> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text("레시피"),
         centerTitle: true,
-        backgroundColor: Colors.limeAccent,
+        backgroundColor: Colors.amberAccent,
       ),
       body: ListView(
         children: [

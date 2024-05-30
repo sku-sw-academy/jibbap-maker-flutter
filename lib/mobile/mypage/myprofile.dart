@@ -34,8 +34,9 @@ class _MyProfileState extends State<MyProfile> {
 
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text('MyProfile'),
-        backgroundColor: Colors.limeAccent,
+        backgroundColor: Colors.amberAccent,
         centerTitle: true,
         actions: [
           IconButton(

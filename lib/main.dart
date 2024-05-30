@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-          //useMaterial3: true,
+          useMaterial3: true,
         ),
         home: MainPage(),
       ),
@@ -84,7 +84,7 @@ class _MainPageState extends State<MainPage> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.home, color: Colors.redAccent),
                 label: 'Home',
-                backgroundColor: Colors.limeAccent
+                backgroundColor: Colors.amberAccent
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.search, color: Colors.blueAccent),

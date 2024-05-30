@@ -31,7 +31,8 @@ class _RecipePageState extends State<RecipePage> {
       appBar: AppBar(
         title: Text("레시피"),
         centerTitle: true,
-        backgroundColor: Colors.limeAccent,
+        backgroundColor: Colors.amberAccent,
+        scrolledUnderElevation: 0,
         actions: [
           IconButton(icon: Icon(Icons.add),
             onPressed: () {

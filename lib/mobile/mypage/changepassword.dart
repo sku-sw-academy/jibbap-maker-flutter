@@ -20,8 +20,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text("비밀번호 변경"),
-        backgroundColor: Colors.limeAccent,
+        backgroundColor: Colors.amberAccent,
         centerTitle: true,
       ),
       body: Padding(

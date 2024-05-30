@@ -157,23 +157,28 @@ class _SelectedPageState extends State<SelectedPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   if (kinds.isNotEmpty)
-                    DropdownButton<int>(
-                      value: selectedKindIndex,
-                      onChanged: (int? newIndex) {
-                        setState(() {
-                          selectedKindIndex = newIndex;
-                          if (newIndex != null) {
-                            fetchRanks(newIndex);
-                          }
-                        });
-                      },
-                      items: List.generate(kinds.length, (index) {
-                        return DropdownMenuItem<int>(
-                          value: index,
-                          child: Text(kinds[index]),
-                          key: Key(kinds[index]),
-                        );
-                      }),
+                    Container(
+                      width: 100, // 너비 설정
+                      height: 50, // 높이 설정
+                      child: DropdownButton<int>(
+                        value: selectedKindIndex,
+                        isExpanded: true,
+                        onChanged: (int? newIndex) {
+                          setState(() {
+                            selectedKindIndex = newIndex;
+                            if (newIndex != null) {
+                              fetchRanks(newIndex);
+                            }
+                          });
+                        },
+                        items: List.generate(kinds.length, (index) {
+                          return DropdownMenuItem<int>(
+                            value: index,
+                            child: Text(kinds[index]),
+                            key: Key(kinds[index]),
+                          );
+                        }),
+                      ),
                     )
                   else
                     CircularProgressIndicator(),
@@ -181,21 +186,26 @@ class _SelectedPageState extends State<SelectedPage> {
                   SizedBox(width: 20),
 
                   if (selectedKindIndex != null && ranks.length > selectedKindIndex! && ranks[selectedKindIndex!] != null && ranks[selectedKindIndex!].isNotEmpty)
-                    DropdownButton<int>(
-                      value: selectedRankIndex,
-                      onChanged: (int? newIndex) {
-                        setState(() {
-                          selectedRankIndex = newIndex;
-                        });
-                        print('Selected item: ${ranks[selectedKindIndex!][selectedRankIndex!]}');
-                      },
-                      items: List.generate(ranks[selectedKindIndex!].length, (index) {
-                        return DropdownMenuItem<int>(
-                          value: index,
-                          child: Text(ranks[selectedKindIndex!][index]),
-                          key: Key(ranks[selectedKindIndex!][index]),
-                        );
-                      }),
+                    Container(
+                      width: 100, // 너비 설정
+                      height: 50, // 높이 설정
+                      child: DropdownButton<int>(
+                        value: selectedRankIndex,
+                        isExpanded: true,
+                        onChanged: (int? newIndex) {
+                          setState(() {
+                            selectedRankIndex = newIndex;
+                          });
+                          print('Selected item: ${ranks[selectedKindIndex!][selectedRankIndex!]}');
+                        },
+                        items: List.generate(ranks[selectedKindIndex!].length, (index) {
+                          return DropdownMenuItem<int>(
+                            value: index,
+                            child: Text(ranks[selectedKindIndex!][index]),
+                            key: Key(ranks[selectedKindIndex!][index]),
+                          );
+                        }),
+                      ),
                     )
                   else
                     CircularProgressIndicator(),
@@ -210,11 +220,17 @@ class _SelectedPageState extends State<SelectedPage> {
                     updateDataTable();
                   }
                 },
-                child: Text('검색'),
+                child: Text('검색', style: TextStyle(fontSize: 12),),
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  surfaceTintColor: Colors.white,
+                  foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // 사각형 모양의 버튼을 원하는 경우 원하는 모양의 BorderRadius 설정
+                    borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
                   ),
+                  side: BorderSide(color: Colors.black, width: 1),
+                  fixedSize: Size(75, 25),
+                  // 다른 스타일 속성들...
                 ),
               ),
             ],
@@ -276,7 +292,7 @@ class _SelectedPageState extends State<SelectedPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: leftTitleWidgets,
-                  reservedSize: 35,
+                  reservedSize: 36,
                 ),
               ),
               rightTitles: AxisTitles(
@@ -284,7 +300,7 @@ class _SelectedPageState extends State<SelectedPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: rightTitleWidgets,
-                  reservedSize: 20,
+                  reservedSize: 18,
                 ),
               ),
               topTitles: AxisTitles(

@@ -82,25 +82,25 @@ class _MainPageState extends State<MainPage> {
         bottomNavigationBar: BottomNavigationBar(
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.home, color: Colors.redAccent),
+                icon: Icon(Icons.home, color: Colors.black),
                 label: 'Home',
-                backgroundColor: Colors.amberAccent
+                backgroundColor: Colors.white
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search, color: Colors.blueAccent),
+              icon: Icon(Icons.search, color: Colors.grey),
               label: 'Search',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view, color: Colors.blueAccent),
+              icon: Icon(Icons.grid_view, color: Colors.grey),
               label: 'Recipe',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person, color: Colors.blueAccent),
+              icon: Icon(Icons.person, color: Colors.grey),
               label: 'My Page',
             ),
           ],
 
-          selectedItemColor: Colors.redAccent,
+          selectedItemColor: Colors.black,
 
           onTap: (int index) {
             if (index == 1) {

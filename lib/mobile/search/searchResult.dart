@@ -128,7 +128,7 @@ class _SelectedPageState extends State<SelectedPage> {
         appBar: AppBar(
           title: Text('${widget.itemname}'),
           centerTitle: true,
-          backgroundColor: Colors.limeAccent,
+          backgroundColor: Colors.lightBlueAccent,
         ),
         body: Center(
           child: CircularProgressIndicator(), // 데이터를 로딩하는 동안 로딩 표시기 표시
@@ -174,7 +174,9 @@ class _SelectedPageState extends State<SelectedPage> {
                         items: List.generate(kinds.length, (index) {
                           return DropdownMenuItem<int>(
                             value: index,
-                            child: Text(kinds[index]),
+                            child: Text(kinds[index], style: TextStyle(
+                              fontSize: _calculateFontSize(kinds[index]), // 글자 크기 동적으로 조절
+                            ),),
                             key: Key(kinds[index]),
                           );
                         }),
@@ -187,7 +189,7 @@ class _SelectedPageState extends State<SelectedPage> {
 
                   if (selectedKindIndex != null && ranks.length > selectedKindIndex! && ranks[selectedKindIndex!] != null && ranks[selectedKindIndex!].isNotEmpty)
                     Container(
-                      width: 100, // 너비 설정
+                      width: 70, // 너비 설정
                       height: 50, // 높이 설정
                       child: DropdownButton<int>(
                         value: selectedRankIndex,
@@ -444,6 +446,17 @@ class _SelectedPageState extends State<SelectedPage> {
       spots.add(FlSpot(i.toDouble(), double.parse(searchData[i].dpr1.replaceAll(",", ""))));
     }
     return spots;
+  }
+
+  double _calculateFontSize(String text) {
+    // 글자 길이에 따라 동적으로 크기 계산 또는 원하는 방식으로 크기 계산
+    if (text.length <= 5) {
+      return 16.0;
+    } else if (text.length <= 10) {
+      return 10.0;
+    } else {
+      return 8.0;
+    }
   }
 
 }

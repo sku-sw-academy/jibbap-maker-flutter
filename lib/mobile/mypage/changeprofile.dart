@@ -14,6 +14,8 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   XFile? _image;
   CroppedFile? _croppedFile;
   final ImagePicker picker = ImagePicker();
+  TextEditingController _nickNameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> getImage(ImageSource imageSource) async{
     try{
@@ -141,20 +143,50 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   Widget _buildTextField() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
+
+      child: Form(
+          key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextFormField(
+              controller: _nickNameController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: '닉네임을 입력하시오.',
               ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '닉네임을 입력해주세요';
+                } else if (_nickNameController.text.length > 10) {
+                  return '10자 이하로 해주세요.';
+                }
+                return null;
+              },
             ),
-          ),
-          SizedBox(width: 15),
-          ElevatedButton(
+            SizedBox(height: 12),
+
+            ElevatedButton(
             onPressed: () {
-              // 저장 버튼을 눌렀을 때의 처리
+              if (_formKey.currentState!.validate()) {
+                // 비밀번호 변경 로직 추가
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('닉네임 변경'),
+                    content: Text('닉네임이 성공적으로 변경되었습니다.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // 다이얼로그 닫기
+                          Navigator.pop(context); // 이전 화면으로 돌아가기
+                        },
+                        child: Text('확인'),
+                      ),
+                    ],
+                  ),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
@@ -163,12 +195,16 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero,
               ),
-              padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              //padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
               side: BorderSide(color: Colors.grey, width: 1),
+              minimumSize: Size(double.infinity, 50),
+              padding: EdgeInsets.symmetric(vertical: 20),
             ),
-            child: Text('저장'),
+              child: Text('저장'),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

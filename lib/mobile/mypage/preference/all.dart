@@ -83,6 +83,7 @@ class _IngredientAllState extends State<IngredientAll> {
         children: [
           Row(
             children: [
+              SizedBox(width: 15,),
               Expanded(
                 child: TextField(
                   controller: searchController,
@@ -122,13 +123,11 @@ class _IngredientAllState extends State<IngredientAll> {
           Expanded(
             child: isSearching
                 ? ListView.builder(
-              itemCount: filteredItems.length,
-              itemBuilder: (context, index) {
-                String item = filteredItems[index];
+                itemCount: filteredItems.length,
+                itemBuilder: (context, index) {
+                  String item = filteredItems[index];
                 int categoryIndex = _childLists.indexWhere((sublist) => sublist.contains(item));
                 int subIndex = _childLists[categoryIndex].indexOf(item);
-                int startIndex = item.toLowerCase().indexOf(searchController.text.toLowerCase());
-                int endIndex = startIndex + searchController.text.length;
 
                 List<TextSpan> textSpans = [];
                 int i = 0;
@@ -194,12 +193,12 @@ class _IngredientAllState extends State<IngredientAll> {
                 itemBuilder: (context, index) {
                   return ExpansionTile(
                     initiallyExpanded: index == 0,
-                    title: Text(categories[index]),
+                    title: Text(categories[index], style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                     children: _childLists[index].asMap().entries.map((entry) {
                     final int subIndex = entry.key;
                     final String childTitle = entry.value;
                     return ListTile(
-                      title: Text(childTitle),
+                      title: Text(" $childTitle"),
                       trailing: ToggleButtons(
                         isSelected: isSelect[index][subIndex],
                         onPressed: (toggleIndex) {

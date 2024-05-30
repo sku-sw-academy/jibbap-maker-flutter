@@ -15,8 +15,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   FocusNode _passwordFocus = FocusNode();
   bool _showCurrentPassword = false;
-  bool _showNewPassword = false;
-  bool _showConfirmPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +62,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   labelText: '새 비밀번호',
                   border: OutlineInputBorder(),
                 ),
-                obscureText: !_showNewPassword,
                 validator: (value) {
                   if (CheckValidate().validatePassword(_passwordFocus, value) != null) {
                     return CheckValidate().validatePassword(_passwordFocus, value);
@@ -79,7 +76,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   labelText: '새 비밀번호 확인',
                   border: OutlineInputBorder(),
                 ),
-                obscureText: !_showConfirmPassword,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return '비밀번호를 입력하세요.';
@@ -119,6 +115,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10), // 버튼의 모서리를 조정하여 네모로 만듭니다.
                   ),
+                  backgroundColor: Colors.white,
+                  surfaceTintColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  side: BorderSide(color: Colors.grey, width: 1),
                   minimumSize: Size(double.infinity, 50), // 버튼의 최소 크기를 조정합니다. double.infinity로 설정하면 가로폭을 꽉 채우도록 만듭니다.
                 ),
                 child: Text('변경'),

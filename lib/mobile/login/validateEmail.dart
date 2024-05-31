@@ -200,80 +200,15 @@ class _ValidateEmailState extends State<ValidateEmail> {
                       if (authCode == code) {
                         final result = await _userService.register(widget.email, widget.nickname, widget.password);
                         if (result == 'OK') {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              backgroundColor: Color(0xFFF4F9FA),
-                              title: Text(
-                                "인증 되었습니다.",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontFamily: 'GowunBatang',
-                                  fontWeight: FontWeight.w700,
-                                  height: 0,
-                                  letterSpacing: -0.40,
-                                ),
-                              ),
-                              content: Text(""),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    "확인",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontFamily: 'GowunBatang',
-                                      fontWeight: FontWeight.w700,
-                                      height: 0,
-                                      letterSpacing: -0.40,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('회원가입 성공')),
                           );
+                          Navigator.pop(context);
+                          Navigator.pop(context);
                         }
                       } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            backgroundColor: Color(0xFFF4F9FA),
-                            title: Text(
-                              "인증번호가 틀렸습니다. 다시 시도해주세요.",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontFamily: 'GowunBatang',
-                                fontWeight: FontWeight.w700,
-                                height: 0,
-                                letterSpacing: -0.40,
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  "확인",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontFamily: 'GowunBatang',
-                                    fontWeight: FontWeight.w700,
-                                    height: 0,
-                                    letterSpacing: -0.40,
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('인증번호가 틀렸습니다. 다시 해주세요.')),
                         );
                       }
                     } catch (e) {

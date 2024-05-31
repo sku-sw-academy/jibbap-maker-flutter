@@ -13,16 +13,18 @@ class UserService{
       nickname: nickname,
       password: password,
     );
-
+    
+    final url = Uri.parse('${Constants.baseUrl}/api/auth/signup');
+    
     final response = await http.post(
-      Uri.parse('${Constants.baseUrl}/register'),
-      headers: {
+      url,
+      headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(registerDTO.toJson()),
     );
 
-    if (response.statusCode == 200 && response.body == 'OK') {
+    if (response.statusCode == 200) {
       return 'OK';
     } else {
       throw Exception('Failed to register');

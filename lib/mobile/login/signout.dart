@@ -5,6 +5,7 @@ import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:flutter_splim/service/userservice.dart';
 
 class LoginPage extends StatelessWidget{
 
@@ -12,6 +13,8 @@ class LoginPage extends StatelessWidget{
   Widget build(BuildContext context) {
     // TODO: implement build
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final UserService userService = UserService();
+    final secureService = Provider.of<SecureService>(context, listen: false);
 
     void _loginSuccess(UserDTO user) {
       userProvider.updateUser(user);
@@ -177,11 +180,21 @@ class LoginPage extends StatelessWidget{
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      onPressed: () async{
-                        String email = _emailController.text.toString();
-                        String password = _passwordController.text.toString();
+                      onPressed: () async {
+                        String email = _emailController.text.trim();
+                        String password = _passwordController.text.trim();
+
+                        try {
+                          final response = await userService.login(email, password);
+                          secureService.writeToken("accesstoken", response.accessToken);
 
 
+                          Navigator.pop(context);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('로그인 실패: $e')),
+                          );
+                        }
                       },
                       child: Container(
                         alignment: Alignment.center,

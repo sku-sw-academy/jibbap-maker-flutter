@@ -16,7 +16,7 @@ class UserService{
 
     final response = await http.post(
       Uri.parse('${Constants.baseUrl}/register'),
-      headers: <String, String>{
+      headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(registerDTO.toJson()),

@@ -208,10 +208,10 @@ class _IngredientAllState extends State<IngredientAll> {
                             }
                           });
                         },
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(10),
                         constraints: BoxConstraints.tightFor(
-                          width: 40,
-                          height: 40,
+                          width: 44,
+                          height: 36,
                         ),
                         children: [
                           Icon(Icons.mood_sharp,
@@ -224,8 +224,8 @@ class _IngredientAllState extends State<IngredientAll> {
                         color: Colors.grey,
                         selectedColor: Colors.white,
                         fillColor: _getFillColor(index, subIndex),
-                        selectedBorderColor: Colors.transparent,
-                        borderColor: Colors.transparent,
+                        selectedBorderColor: Colors.black,
+                        borderColor: Colors.black,
                       ),
                     );
                   }).toList(),

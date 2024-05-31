@@ -78,13 +78,99 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ListView(
         children: [
           Container(
-            margin: EdgeInsets.all(screenWidth / 40),
+            margin: EdgeInsets.only(
+                top: screenHeight * 0.01, right: screenWidth * 0.04),
             child: Row(
               children: [
                 Expanded(
+                  child: GestureDetector(
+                    onTap: () async {
+                      final storageService = Provider.of<SecureService>(context, listen: false);
+                      String? token = await storageService.readToken(key);
+                      if (token == null || token.isEmpty) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('로그인 필요'),
+                            content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('확인'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => LoginPage()),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                        return;
+                      } else {
+                        // 추가적인 액션을 여기에 추가하세요.
+                      }
+                    },
+                    child: Container(
+                      height: screenHeight * 0.33,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 30,),
+                          Card(
+                            elevation: 5.0,
+                            color: Colors.blue[700],
+
+                            child: Container(
+                              height: screenHeight * 0.25,
+                              width: screenWidth * 0.4,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('asset/food/ai.jpeg'), // 여기에 로컬 이미지 경로를 입력하세요
+                                  fit: BoxFit.fill, // 이미지를 Container의 크기에 맞게 조정합니다.
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '오늘의 추천 레시피',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  //SizedBox(height: 10.0),
+                                  // Icon(
+                                  //   Icons.sticky_note_2_outlined,
+                                  //   size: 80.0,
+                                  //   color: Colors.lightBlueAccent,
+                                  // ),
+                                  SizedBox(height: 80.0),
+                                  Text(
+                                    'AI 기반 맞춤 레시피를\n확인해보세요!',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.amberAccent,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                Expanded(
                   child: Container(
                     width: double.infinity,
-                    height: screenHeight * 0.35,
+                    height: screenHeight * 0.33,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(width: screenWidth / 20),
+                            SizedBox(width: screenWidth  * 0.08),
                             Expanded(
                               child: ToggleButtons(
                               isSelected: [isSelected, !isSelected],
@@ -127,15 +213,28 @@ class _MyHomePageState extends State<MyHomePage> {
                                   isSelected = index == 0 ? true : false;
                                 });
                               },
-                              borderRadius: BorderRadius.circular(17),
+                              borderRadius: BorderRadius.circular(5),
                               constraints: BoxConstraints.tightFor(
                                 width: screenWidth / 6.2,
                                 height: screenHeight / 20.5,
                               ),
                               children: [
-                                Text("알뜰 소비"),
-                                Text("맞춤 가격")
+                                Text(
+                                  "알뜰 소비",
+                                  style: TextStyle(
+                                    color: isSelected ? Colors.black : Colors.grey, // 버튼의 글자 색상
+                                  ),
+                                ),
+                                Text(
+                                  "맞춤 가격",
+                                  style: TextStyle(
+                                    color: !isSelected ? Colors.black : Colors.grey, // 버튼의 글자 색상
+                                  ),
+                                ),
                                 ],
+                                fillColor: Colors.amberAccent, // 선택된 버튼의 배경 색상
+                                selectedBorderColor: Colors.grey, // 선택된 버튼의 테두리 색상
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -144,21 +243,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         Expanded(
                           child: Column(
                             children: [
-                              Container(
-                                margin: EdgeInsets.only(right: 20, bottom: 8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end, // 오른쪽 정렬
-                                  children: [
-                                    Text(
-                                      '(등락률 기준)',
-                                      style: TextStyle(fontSize: 12,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                               if (isSelected) ...[
                                 FutureBuilder<List<PriceDTO>>(
                                   future: futurePrices,
@@ -177,7 +261,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             height: 61, // 고정 높이
                                             decoration: BoxDecoration(
                                               border: Border.all(color: Colors.black),
-                                              borderRadius: BorderRadius.circular(30),// 경계선 색상
+                                              borderRadius: BorderRadius.circular(10),// 경계선 색상
                                             ),
                                             child: ListTile(
                                               title: Text(
@@ -195,7 +279,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   fontSize: 12,
                                                     color: Colors.blue,
                                                     fontWeight: FontWeight.bold,
-
                                                 ),
                                               ),
                                               tileColor: Colors.white,
@@ -231,7 +314,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               height: 60, // 고정 높이
                                               decoration: BoxDecoration(
                                                 border: Border.all(color: Colors.black),
-                                                borderRadius: BorderRadius.circular(30),// 경계선 색상
+                                                borderRadius: BorderRadius.circular(10),// 경계선 색상
                                               ),
                                               child: ListTile(
                                                 leading: Icon(Icons.info),
@@ -253,37 +336,34 @@ class _MyHomePageState extends State<MyHomePage> {
                                             Container(
                                               height: 60, // 고정 높이
                                               decoration: BoxDecoration(
-                                                border: Border.all(color: Colors.black), // 경계선 색상
+                                                border: Border.all(color: Colors.black),
+                                                borderRadius: BorderRadius.circular(10),// 경계선 색상
                                               ),
                                               child: ListTile(
-                                                leading: Icon(Icons.arrow_upward),
                                                 title: Text(increaseValues[0].name),
                                                 trailing: Text('${increaseValues[0].price} 원'),
-                                                tileColor: Colors.yellowAccent[100],
                                               ),
                                             ),
                                             Container(
                                               height: 60, // 고정 높이
                                               decoration: BoxDecoration(
-                                                border: Border.all(color: Colors.black), // 경계선 색상
+                                                border: Border.all(color: Colors.black),
+                                                borderRadius: BorderRadius.circular(10),// 경계선 색상
                                               ),
                                               child: ListTile(
-                                                leading: Icon(Icons.arrow_upward),
                                                 title: Text(increaseValues[1].name),
                                                 trailing: Text('${increaseValues[1].price} 원'),
-                                                tileColor: Colors.yellowAccent[200],
                                               ),
                                             ),
                                             Container(
                                               height: 60, // 고정 높이
                                               decoration: BoxDecoration(
-                                                border: Border.all(color: Colors.black), // 경계선 색상
+                                                border: Border.all(color: Colors.black),
+                                                borderRadius: BorderRadius.circular(10),// 경계선 색상
                                               ),
                                               child: ListTile(
-                                                leading: Icon(Icons.arrow_upward),
                                                 title: Text(increaseValues[2].name),
                                                 trailing: Text('${increaseValues[2].price} 원'),
-                                                tileColor: Colors.yellow,
                                               ),
                                             ),
                                           ],
@@ -301,83 +381,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
 
-                SizedBox(width: 20),
-
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () async {
-                      final storageService = Provider.of<SecureService>(context, listen: false);
-                      String? token = await storageService.readToken(key);
-                      if (token == null || token.isEmpty) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('로그인 필요'),
-                            content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('확인'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => LoginPage()),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        );
-                        return;
-                      } else {
-                        // 추가적인 액션을 여기에 추가하세요.
-                      }
-                    },
-                    child: Container(
-                      height: screenHeight * 0.35,
-                      child: Column(
-                        children: [
-                          Card(
-                            elevation: 5.0,
-                            color: Colors.blue[700],
-                            child: Container(
-                              height: screenHeight * 0.25,
-                              width: screenWidth * 0.4,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    '오늘의 추천 레시피',
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blueAccent[100],
-                                    ),
-                                  ),
-                                  SizedBox(height: 10.0),
-                                  Icon(
-                                    Icons.sticky_note_2_outlined,
-                                    size: 80.0,
-                                    color: Colors.lightBlueAccent,
-                                  ),
-                                  SizedBox(height: 10.0),
-                                  Text(
-                                    'AI 기반 맞춤 레시피를\n확인해보세요!',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 13.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blue[300],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                  ),
-                ),),
               ],
             ),
           ),
@@ -502,7 +505,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       '가격단위 : 원 기준일 ($date)',
                       style: TextStyle(fontSize: 16,
                           color: Colors.black,
-                          //decoration: TextDecoration.underline,
                           fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic
                       ),
@@ -528,7 +530,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 List<PriceDTO> popularPrices = snapshot.data!;
                 return Container(
                   height: screenHeight / 3,
-                  color: Color(0xFFFCFCF1),
+                  color: Colors.white,
                   child: GridView.count(
                     crossAxisCount: 3, // 가로 방향으로 3개의 카드씩 배치
                     childAspectRatio: 3 / 3, // 카드의 가로 세로 비율 설정
@@ -540,8 +542,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           );
                         },
                         child: Card(
-                          color: Colors.white,
-                          elevation: 4.0,
+                          color: Colors.blue[50],
+                          elevation: 1.5,
                           child: Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,

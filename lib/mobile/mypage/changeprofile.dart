@@ -181,8 +181,8 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '닉네임을 입력해주세요';
-                } else if (_nickNameController.text.length > 10) {
-                  return '10자 이하로 해주세요.';
+                } else if (_nickNameController.text.length > 20) {
+                  return '20자 이하로 해주세요.';
                 }
                 return null;
               },

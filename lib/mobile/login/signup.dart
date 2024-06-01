@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_splim/mobile/login/validate.dart';
 import 'package:flutter_splim/mobile/login/validateEmail.dart';
+import 'package:flutter_splim/service/userservice.dart';
 
-class CreateAccountScreen extends StatelessWidget {
+class CreateAccountScreen extends StatefulWidget{
+  @override
+  _CreateAccountScreenState createState() => _CreateAccountScreenState();
+}
+
+class _CreateAccountScreenState extends State<CreateAccountScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nickNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -12,6 +18,25 @@ class CreateAccountScreen extends StatelessWidget {
 
   FocusNode _emailFocus = new FocusNode();
   FocusNode _passwordFocus = new FocusNode();
+
+  late List<String> emailList =[];
+  late UserService userService = UserService();
+
+
+  @override
+  void initState() {
+    super.initState();
+    fetchEmail();
+  }
+
+  Future<void> fetchEmail() async {
+    try {
+      emailList = await userService.fetchEmails();
+      print(emailList);
+    } catch (e) {
+      print('Error fetching emails: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,8 +140,8 @@ class CreateAccountScreen extends StatelessWidget {
                       validator: (value){
                         if(value == null || value.isEmpty){
                           return '닉네임을 입력하세요.';
-                        }else if(value.length > 10){
-                          return '닉네임을 10자 이하로 해주세요.';
+                        }else if(value.length > 20){
+                          return '닉네임을 20자 이하로 해주세요.';
                         }
                           return null;
                       },
@@ -172,7 +197,7 @@ class CreateAccountScreen extends StatelessWidget {
                         letterSpacing: -0.33,
                       ),
                       controller: _emailController,
-                      validator: (value) => CheckValidate().validateEmail(_emailFocus, value),
+                      validator: (value) => CheckValidate().validateEmail(_emailFocus, value, emailList),
                         onSaved: (value) {}
                     ),
                   ),

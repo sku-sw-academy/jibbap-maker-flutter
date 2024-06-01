@@ -113,4 +113,17 @@ class UserService{
     }
   }
 
+  Future<List<String>> fetchEmails() async {
+    final response = await http.get(Uri.parse('${Constants.baseUrl}/api/auth/emails'));
+
+    if (response.statusCode == 200) {
+      var responseBody = utf8.decode(response.bodyBytes);
+      List<dynamic> jsonList = json.decode(responseBody);
+      List<String> emailList = jsonList.cast<String>();
+      return emailList;
+    } else {
+      throw Exception('Failed to load emails');
+    }
+  }
+
 }

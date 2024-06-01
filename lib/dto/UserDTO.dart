@@ -1,16 +1,16 @@
 class UserDTO{
   final int id;
   final String email;
-  final String nickname;
-  final String profile;
-  final String password;
-  final bool enabled;
-  final bool push;
-  final bool log;
-  final String fcmtoken;
+  late String nickname;
+  String? profile;
+  late String password;
+  late bool enabled;
+  late bool push;
+  late bool log;
+  String? fcmtoken;
 
-  UserDTO({required this.id, required this.email, required this.nickname, required this.profile, required this.enabled, required this.password,
-  required this.push, required this.log, required this.fcmtoken});
+  UserDTO({required this.id, required this.email, required this.nickname, this.profile, required this.enabled, required this.password,
+  required this.push, required this.log, this.fcmtoken});
 
   factory UserDTO.fromJson(Map<String, dynamic> json) {
     return UserDTO(

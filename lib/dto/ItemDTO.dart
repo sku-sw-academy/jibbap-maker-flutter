@@ -4,8 +4,8 @@ class ItemDTO {
   final String itemName;
   final int itemCode;
   final CategoryDTO category;
-  final String? imagePath;
-  final int count;
+  String? imagePath;
+  int count;
 
   ItemDTO({
     required this.itemName,

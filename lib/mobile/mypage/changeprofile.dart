@@ -6,6 +6,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_splim/constant.dart';
+import 'package:flutter_splim/service/userservice.dart';
 
 class ChangeProfilePage extends StatefulWidget {
 
@@ -19,11 +22,13 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   final ImagePicker picker = ImagePicker();
   TextEditingController _nickNameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  late UserDTO user;
+  late UserService userService = UserService();
 
   @override
   void initState() {
     super.initState();
-    // 사용자 정보에서 닉네임 설정
+    user = Provider.of<UserProvider>(context, listen: false).user!;
   }
 
   Future<void> getImage(ImageSource imageSource) async{
@@ -83,15 +88,34 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
         setState(() {
           _croppedFile = croppedFile;
         });
+        //uploadImage(user.id, _croppedFile!);
       }
     }
   }
 
+  Future uploadImage(int userId, CroppedFile imageFile) async {
+    var url = Uri.parse('${Constants.baseUrl}/api/auth/upload');
+    var request = http.MultipartRequest('POST', url);
+    request.fields['userId'] = userId.toString(); // 사용자 ID 추가
+    request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Image uploaded successfully');
+      String imageUrl = await response.stream.bytesToString();
+      print('Image URL: $imageUrl');
+      // 이후 필요한 작업 수행
+    } else {
+      print('Failed to upload image');
+    }
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    UserDTO? user = Provider.of<UserProvider>(context).user;
-    _nickNameController.text = user?.nickname ?? '';
+    _nickNameController.text = user.nickname ?? '';
 
     return Scaffold(
       appBar: AppBar(
@@ -113,7 +137,6 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   }
 
   Widget _buildPhotoArea() {
-    UserDTO? user = Provider.of<UserProvider>(context).user;
 
     return GestureDetector(
       onTap: () {
@@ -126,10 +149,10 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
               radius: 70,
               backgroundImage: FileImage(File(_croppedFile!.path)),
           )
-              : user?.profile != ""
+              : user.profile != ""
               ? CircleAvatar(
             radius: 70,
-            backgroundImage: NetworkImage(user!.profile),
+            backgroundImage: NetworkImage(user.profile!),
           )
               : CircleAvatar(
                 radius: 70,
@@ -190,25 +213,23 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
             SizedBox(height: 12),
 
             ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                // 비밀번호 변경 로직 추가
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('닉네임 변경'),
-                    content: Text('닉네임이 성공적으로 변경되었습니다.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context); // 다이얼로그 닫기
-                          Navigator.pop(context); // 이전 화면으로 돌아가기
-                        },
-                        child: Text('확인'),
-                      ),
-                    ],
-                  ),
-                );
+            onPressed: () async {
+              if (_formKey.currentState!.validate() && _nickNameController.text != user.nickname) {
+
+                String result = await userService.changeNickName(user.id, _nickNameController.text);
+                if (result != "error") {
+                  setState(() {
+                    user.nickname = result;
+                  });
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('닉네임 변경 성공')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('닉네임 변경 실패')),
+                  );
+                }
               }
             },
             style: ElevatedButton.styleFrom(
@@ -272,39 +293,3 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   }
 
 }
-
-
-// Widget _buildButton() {
-//   double screenWidth = MediaQuery.of(context).size.width;
-//
-//   return Row(
-//     mainAxisAlignment: MainAxisAlignment.center,
-//     children: [
-//       ElevatedButton(
-//         onPressed: () {
-//           getImage(ImageSource.camera); // getImage 함수를 호출해서 갤러리에서 사진 가져오기
-//         },
-//         style: ElevatedButton.styleFrom(
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.zero, // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
-//           ),
-//         ),
-//         child: Icon(Icons.photo_camera),
-//       ),
-//
-//       SizedBox(width: screenWidth / 30),
-//
-//       ElevatedButton(
-//         onPressed: () {
-//           getImage(ImageSource.gallery); // getImage 함수를 호출해서 갤러리에서 사진 가져오기
-//         },
-//         style: ElevatedButton.styleFrom(
-//           shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.zero, // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
-//           ),
-//         ),
-//         child: Icon(Icons.photo),
-//       ),
-//     ],
-//   );
-// }

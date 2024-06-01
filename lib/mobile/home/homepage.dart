@@ -87,8 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SearchPage()),
-              );
+                MaterialPageRoute(builder: (context) => SearchPage()),).then((value) => setState(() {
+              }));
             },
           ),
         ],
@@ -120,15 +120,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => LoginPage()),
-                                  );
+                                  ).then((value) => setState(() {
+
+                                  }));
                                 },
                               ),
                             ],
                           ),
                         );
                         return;
-                      } else {
-                        // 추가적인 액션을 여기에 추가하세요.
                       }
                     },
                     child: Container(
@@ -139,7 +139,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           Card(
                             elevation: 6.0,
                             color: Colors.blue[700],
-
                             child: Container(
                               height: screenHeight * 0.24,
                               width: screenWidth * 0.4,
@@ -213,7 +212,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(builder: (context) => LoginPage()),
-                                              );
+                                              ).then((value) => setState(() {
+
+                                              }));
                                             },
                                           ),
                                         ],
@@ -283,7 +284,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   fontSize: 11,
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold,
-
                                                 ),
                                               ),
                                               trailing: Text(
@@ -299,7 +299,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(builder: (context) => DetailPage(regday: date!)),
-                                                );
+                                                ).then((value) => setState(() {
+
+                                                }));
                                               },
                                             ),
                                           );
@@ -317,7 +319,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                     } else if (snapshot.hasError) {
                                       return Center(child: Text('Error: ${snapshot.error}'));
                                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                      return Center(child: Text('No data found'));
+                                      return Column(children: [Container(
+                                        height: 100, // 고정 높이
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.black),
+                                          borderRadius: BorderRadius.circular(10),// 경계선 색상
+                                        ),
+                                        child: ListTile(
+                                          leading: Icon(Icons.info),
+                                          title: Text(
+                                            '선택하신 선호\n'
+                                                '식재료 종류가 \n 부족합니다.',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          tileColor: Colors.grey[200],
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => MyPrefer()),
+                                            ).then((value) => setState(() {
+
+                                            }));
+                                          },
+                                        ),
+                                      ),]);
                                     } else {
                                       List<PriceDTO> price = snapshot.data!;
                                       return Column(
@@ -341,7 +366,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(builder: (context) => MyPrefer()),
-                                                  );
+                                                  ).then((value) => setState(() {
+
+                                                  }));
                                                 },
                                               ),
                                             ),
@@ -365,7 +392,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   "${price[0].value}%",
                                                   style: TextStyle(
                                                     fontSize: 12,
-                                                    color: Colors.blue,
+                                                    color: price[0].value < 0 ? Colors.blue : price[0].value == 0 ? Colors.black : Colors.red,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -374,7 +401,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(builder: (context) => PreferDetailPage(price: price)),
-                                                  );
+                                                  ).then((value) => setState(() {
+
+                                                  }));
                                                 },
                                               ),
                                             ),
@@ -398,7 +427,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   "${price[1].value}%",
                                                   style: TextStyle(
                                                     fontSize: 12,
-                                                    color: Colors.blue,
+                                                    color: price[1].value < 0 ? Colors.blue : price[1].value == 0 ? Colors.black : Colors.red,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -407,7 +436,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(builder: (context) => PreferDetailPage(price: price)),
-                                                  );
+                                                  ).then((value) => setState(() {
+
+                                                  }));
                                                 },
                                               ),
                                             ),
@@ -430,7 +461,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   "${price[2].value}%",
                                                   style: TextStyle(
                                                     fontSize: 12,
-                                                    color: Colors.blue,
+                                                    color: price[2].value < 0 ? Colors.blue : price[2].value == 0 ? Colors.black : Colors.red,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -439,7 +470,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(builder: (context) => PreferDetailPage(price: price)),
-                                                  );
+                                                  ).then((value) => setState(() {
+
+                                                  }));
                                                 },
                                               ),
                                             ),
@@ -466,7 +499,9 @@ class _MyHomePageState extends State<MyHomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ShoppingPage(increaseValues: _increaseValues, decreaseValues: _decreaseValues)),
-              );
+              ).then((value) => setState(() {
+
+              }));
             },
             child: FutureBuilder<List<List<Shop>>>(
               future: Future.wait([_increaseValues, _decreaseValues]),
@@ -615,7 +650,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         onTap: () {
                           Navigator.push(context,
                           MaterialPageRoute(builder: (contex) => SelectedPage(itemname: price.itemCode.itemName)),
-                          );
+                          ).then((value) => setState(() {
+
+                          }));
                         },
                         child: Card(
                           color: Colors.blue[50],

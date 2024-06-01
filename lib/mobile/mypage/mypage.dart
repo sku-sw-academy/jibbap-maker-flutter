@@ -4,7 +4,13 @@ import 'package:flutter_splim/mobile/recipeview/recipeview.dart';
 import 'package:flutter_splim/mobile/search/search.dart';
 import 'package:flutter_splim/mobile/mypage/myprofile.dart';
 
-class MyPage extends StatelessWidget {
+class MyPage extends StatefulWidget{
+
+  @override
+  _MyPageState createState() => _MyPageState();
+}
+
+class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +54,15 @@ class MyPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SearchPage()),
-              );
+              ).then((value) => setState(() {
+              }));
             }
             else if (index == 2) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => RecipeView()),
-              );
+              ).then((value) => setState(() {
+              }));
             }
           },
         ),

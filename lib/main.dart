@@ -108,29 +108,39 @@ class _MainPageState extends State<MainPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SearchPage()),
-              );
+              ).then((value) => setState(() {
+
+              }));
             } else if (index == 2) {
               // 마이페이지는 홈 화면과 같이 TabBarView에 표시됩니다.
               // 탭 인덱스를 이용하여 화면을 전환합니다.
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => RecipePage()),
-              );
+              ).then((value) => setState(() {
+
+              }));
             }else if (index == 3) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => MyPage()),
-              );
+              ).then((value) => setState(() {
+
+              }));
               // if (_isLoggedIn) {
               //   Navigator.push(
               //     context,
               //     MaterialPageRoute(builder: (context) => MyPage()),
-              //   );
+              //   ).then((value) => setState(() {
+              //
+              //                 }));
               // } else {
               //   Navigator.push(
               //     context,
               //     MaterialPageRoute(builder: (context) => LoginPage()),
-              //   );
+              //   ).then((value) => setState(() {
+              //
+              //                 }));
               // }
             }
           },

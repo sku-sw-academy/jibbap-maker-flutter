@@ -126,4 +126,21 @@ class UserService{
     }
   }
 
+  Future<String> changeNickName(int userId, String newNickName) async {
+    var url = Uri.parse('${Constants.baseUrl}/api/auth/nickName');
+    var response = await http.post(
+      url,
+      body: {
+        'userId': userId.toString(),
+        'NickName': newNickName,
+      },
+    );
+
+    if (response.statusCode == 200) {
+        return newNickName;
+    } else {
+      return "error";
+    }
+  }
+
 }

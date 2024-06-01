@@ -34,7 +34,9 @@ class _ShoppingPageState extends State<ShoppingPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SearchPage()),
-              );
+              ).then((value) => setState(() {
+
+              }));
             },
           ),
         ],
@@ -106,7 +108,9 @@ class _ShoppingPageState extends State<ShoppingPage> {
     return GestureDetector(
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ShoppingResultPage(itemname: shop.name, kindname: shop.kind, rankname: shop.rank)));
+            MaterialPageRoute(builder: (context) => ShoppingResultPage(itemname: shop.name, kindname: shop.kind, rankname: shop.rank))).then((value) => setState(() {
+
+        }));
       },
       child: Card(
         elevation: 4.0,

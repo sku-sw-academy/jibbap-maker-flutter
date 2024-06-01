@@ -84,7 +84,9 @@ class _SearchPageState extends State<SearchPage> {
                   MaterialPageRoute(
                     builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
                   ),
-                );
+                ).then((value) => setState(() {
+
+                }));
               }
             },
             style: TextStyle(color: Colors.black),
@@ -100,7 +102,9 @@ class _SearchPageState extends State<SearchPage> {
                   MaterialPageRoute(
                     builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
                   ),
-                );
+                ).then((value) => setState(() {
+
+                }));
               }
             },
           ),
@@ -181,7 +185,9 @@ class _SearchPageState extends State<SearchPage> {
                                 context,
                                 MaterialPageRoute(builder: (context) => SelectedPage(itemname: recentSearch),
                                 ),
-                              );
+                              ).then((value) => setState(() {
+
+                              }));
                             },
                           );
                         }).toList(),
@@ -270,7 +276,9 @@ class _SearchPageState extends State<SearchPage> {
                                               MaterialPageRoute(
                                                 builder: (context) => SelectedPage(itemname: popularPrices[j].itemCode.itemName),
                                               ),
-                                            );
+                                            ).then((value) => setState(() {
+
+                                            }));
                                           },
                                           child: Text(
                                             popularPrices[j].itemCode.itemName,
@@ -353,7 +361,9 @@ class _SearchPageState extends State<SearchPage> {
                       MaterialPageRoute(
                         builder: (context) => SelectedPage(itemname: suggestion),
                       ),
-                    );
+                    ).then((value) => setState(() {
+
+                    }));
                   },
                 );
               }).toList(),

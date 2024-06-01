@@ -21,19 +21,27 @@ class _MyProfileState extends State<MyProfile> {
   final String nickname = '닉네임';
   final String email = 'test@example.com';
   final SecureService _secureService = SecureService();
+  late UserDTO? user;
 
   String key = "";
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() {
+    UserDTO? userData = Provider.of<UserProvider>(context, listen: false).user;
+    setState(() {
+      user = userData;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    UserDTO? user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +56,9 @@ class _MyProfileState extends State<MyProfile> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SearchPage()),
-              );
+              ).then((value) => setState(() {
+
+              }));
             },
           ),
         ],
@@ -64,14 +74,14 @@ class _MyProfileState extends State<MyProfile> {
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.blue[200],
-                    child: user?.profile != ""
+                    child: user != null && user!.profile != "" && user!.profile!.isNotEmpty
                         ? ClipRRect(
                       borderRadius: BorderRadius.circular(60),
-                      child: Image.network(
-                        user!.profile,
-                        width: 120,
-                        height: 120,
-                        fit: BoxFit.cover,
+                          child: Image.network(
+                          user!.profile!,
+                          width: 120,
+                          height: 120,
+                          fit: BoxFit.cover,
                       ),
                     )
                         : Icon(Icons.person, color: Colors.grey, size: 70),
@@ -141,7 +151,10 @@ class _MyProfileState extends State<MyProfile> {
               onTap: () {
                 Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ChangeProfilePage()),
-                );
+                ).then((value) => setState(() {
+
+                }));
+
               },
             ),
 
@@ -153,7 +166,9 @@ class _MyProfileState extends State<MyProfile> {
               onTap: () {
                 Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ChangePasswordPage()),
-                );
+                ).then((value) => setState(() {
+
+                }));
               },
             ),
 
@@ -177,7 +192,9 @@ class _MyProfileState extends State<MyProfile> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ModifyPage()),
-                );
+                ).then((value) => setState(() {
+
+                }));
               },
             ),
 
@@ -189,7 +206,9 @@ class _MyProfileState extends State<MyProfile> {
               onTap: () {
                 Navigator.push(context,
                   MaterialPageRoute(builder: (context) => MyPrefer()),
-                );
+                ).then((value) => setState(() {
+
+                }));
               },
             ),
 
@@ -212,7 +231,9 @@ class _MyProfileState extends State<MyProfile> {
               onTap: () {
                 Navigator.push(context,
                   MaterialPageRoute(builder: (context) => CenterPage()),
-                );
+                ).then((value) => setState(() {
+
+                }));
               },
             ),
 

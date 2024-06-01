@@ -34,11 +34,34 @@ class _FavoritePageState extends State<FavoritePage> {
       body: ListView.builder(
         itemCount: list.length,  // _childLists의 길이만큼 아이템을 생성
         itemBuilder: (context, index) {
+          final prefer = list[index];
+
           return ListTile(
-            title: Text(list[index].item.itemName),
+            title: Text(prefer.item.itemName),
+            trailing: IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () async {
+                setState(() {
+                  prefer.prefer = 1;  // prefer 값을 0으로 설정
+                });
+
+                try {
+                  await preferService.updatePrefer(prefer);  // 서버에 업데이트 요청
+
+                  setState(() {
+                    list.removeAt(index);  // 리스트에서 해당 항목 삭제
+                  });
+                } catch (e) {
+                  print('Error updating preference: $e');
+                  setState(() {
+                    prefer.prefer = 1;  // 업데이트 실패 시 prefer 값을 복원
+                  });
+                }
+              },
+            ),
             onTap: (){
               Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SelectedPage(itemname : list[index].item.itemName))
+              MaterialPageRoute(builder: (context) => SelectedPage(itemname : prefer.item.itemName))
               );
             },// 각 아이템을 ListTile로 변환하여 표시
           );

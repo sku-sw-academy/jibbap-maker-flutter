@@ -101,7 +101,7 @@ class _IngredientAllState extends State<IngredientAll> {
                 child: TextField(
                   controller: searchController,
                   decoration: InputDecoration(
-                    hintText: '검색',
+                    hintText: '검색어를 입력하세요',
                   ),
                   onChanged: (value) {
                     setState(() {
@@ -115,21 +115,6 @@ class _IngredientAllState extends State<IngredientAll> {
                     });
                   },
                 ),
-              ),
-              IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  String query = searchController.text;
-                  setState(() {
-                    if (query.isNotEmpty) {
-                      filteredItems = filterItems(query);
-                      isSearching = true;
-                    } else {
-                      filteredItems.clear();
-                      isSearching = false;
-                    }
-                  });
-                },
               ),
             ],
           ),

@@ -7,12 +7,10 @@ class UserDTO{
   final bool enabled;
   final bool push;
   final bool log;
-  final String fcm_token;
-  final String access_token;
-  final String refresh_token;
+  final String fcmtoken;
 
   UserDTO({required this.id, required this.email, required this.nickname, required this.profile, required this.enabled, required this.password,
-  required this.push, required this.log, required this.fcm_token, required this.access_token, required this.refresh_token});
+  required this.push, required this.log, required this.fcmtoken});
 
   factory UserDTO.fromJson(Map<String, dynamic> json) {
     return UserDTO(
@@ -24,9 +22,7 @@ class UserDTO{
       enabled: json['enabled'],
       push: json['push'],
       log: json['log'],
-      fcm_token: json['fcm_token'],
-      access_token: json['access_token'],
-      refresh_token: json['refresh_token']
+      fcmtoken: json['fcmToken'],
     );
   }
 
@@ -39,9 +35,7 @@ class UserDTO{
     'enabled' : enabled,
     'push' : push,
     'log' : log,
-    'fcm_token' : fcm_token,
-    'acces_token' : access_token,
-    'refresh_token' : refresh_token,
+    'fcmToken' : fcmtoken,
   };
 
 }

@@ -102,5 +102,15 @@ class UserService{
     }
   }
 
+  Future<UserDTO> fetchUser() async {
+    final response = await http.get(Uri.parse('${Constants.baseUrl}/api/auth/user'));
+
+    if (response.statusCode == 200) {
+      var responsebody = utf8.decode(response.bodyBytes);
+      return UserDTO.fromJson(json.decode(responsebody));
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
 
 }

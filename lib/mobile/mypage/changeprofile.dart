@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
 
 class ChangeProfilePage extends StatefulWidget {
 
@@ -16,6 +19,12 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   final ImagePicker picker = ImagePicker();
   TextEditingController _nickNameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // 사용자 정보에서 닉네임 설정
+  }
 
   Future<void> getImage(ImageSource imageSource) async{
     try{
@@ -78,10 +87,12 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    UserDTO? user = Provider.of<UserProvider>(context).user;
+    _nickNameController.text = user?.nickname ?? '';
+
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -102,6 +113,8 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   }
 
   Widget _buildPhotoArea() {
+    UserDTO? user = Provider.of<UserProvider>(context).user;
+
     return GestureDetector(
       onTap: () {
         showSheet(context);
@@ -112,6 +125,11 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
               ? CircleAvatar(
               radius: 70,
               backgroundImage: FileImage(File(_croppedFile!.path)),
+          )
+              : user?.profile != ""
+              ? CircleAvatar(
+            radius: 70,
+            backgroundImage: NetworkImage(user!.profile),
           )
               : CircleAvatar(
                 radius: 70,

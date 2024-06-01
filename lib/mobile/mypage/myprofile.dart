@@ -8,6 +8,8 @@ import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/mobile/mypage/customerCenter/center.dart';
 import 'package:flutter_splim/mobile/mypage/recipe/modify.dart';
 import 'package:flutter_splim/mobile/mypage/recipe/recipelist.dart';
+import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:provider/provider.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -19,7 +21,7 @@ class _MyProfileState extends State<MyProfile> {
   final String nickname = '닉네임';
   final String email = 'test@example.com';
   final SecureService _secureService = SecureService();
-  late UserDTO _userDTO;
+
   String key = "";
 
   @override
@@ -31,6 +33,7 @@ class _MyProfileState extends State<MyProfile> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    UserDTO? user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(
       appBar: AppBar(
@@ -61,8 +64,17 @@ class _MyProfileState extends State<MyProfile> {
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.blue[200],
-                    child: Icon(Icons.person, color: Colors.grey, size: 70),
-                      // 프로필 사진 URL
+                    child: user?.profile != ""
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(60),
+                      child: Image.network(
+                        user!.profile,
+                        width: 120,
+                        height: 120,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                        : Icon(Icons.person, color: Colors.grey, size: 70),
                   ),
 
                   SizedBox(width: screenWidth / 50),
@@ -71,14 +83,14 @@ class _MyProfileState extends State<MyProfile> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${nickname}', // 여기에 닉네임을 넣어주세요
+                        '${user?.nickname}', // 여기에 닉네임을 넣어주세요
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
 
                       SizedBox(height: screenHeight / 80),
 
                       Text(
-                        '이메일: ${email}', // 여기에 닉네임을 넣어주세요
+                        '이메일: ${user?.email}', // 여기에 닉네임을 넣어주세요
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ],

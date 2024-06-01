@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/mobile/search/search.dart';
 import 'package:flutter_splim/mobile/login/signout.dart';
+import 'package:flutter_splim/service/userservice.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +15,7 @@ import 'package:flutter_splim/dto/Shop.dart';
 import 'package:flutter_splim/mobile/mypage/prefer.dart';
 import 'package:flutter_splim/mobile/search/searchResult.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_splim/provider/userprovider.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -28,6 +31,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<Shop>> _increaseValues;
   late Future<List<Shop>> _decreaseValues;
   late Future<List<PriceDTO>> _futurePopularNames;
+  final UserService userService = UserService();
+  late Future<UserDTO> userDTO;
 
   @override
   void initState() {
@@ -38,6 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
     _increaseValues = priceService.fetchPriceIncreaseValues(date!);
     _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
     _futurePopularNames = priceService.fetchPopularItemPrices6();
+    userDTO = userService.fetchUser();
+    userDTO.then((user) {
+      Provider.of<UserProvider>(context, listen: false).updateUser(user);
+    });
   }
 
 
@@ -116,13 +125,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: screenHeight * 0.33,
                       child: Column(
                         children: [
-                          SizedBox(height: 30,),
+                          SizedBox(height: 40,),
                           Card(
-                            elevation: 5.0,
+                            elevation: 6.0,
                             color: Colors.blue[700],
 
                             child: Container(
-                              height: screenHeight * 0.25,
+                              height: screenHeight * 0.24,
                               width: screenWidth * 0.4,
                               decoration: BoxDecoration(
                                 image: DecorationImage(

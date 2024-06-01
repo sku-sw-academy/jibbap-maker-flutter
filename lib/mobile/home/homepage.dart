@@ -16,6 +16,7 @@ import 'package:flutter_splim/mobile/mypage/prefer.dart';
 import 'package:flutter_splim/mobile/search/searchResult.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:flutter_splim/mobile/home/preferdetail.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -33,6 +34,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<PriceDTO>> _futurePopularNames;
   final UserService userService = UserService();
   late Future<UserDTO> userDTO;
+  late Future<List<PriceDTO>> _futurePreferPrices;
+  late int userId;
 
   @override
   void initState() {
@@ -45,8 +48,15 @@ class _MyHomePageState extends State<MyHomePage> {
     _futurePopularNames = priceService.fetchPopularItemPrices6();
     userDTO = userService.fetchUser();
     userDTO.then((user) {
-      Provider.of<UserProvider>(context, listen: false).updateUser(user);
+      if (user != null) {
+        Provider.of<UserProvider>(context, listen: false).updateUser(user);
+        userId = user.id;
+        if (userId != null) {
+          _futurePreferPrices = priceService.fetchPreferPrice(userId);
+        }
+      }
     });
+
   }
 
 
@@ -150,12 +160,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                       color: Colors.white,
                                     ),
                                   ),
-                                  //SizedBox(height: 10.0),
-                                  // Icon(
-                                  //   Icons.sticky_note_2_outlined,
-                                  //   size: 80.0,
-                                  //   color: Colors.lightBlueAccent,
-                                  // ),
                                   SizedBox(height: 80.0),
                                   Text(
                                     'AI 기반 맞춤 레시피를\n확인해보세요!',
@@ -305,8 +309,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   },
                                 ),
                               ] else ...[
-                                FutureBuilder<List<Shop>>(
-                                  future: _increaseValues,
+                                FutureBuilder<List<PriceDTO>>(
+                                  future: _futurePreferPrices,
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState == ConnectionState.waiting) {
                                       return Center(child: CircularProgressIndicator());
@@ -315,12 +319,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                                       return Center(child: Text('No data found'));
                                     } else {
-                                      List<Shop> increaseValues = snapshot.data!;
+                                      List<PriceDTO> price = snapshot.data!;
                                       return Column(
                                         children: [
-                                          if (increaseValues.length < 3) ...[
+                                          if (price.length < 3) ...[
                                             Container(
-                                              height: 60, // 고정 높이
+                                              height: 100, // 고정 높이
                                               decoration: BoxDecoration(
                                                 border: Border.all(color: Colors.black),
                                                 borderRadius: BorderRadius.circular(10),// 경계선 색상
@@ -328,8 +332,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                               child: ListTile(
                                                 leading: Icon(Icons.info),
                                                 title: Text(
-                                                  '식재료를 \n'
-                                                      '3가지 이상 \n선택하세요',
+                                                  '선택하신 선호\n'
+                                                      '식재료 종류가 \n 부족합니다.',
                                                   textAlign: TextAlign.center,
                                                 ),
                                                 tileColor: Colors.grey[200],
@@ -349,8 +353,29 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 borderRadius: BorderRadius.circular(10),// 경계선 색상
                                               ),
                                               child: ListTile(
-                                                title: Text(increaseValues[0].name),
-                                                trailing: Text('${increaseValues[0].price} 원'),
+                                                title: Text(
+                                                  "${price[0].itemCode.itemName}\n${price[0].kindName}",
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                trailing: Text(
+                                                  "${price[0].value}%",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.blue,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                tileColor: Colors.white,
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => PreferDetailPage(price: price)),
+                                                  );
+                                                },
                                               ),
                                             ),
                                             Container(
@@ -360,8 +385,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 borderRadius: BorderRadius.circular(10),// 경계선 색상
                                               ),
                                               child: ListTile(
-                                                title: Text(increaseValues[1].name),
-                                                trailing: Text('${increaseValues[1].price} 원'),
+                                                title: Text(
+                                                  "${price[1].itemCode.itemName}\n${price[1].kindName}",
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+
+                                                  ),
+                                                ),
+                                                trailing: Text(
+                                                  "${price[1].value}%",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.blue,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                tileColor: Colors.white,
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => PreferDetailPage(price: price)),
+                                                  );
+                                                },
                                               ),
                                             ),
                                             Container(
@@ -371,8 +418,29 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 borderRadius: BorderRadius.circular(10),// 경계선 색상
                                               ),
                                               child: ListTile(
-                                                title: Text(increaseValues[2].name),
-                                                trailing: Text('${increaseValues[2].price} 원'),
+                                                title: Text(
+                                                  "${price[2].itemCode.itemName}\n${price[2].kindName}",
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                trailing: Text(
+                                                  "${price[2].value}%",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.blue,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                tileColor: Colors.white,
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => PreferDetailPage(price: price)),
+                                                  );
+                                                },
                                               ),
                                             ),
                                           ],
@@ -389,7 +457,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-
               ],
             ),
           ),

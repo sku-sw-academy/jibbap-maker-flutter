@@ -10,6 +10,7 @@ import 'package:flutter_splim/mobile/mypage/recipe/modify.dart';
 import 'package:flutter_splim/mobile/mypage/recipe/recipelist.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_splim/constant.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -74,17 +75,12 @@ class _MyProfileState extends State<MyProfile> {
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.blue[200],
+                    backgroundImage: user != null && user!.profile != "" && user!.profile!.isNotEmpty
+                        ? NetworkImage("${Constants.baseUrl}/api/auth/images/${user!.profile!}")
+                        : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
                     child: user != null && user!.profile != "" && user!.profile!.isNotEmpty
-                        ? ClipRRect(
-                      borderRadius: BorderRadius.circular(60),
-                          child: Image.network(
-                          user!.profile!,
-                          width: 120,
-                          height: 120,
-                          fit: BoxFit.cover,
-                      ),
-                    )
-                        : Icon(Icons.person, color: Colors.grey, size: 70),
+                        ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
+                        : Icon(Icons.person, size: 80, color: Colors.grey,), // 프로필 이미지가 없는 경우에 아이콘을 표시
                   ),
 
                   SizedBox(width: screenWidth / 50),
@@ -93,15 +89,15 @@ class _MyProfileState extends State<MyProfile> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${user?.nickname}', // 여기에 닉네임을 넣어주세요
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        '${user?.nickname ?? ''}', // 여기에 닉네임을 넣어주세요
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
 
                       SizedBox(height: screenHeight / 80),
 
                       Text(
-                        '이메일: ${user?.email}', // 여기에 닉네임을 넣어주세요
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        '이메일: ${user?.email ?? ''}', // 여기에 닉네임을 넣어주세요
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

@@ -29,6 +29,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   void initState() {
     super.initState();
     user = Provider.of<UserProvider>(context, listen: false).user!;
+    _nickNameController.text = user.nickname ?? '';
   }
 
   Future<void> getImage(ImageSource imageSource) async{
@@ -88,7 +89,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
         setState(() {
           _croppedFile = croppedFile;
         });
-        //uploadImage(user.id, _croppedFile!);
+        uploadImage(user.id, _croppedFile!);
       }
     }
   }
@@ -102,21 +103,19 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
     var response = await request.send();
     if (response.statusCode == 200) {
       print('Image uploaded successfully');
-      String imageUrl = await response.stream.bytesToString();
-      print('Image URL: $imageUrl');
-      // 이후 필요한 작업 수행
+      String image = await response.stream.bytesToString();
+      print('Image: $image');
+      setState(() {
+        user.profile = image; // 서버에서 받은 이미지 URL을 사용자 프로필에 설정
+      });
     } else {
       print('Failed to upload image');
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    _nickNameController.text = user.nickname ?? '';
-
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -137,27 +136,21 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   }
 
   Widget _buildPhotoArea() {
-
     return GestureDetector(
       onTap: () {
         showSheet(context);
       },
       child: Stack(
         children: [
-          _image != null
-              ? CircleAvatar(
-              radius: 70,
-              backgroundImage: FileImage(File(_croppedFile!.path)),
-          )
-              : user.profile != ""
-              ? CircleAvatar(
-            radius: 70,
-            backgroundImage: NetworkImage(user.profile!),
-          )
-              : CircleAvatar(
-                radius: 70,
-                backgroundColor: Colors.blue[200],
-                child: Icon(Icons.person, color: Colors.grey, size: 70),
+          CircleAvatar(
+            radius: 60,
+            backgroundColor: Colors.blue[200],
+            backgroundImage: user != null && user!.profile != "" && user!.profile!.isNotEmpty
+                ? NetworkImage("${Constants.baseUrl}/api/auth/images/${user!.profile!}")
+                : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
+            child: user != null && user!.profile != "" && user!.profile!.isNotEmpty
+                ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
+                : Icon(Icons.person, size: 80, color: Colors.grey,), // 프로필 이미지가 없는 경우에 아이콘을 표시
           ),
           Positioned(
             right: 5,

@@ -143,4 +143,25 @@ class UserService{
     }
   }
 
+  Future<String> changePassword(int userId, String currentPassword, String newPassword) async {
+    final url = Uri.parse('${Constants.baseUrl}/api/auth/changePassword');
+    final response = await http.post(
+      url,
+      body: {
+        'userId': userId.toString(),
+        'current': currentPassword,
+        'new': newPassword,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final String responseBody = response.body;
+      return responseBody;
+      // Handle successful response
+    } else {
+      throw Exception('Failed to change password: ${response.statusCode}');
+      // Handle error response
+    }
+  }
+
 }

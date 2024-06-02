@@ -17,6 +17,7 @@ import 'package:flutter_splim/mobile/search/searchResult.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:flutter_splim/mobile/home/preferdetail.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -37,6 +38,29 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<PriceDTO>> _futurePreferPrices;
   late int userId;
 
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // 새로고침 로직을 여기에 구현하세요.
+    date = getDate();
+    futurePrices = priceService.fetchPriceTop3(date!);
+    _increaseValues = priceService.fetchPriceIncreaseValues(date!);
+    _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
+    _futurePopularNames = priceService.fetchPopularItemPrices6();
+    userDTO = userService.fetchUser();
+    userDTO.then((user) {
+      if (user != null) {
+        Provider.of<UserProvider>(context, listen: false).updateUser(user);
+        userId = user.id;
+        if (userId != null) {
+          _futurePreferPrices = priceService.fetchPreferPrice(userId);
+        }
+      }
+    });
+    await Future.delayed(Duration(seconds: 2));
+    _refreshController.refreshCompleted();// 임시로 2초 대기
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,9 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       }
     });
-
   }
-
 
   String getDate(){
     DateTime now = DateTime.now();
@@ -94,7 +116,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
 
-      body: ListView(
+      body: SmartRefresher(
+        controller: _refreshController,
+        enablePullDown: true,
+        header: WaterDropHeader(),
+        onRefresh: _onRefresh,
+        child:ListView(
         children: [
           Container(
             margin: EdgeInsets.only(
@@ -195,34 +222,34 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: ToggleButtons(
                               isSelected: [isSelected, !isSelected],
                               onPressed: (index) async {
-                                if (index == 1) {
-                                  final storageService = Provider.of<SecureService>(context, listen: false);
-                                  String? token = await storageService.readToken(key);
-                                  if (token == null || token.isEmpty) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: Text('로그인 필요'),
-                                        content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            child: Text('확인'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(builder: (context) => LoginPage()),
-                                              ).then((value) => setState(() {
-
-                                              }));
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                    return;
-                                  }
-                                }
+                                // if (index == 1) {
+                                //   final storageService = Provider.of<SecureService>(context, listen: false);
+                                //   String? token = await storageService.readToken(key);
+                                //   if (token == null || token.isEmpty) {
+                                //     showDialog(
+                                //       context: context,
+                                //       builder: (context) => AlertDialog(
+                                //         title: Text('로그인 필요'),
+                                //         content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                                //         actions: <Widget>[
+                                //           TextButton(
+                                //             child: Text('확인'),
+                                //             onPressed: () {
+                                //               Navigator.of(context).pop();
+                                //               Navigator.push(
+                                //                 context,
+                                //                 MaterialPageRoute(builder: (context) => LoginPage()),
+                                //               ).then((value) => setState(() {
+                                //
+                                //               }));
+                                //             },
+                                //           ),
+                                //         ],
+                                //       ),
+                                //     );
+                                //     return;
+                                //   }
+                                // }
                                 setState(() {
                                   isSelected = index == 0 ? true : false;
                                 });
@@ -420,7 +447,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     fontSize: 11,
                                                     color: Colors.black,
                                                     fontWeight: FontWeight.bold,
-
                                                   ),
                                                 ),
                                                 trailing: Text(
@@ -720,6 +746,6 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(height: 15),
         ],
       ),
-    );
+    ),);
   }
 }

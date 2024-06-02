@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_splim/mobile/login/validate.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
+import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_splim/service/userservice.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   @override
@@ -7,14 +11,20 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  final _formKey = GlobalKey<FormState>(); // 폼의 키
-
+  final _formKey = GlobalKey<FormState>();
+  late UserDTO user;// 폼의 키
+  late UserService userService = UserService();
   TextEditingController _currentPasswordController = TextEditingController();
   TextEditingController _newPasswordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
-
   FocusNode _passwordFocus = FocusNode();
   bool _showCurrentPassword = false;
+
+  @override
+  void initState() {
+    super.initState();
+    user = Provider.of<UserProvider>(context, listen: false).user!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,26 +99,31 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               SizedBox(height: 20),
 
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   // 폼의 유효성 검사를 실행하고 유효할 경우 비밀번호 변경 로직 실행
                   if (_formKey.currentState!.validate()) {
-                    // 비밀번호 변경 로직 추가
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('비밀번호 변경 완료'),
-                        content: Text('비밀번호가 성공적으로 변경되었습니다.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context); // 다이얼로그 닫기
-                              Navigator.pop(context); // 이전 화면으로 돌아가기
-                            },
-                            child: Text('확인'),
-                          ),
-                        ],
-                      ),
-                    );
+                    try{
+                      String current = _currentPasswordController.text;
+                      String newPassword = _newPasswordController.text;
+                      String respone = await userService.changePassword(user.id, current, newPassword);
+
+                      if(respone != "Wrong password"){
+                        user.password = respone;
+                        Navigator.pop(context); // 다이얼로그 닫기
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('비밀번호가 성공적으로 변경되었습니다.')),
+                        );
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('현재 비밀번호가 잘못되었습니다.')),
+                        );
+                      }
+
+                    }catch(e){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("오류가 발생했습니다.")),
+                      );
+                    }
                   }
                 },
                 style: ElevatedButton.styleFrom(

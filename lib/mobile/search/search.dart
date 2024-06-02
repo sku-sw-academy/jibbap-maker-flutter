@@ -9,7 +9,7 @@ import 'package:flutter_splim/constant.dart';
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'package:flutter_splim/mobile/search/result.dart';
-import 'package:mysql_client/mysql_client.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -25,6 +25,17 @@ class _SearchPageState extends State<SearchPage> {
   late Future<List<Record>> recentSearches;
   late Future<List<PriceDTO>> futurePopularNames;
 
+
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // 새로고침 로직을 여기에 구현하세요.
+    recentSearches = dbHelper.getRecords();
+    futurePopularNames = priceService.fetchPopularItemPrices9();
+    fetchSuggestions();
+    await Future.delayed(Duration(seconds: 2));
+    _refreshController.refreshCompleted();// 임시로 2초 대기
+  }
 
   @override
   void initState() {
@@ -112,7 +123,12 @@ class _SearchPageState extends State<SearchPage> {
         ],
       ),
 
-      body: ListView(
+      body: SmartRefresher(
+        controller: _refreshController,
+        enablePullDown: true,
+        header: WaterDropHeader(),
+        onRefresh: _onRefresh,
+        child: ListView(
         children: [
           if (searchText.isEmpty)
             Column(
@@ -370,6 +386,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
         ],
       ),
+    ),
     );
   }
 }

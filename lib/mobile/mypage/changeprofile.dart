@@ -106,10 +106,32 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
       String image = await response.stream.bytesToString();
       print('Image: $image');
       setState(() {
-        user.profile = image; // 서버에서 받은 이미지 URL을 사용자 프로필에 설정
+        user.profile = image; // 서버에서 받은 이미지
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('프로필 이미지가 기본 이미지로 변경되었습니다.')),
+        );
       });
     } else {
       print('Failed to upload image');
+    }
+  }
+
+  Future<void> resetProfileImage(int userId) async {
+    var url = Uri.parse('${Constants.baseUrl}/api/auth/reset-profile');
+    var response = await http.post(url, body: {'userId': userId.toString()});
+    if (response.statusCode == 200 && response.body == "Ok") {
+      print('Profile reset successfully');
+      setState(() {
+        user.profile = ""; // 프로필 이미지 URL을 빈 값으로 설정
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('프로필 이미지가 기본 이미지로 변경되었습니다.')),
+      );
+    } else {
+      print('Failed to reset profile image');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('프로필 이미지 변경 실패')),
+      );
     }
   }
 
@@ -251,10 +273,8 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
       builder: (BuildContext context) {
         return SimpleDialog(
           backgroundColor: Colors.white,
-          // 배경색상을 변경
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10), // 경계선을 둥글게 만듦
-            // 경계선 색상 및 두께 설정
           ),
           elevation: 5.0,
           title: Text('프로필 사진 변경'),
@@ -262,7 +282,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
             SimpleDialogOption(
               onPressed: () {
                 getImage(ImageSource.camera); // 카메라 열기
-                Navigator.pop(context); // BottomSheet 닫기
+                Navigator.pop(context); // 다이얼로그 닫기
               },
               child: ListTile(
                 leading: Icon(Icons.photo_camera),
@@ -272,13 +292,24 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
             SimpleDialogOption(
               onPressed: () {
                 getImage(ImageSource.gallery); // 갤러리에서 이미지 선택
-                Navigator.pop(context); // BottomSheet 닫기
+                Navigator.pop(context); // 다이얼로그 닫기
               },
               child: ListTile(
                 leading: Icon(Icons.photo),
                 title: Text('갤러리에서 선택'),
               ),
             ),
+            if (user != null && user.profile != "" && user.profile!.isNotEmpty)
+              SimpleDialogOption(
+                onPressed: () {
+                  resetProfileImage(user.id); // 기본 이미지로 변경
+                  Navigator.pop(context); // 다이얼로그 닫기
+                },
+                child: ListTile(
+                  leading: Icon(Icons.restore),
+                  title: Text('기본 이미지로 변경'),
+                ),
+              ),
           ],
         );
       },

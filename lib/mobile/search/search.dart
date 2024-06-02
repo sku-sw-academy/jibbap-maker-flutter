@@ -96,7 +96,7 @@ class _SearchPageState extends State<SearchPage> {
                     builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
                   ),
                 ).then((value) => setState(() {
-
+                  futurePopularNames = priceService.fetchPopularItemPrices9();
                 }));
               }
             },
@@ -114,7 +114,7 @@ class _SearchPageState extends State<SearchPage> {
                     builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
                   ),
                 ).then((value) => setState(() {
-
+                  futurePopularNames = priceService.fetchPopularItemPrices9();
                 }));
               }
             },
@@ -291,7 +291,7 @@ class _SearchPageState extends State<SearchPage> {
                                                 builder: (context) => SelectedPage(itemname: popularPrices[j].itemCode.itemName),
                                               ),
                                             ).then((value) => setState(() {
-
+                                              futurePopularNames = priceService.fetchPopularItemPrices9();
                                             }));
                                           },
                                           child: Text(
@@ -376,7 +376,7 @@ class _SearchPageState extends State<SearchPage> {
                         builder: (context) => SelectedPage(itemname: suggestion),
                       ),
                     ).then((value) => setState(() {
-
+                      futurePopularNames = priceService.fetchPopularItemPrices9();
                     }));
                   },
                 );

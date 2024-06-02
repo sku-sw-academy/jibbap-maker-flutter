@@ -366,7 +366,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               context,
                                               MaterialPageRoute(builder: (context) => MyPrefer()),
                                             ).then((value) => setState(() {
-
+                                              _futurePreferPrices = priceService.fetchPreferPrice(userId);
                                             }));
                                           },
                                         ),
@@ -395,7 +395,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     context,
                                                     MaterialPageRoute(builder: (context) => MyPrefer()),
                                                   ).then((value) => setState(() {
-
+                                                    _futurePreferPrices = priceService.fetchPreferPrice(userId);
                                                   }));
                                                 },
                                               ),
@@ -430,7 +430,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     context,
                                                     MaterialPageRoute(builder: (context) => PreferDetailPage(price: price)),
                                                   ).then((value) => setState(() {
-
+                                                    _futurePreferPrices = priceService.fetchPreferPrice(userId);
                                                   }));
                                                 },
                                               ),
@@ -464,7 +464,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     context,
                                                     MaterialPageRoute(builder: (context) => PreferDetailPage(price: price)),
                                                   ).then((value) => setState(() {
-
+                                                    _futurePreferPrices = priceService.fetchPreferPrice(userId);
                                                   }));
                                                 },
                                               ),
@@ -498,7 +498,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                     context,
                                                     MaterialPageRoute(builder: (context) => PreferDetailPage(price: price)),
                                                   ).then((value) => setState(() {
-
+                                                    _futurePreferPrices = priceService.fetchPreferPrice(userId);
                                                   }));
                                                 },
                                               ),
@@ -678,7 +678,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           Navigator.push(context,
                           MaterialPageRoute(builder: (contex) => SelectedPage(itemname: price.itemCode.itemName)),
                           ).then((value) => setState(() {
-
+                            _futurePopularNames = priceService.fetchPopularItemPrices6();
                           }));
                         },
                         child: Card(

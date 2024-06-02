@@ -125,8 +125,6 @@ class _SearchPageState extends State<SearchPage> {
 
       body: SmartRefresher(
         controller: _refreshController,
-        enablePullDown: true,
-        header: WaterDropHeader(),
         onRefresh: _onRefresh,
         child: ListView(
         children: [

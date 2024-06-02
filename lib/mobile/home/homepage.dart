@@ -42,22 +42,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onRefresh() async {
     // 새로고침 로직을 여기에 구현하세요.
-    date = getDate();
-    futurePrices = priceService.fetchPriceTop3(date!);
-    _increaseValues = priceService.fetchPriceIncreaseValues(date!);
-    _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
-    _futurePopularNames = priceService.fetchPopularItemPrices6();
-    userDTO = userService.fetchUser();
-    userDTO.then((user) {
-      if (user != null) {
-        Provider.of<UserProvider>(context, listen: false).updateUser(user);
-        userId = user.id;
-        if (userId != null) {
-          _futurePreferPrices = priceService.fetchPreferPrice(userId);
-        }
-      }
-    });
     await Future.delayed(Duration(seconds: 2));
+
+    setState(() {
+      date = getDate();
+      futurePrices = priceService.fetchPriceTop3(date!);
+      _increaseValues = priceService.fetchPriceIncreaseValues(date!);
+      _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
+      _futurePopularNames = priceService.fetchPopularItemPrices6();
+      userDTO.then((user) {
+        if (user != null) {
+          Provider.of<UserProvider>(context, listen: false).updateUser(user);
+          userId = user.id;
+          if (userId != null) {
+            _futurePreferPrices = priceService.fetchPreferPrice(userId);
+          }
+        }
+      });
+    });
+
     _refreshController.refreshCompleted();// 임시로 2초 대기
   }
 
@@ -118,8 +121,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
       body: SmartRefresher(
         controller: _refreshController,
-        enablePullDown: true,
-        header: WaterDropHeader(),
         onRefresh: _onRefresh,
         child:ListView(
         children: [

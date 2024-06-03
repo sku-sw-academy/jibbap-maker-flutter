@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
-import 'package:flutter/services.dart';
+import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 class DetailPage extends StatefulWidget {
   final String regday;
@@ -23,17 +23,16 @@ class _DetailPageState extends State<DetailPage> {
     _data = priceService.fetchPriceDetails(widget.regday);
 
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp, // 세로
-      DeviceOrientation.landscapeLeft, // 가로
-      DeviceOrientation.landscapeRight, // 가로
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
     ]);
   }
 
   @override
   void dispose() {
-    // 페이지가 dispose 될 때 기본 회전 모드로 복원
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp, // 세로
+      DeviceOrientation.portraitUp,
     ]);
     super.dispose();
   }
@@ -58,87 +57,127 @@ class _DetailPageState extends State<DetailPage> {
             return Center(child: Text('No data found'));
           } else {
             List<PriceDTO> prices = snapshot.data!;
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal, // 가로 스크롤을 위해 설정
-              child: SingleChildScrollView(
-                    child: DataTable(
-                      headingRowColor:
-                        MaterialStateColor.resolveWith((states) => Colors.grey),
-                      border: TableBorder.all(
-                        width: 3.0,
-                        color:Colors.black12,
-                      ),
-                      columns: [
-                        DataColumn(
-                            label:
-                          Expanded(
-                            child: Text('품목', textAlign:TextAlign.center)
-                          )
-                        ),
-
-                        DataColumn(label: Expanded(
-                            child:
-                            Text('품종', textAlign:TextAlign.center))
-                        ),
-
-                        DataColumn(label: Expanded(
-                            child:
-                            Text('단위', textAlign:TextAlign.center))
-                        ),
-
-                        DataColumn(label: Expanded(
-                            child:
-                            Text('등급', textAlign:TextAlign.center))
-                        ),
-
-                        DataColumn(label: Expanded(
-                            child:
-                            Text('당일가격', textAlign:TextAlign.center))
-                        ),
-
-                        DataColumn(label: Expanded(
-                            child:
-                            Text('등락률', textAlign:TextAlign.center))
-                        ),
-
-                        DataColumn(label: Expanded(
-                            child:
-                            Text('날짜', textAlign:TextAlign.center))
-                        ),
-
-                      ],
-                      rows: prices.map((price) {
-                        return DataRow(cells: [
-                          DataCell(Text(price.itemCode.itemName, textAlign:TextAlign.center)),
-                          DataCell(Text(price.kindName, textAlign:TextAlign.center)),
-                          DataCell(Text(price.unit, textAlign:TextAlign.center)),
-                          DataCell(Text(price.rankName, textAlign:TextAlign.center)),
-                          DataCell(Text(price.dpr1, textAlign:TextAlign.center)),
-                          DataCell(
-                          Text( price.value.toString(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                          color: price.value < 0
-                          ? Colors.blue
-                              : price.value == 0
-                          ? Colors.black
-                              : Colors.red,
-                            ),
-                          ),
-                        ),
-                          DataCell(Text(price.regday, textAlign:TextAlign.center)),
-                          // Add more cells as needed
-                        ]
-                        );
-                      }
-                      ).toList(),
-                    ),
-                  ),
-            );
+            return _buildTableView(prices);
           }
         },
       ),
     );
   }
 
+  Widget _buildTableView(List<PriceDTO> prices) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final decoration = TableSpanDecoration(
+      border: TableSpanBorder(
+        trailing: BorderSide(color: theme.dividerColor),
+      ),
+    );
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: TableView.builder(
+        columnCount: 7,
+        rowCount: prices.length + 1,
+        pinnedRowCount: 1,
+        pinnedColumnCount: 0,
+        columnBuilder: (index) {
+          return TableSpan(
+            foregroundDecoration: index == 0 ? decoration : null,
+            extent: const FractionalTableSpanExtent(1 / 7),
+          );
+        },
+        rowBuilder: (index) {
+          return TableSpan(
+            foregroundDecoration: index == 0 ? decoration : null,
+            extent: const FixedTableSpanExtent(50),
+          );
+        },
+        cellBuilder: (context, vicinity) {
+          final isStickyHeader = vicinity.yIndex == 0;
+          String label = '';
+          TextStyle textStyle = const TextStyle();
+
+          if (isStickyHeader) {
+            switch (vicinity.xIndex) {
+              case 0:
+                label = '품목';
+                break;
+              case 1:
+                label = '품종';
+                break;
+              case 2:
+                label = '단위';
+                break;
+              case 3:
+                label = '등급';
+                break;
+              case 4:
+                label = '당일가격';
+                break;
+              case 5:
+                label = '등락률';
+                break;
+              case 6:
+                label = '날짜';
+                break;
+            }
+          } else {
+            final price = prices[vicinity.yIndex - 1];
+            switch (vicinity.xIndex) {
+              case 0:
+                label = price.itemCode.itemName;
+                break;
+              case 1:
+                label = price.kindName;
+                break;
+              case 2:
+                label = price.unit;
+                break;
+              case 3:
+                label = price.rankName;
+                break;
+              case 4:
+                label = price.dpr1;
+                break;
+              case 5:
+                label = price.value.toString();
+                textStyle = TextStyle(
+                  color: price.value < 0
+                      ? Colors.blue
+                      : price.value == 0
+                      ? Colors.black
+                      : Colors.red,
+                );
+                break;
+              case 6:
+                label = price.regday;
+                break;
+            }
+          }
+
+          return TableViewCell(
+            child: ColoredBox(
+              color: isStickyHeader ? Colors.transparent : colorScheme.background,
+              child: Center(
+                child: FittedBox(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      label,
+                      style: isStickyHeader
+                          ? TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                      )
+                          : textStyle,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }

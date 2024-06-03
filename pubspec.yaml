@@ -57,6 +57,7 @@ dependencies:
   data_table_2: ^2.5.12
   encrypt: ^5.0.3
   pull_to_refresh: ^2.0.0
+  two_dimensional_scrollables: ^0.3.0
 
 dev_dependencies:
   flutter_test:

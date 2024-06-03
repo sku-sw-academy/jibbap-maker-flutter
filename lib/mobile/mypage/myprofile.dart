@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_splim/dto/AuthLogoutRequest.dart';
 import 'package:flutter_splim/mobile/search/search.dart';
 import 'package:flutter_splim/mobile/mypage/prefer.dart';
 import 'package:flutter_splim/mobile/mypage/changeprofile.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_splim/mobile/mypage/recipe/recipelist.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/constant.dart';
+import 'package:flutter_splim/service/userservice.dart';
 
 class MyProfile extends StatefulWidget {
   @override
@@ -19,30 +21,22 @@ class MyProfile extends StatefulWidget {
 
 class _MyProfileState extends State<MyProfile> {
   bool _switchValue = false;
-  final String nickname = '닉네임';
-  final String email = 'test@example.com';
   final SecureService _secureService = SecureService();
   late UserDTO? user;
-
-  String key = "";
+  final UserService userService = UserService();
+  String access = "accessToken";
+  String refresh = "refreshToken";
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
-  }
-
-  void _loadUserData() {
-    UserDTO? userData = Provider.of<UserProvider>(context, listen: false).user;
-    setState(() {
-      user = userData;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    UserDTO? user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(
       appBar: AppBar(
@@ -75,10 +69,10 @@ class _MyProfileState extends State<MyProfile> {
                   CircleAvatar(
                     radius: 60,
                     backgroundColor: Colors.blue[200],
-                    backgroundImage: user != null && user!.profile != "" && user!.profile!.isNotEmpty
+                    backgroundImage: user != null && user!.profile != null && user!.profile!.isNotEmpty
                         ? NetworkImage("${Constants.baseUrl}/api/auth/images/${user!.profile!}")
                         : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
-                    child: user != null && user!.profile != "" && user!.profile!.isNotEmpty
+                    child: user != null && user!.profile != null && user!.profile!.isNotEmpty
                         ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
                         : Icon(Icons.person, size: 80, color: Colors.grey,), // 프로필 이미지가 없는 경우에 아이콘을 표시
                   ),
@@ -243,7 +237,11 @@ class _MyProfileState extends State<MyProfile> {
                 margin: EdgeInsets.only(top: screenHeight / 80, bottom: screenHeight / 80),
                 child: ElevatedButton(
                   onPressed: () async {
-                    await _secureService.deleteToken(key);
+                    String? token = await _secureService.readToken(refresh);
+                    userService.logout(AuthLogoutRequest(id: user!.id, refreshToken: token!));
+                    await _secureService.deleteToken(access);
+                    await _secureService.deleteToken(refresh);
+                    //Provider.of<UserProvider>(context).clearUser();
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                   style: ElevatedButton.styleFrom(

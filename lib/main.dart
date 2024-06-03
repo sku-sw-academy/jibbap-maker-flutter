@@ -14,6 +14,8 @@ import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:flutter_splim/mobile/recipeview/recipe.dart';
 import 'package:flutter_splim/mobile/login/signout.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
+import 'package:flutter_splim/service/userservice.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,7 +61,9 @@ class MainPage extends StatefulWidget{
 
 class _MainPageState extends State<MainPage> {
   bool _isLoggedIn = false;
-  String key = "";
+  String key = "accessToken";
+  late UserDTO? user;
+  final UserService userService = UserService();
 
   @override
   void initState() {
@@ -70,13 +74,17 @@ class _MainPageState extends State<MainPage> {
   Future<void> _checkLoginStatus() async {
     final storageService = Provider.of<SecureService>(context, listen: false);
     String? token = await storageService.readToken(key);
+    bool isLoggedIn = token != null && token.isNotEmpty;
     setState(() {
-      _isLoggedIn = token != null && token.isNotEmpty;
+      _isLoggedIn = isLoggedIn;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final storageService = Provider.of<SecureService>(context, listen: false);
+
     return DefaultTabController(
       length: 1,
       child: Scaffold(
@@ -123,31 +131,33 @@ class _MainPageState extends State<MainPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => RecipePage()),
-              ).then((value) => setState(() {
+              ).then((value) => setState((){
 
               }));
             }else if (index == 3) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MyPage()),
-              ).then((value) => setState(() {
-
-              }));
-              // if (_isLoggedIn) {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(builder: (context) => MyPage()),
-              //   ).then((value) => setState(() {
-              //
-              //                 }));
-              // } else {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(builder: (context) => LoginPage()),
-              //   ).then((value) => setState(() {
-              //
-              //                 }));
-              // }
+              if (_isLoggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyPage()),
+                ).then((value) {
+                  storageService.readToken(key).then((token) {
+                    setState(() {
+                      _isLoggedIn = token != null && token.isNotEmpty;
+                    });
+                  });
+                });
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                ).then((value) {
+                  storageService.readToken(key).then((token) {
+                    setState(() {
+                      _isLoggedIn = token != null && token.isNotEmpty;
+                    });
+                  });
+                });
+              }
             }
           },
         ),

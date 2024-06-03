@@ -6,6 +6,7 @@ import 'package:flutter_splim/dto/RegisterDTO.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_splim/constant.dart';
 import 'dart:convert';
+import 'package:flutter_splim/dto/AuthLogoutRequest.dart';
 
 class UserService{
 
@@ -102,17 +103,6 @@ class UserService{
     }
   }
 
-  Future<UserDTO> fetchUser() async {
-    final response = await http.get(Uri.parse('${Constants.baseUrl}/api/auth/user'));
-
-    if (response.statusCode == 200) {
-      var responsebody = utf8.decode(response.bodyBytes);
-      return UserDTO.fromJson(json.decode(responsebody));
-    } else {
-      throw Exception('Failed to load user');
-    }
-  }
-
   Future<List<String>> fetchEmails() async {
     final response = await http.get(Uri.parse('${Constants.baseUrl}/api/auth/emails'));
 
@@ -161,6 +151,49 @@ class UserService{
     } else {
       throw Exception('Failed to change password: ${response.statusCode}');
       // Handle error response
+    }
+  }
+
+  Future<UserDTO> getUserInfo(String refreshToken) async {
+    final url = Uri.parse('${Constants.baseUrl}/api/auth/userInfo/$refreshToken');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8', // 새로운 accessToken을 헤더에 포함
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      return UserDTO.fromJson(responseData);
+    } else {
+      throw Exception('사용자 정보를 가져오는 데 실패했습니다.');
+    }
+  }
+
+  Future<void> logout(AuthLogoutRequest request) async {
+    final url = Uri.parse('${Constants.baseUrl}/api/auth/logout');
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+    final body = jsonEncode({
+      'id': request.id,
+      'refreshToken': request.refreshToken,
+    });
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        // 로그아웃 성공
+        print('로그아웃 성공');
+      } else {
+        // 로그아웃 실패
+        print('로그아웃 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      // 네트워크 오류
+      print('네트워크 오류: $e');
     }
   }
 

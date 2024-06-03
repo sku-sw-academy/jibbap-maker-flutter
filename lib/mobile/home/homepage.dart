@@ -27,7 +27,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool isSelected = true;
   String? date;
-  String key = "";
+  String key = "accessToken";
   final PriceService priceService = PriceService();
   late Future<List<PriceDTO>> futurePrices;
   late Future<List<Shop>> _increaseValues;
@@ -50,13 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
       _increaseValues = priceService.fetchPriceIncreaseValues(date!);
       _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
       _futurePopularNames = priceService.fetchPopularItemPrices6();
+      userDTO = _fetchUser();
       userDTO.then((user) {
         if (user != null) {
-          Provider.of<UserProvider>(context, listen: false).updateUser(user);
           userId = user.id;
-          if (userId != null) {
-            _futurePreferPrices = priceService.fetchPreferPrice(userId);
-          }
+          _futurePreferPrices = priceService.fetchPreferPrice(userId);
         }
       });
     });
@@ -68,21 +66,34 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    initializeData();
+  }
+
+  Future<void> initializeData() async {
     date = getDate();
     futurePrices = priceService.fetchPriceTop3(date!);
     _increaseValues = priceService.fetchPriceIncreaseValues(date!);
     _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
     _futurePopularNames = priceService.fetchPopularItemPrices6();
-    userDTO = userService.fetchUser();
+    userDTO = _fetchUser();
     userDTO.then((user) {
       if (user != null) {
-        Provider.of<UserProvider>(context, listen: false).updateUser(user);
         userId = user.id;
-        if (userId != null) {
-          _futurePreferPrices = priceService.fetchPreferPrice(userId);
-        }
+        _futurePreferPrices = priceService.fetchPreferPrice(userId);
       }
     });
+  }
+
+  Future<UserDTO> _fetchUser() async {
+    final storageService = Provider.of<SecureService>(context, listen: false);
+    String? token = await storageService.readToken("refreshToken");
+    if (token != null && token.isNotEmpty) {
+      UserDTO user = await userService.getUserInfo(token);
+      Provider.of<UserProvider>(context, listen: false).updateUser(user);
+      return user;
+    } else {
+      throw Exception("유효한 토큰이 없습니다.");
+    }
   }
 
   String getDate(){
@@ -122,7 +133,14 @@ class _MyHomePageState extends State<MyHomePage> {
       body: SmartRefresher(
         controller: _refreshController,
         onRefresh: _onRefresh,
-        child:ListView(
+        child: Consumer<UserProvider>(
+        builder: (context, userProvider, child) {
+          if (userProvider.user != null) {
+          userId = userProvider.user!.id;
+          _futurePreferPrices = priceService.fetchPreferPrice(userId);
+        }
+
+        return ListView(
         children: [
           Container(
             margin: EdgeInsets.only(
@@ -148,8 +166,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => LoginPage()),
-                                  ).then((value) => setState(() {
-
+                                  ).then((value) => setState(() async {
+                                    Future.delayed(Duration(milliseconds: 500), () {
+                                      setState(() {
+                                        // 여기서 필요한 로그인 이후의 동작 수행
+                                      });
+                                    });
                                   }));
                                 },
                               ),
@@ -223,34 +245,39 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: ToggleButtons(
                               isSelected: [isSelected, !isSelected],
                               onPressed: (index) async {
-                                // if (index == 1) {
-                                //   final storageService = Provider.of<SecureService>(context, listen: false);
-                                //   String? token = await storageService.readToken(key);
-                                //   if (token == null || token.isEmpty) {
-                                //     showDialog(
-                                //       context: context,
-                                //       builder: (context) => AlertDialog(
-                                //         title: Text('로그인 필요'),
-                                //         content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
-                                //         actions: <Widget>[
-                                //           TextButton(
-                                //             child: Text('확인'),
-                                //             onPressed: () {
-                                //               Navigator.of(context).pop();
-                                //               Navigator.push(
-                                //                 context,
-                                //                 MaterialPageRoute(builder: (context) => LoginPage()),
-                                //               ).then((value) => setState(() {
-                                //
-                                //               }));
-                                //             },
-                                //           ),
-                                //         ],
-                                //       ),
-                                //     );
-                                //     return;
-                                //   }
-                                // }
+                                if (index == 1) {
+                                  final storageService = Provider.of<SecureService>(context, listen: false);
+                                  String? token = await storageService.readToken(key);
+                                  if (token == null || token.isEmpty) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text('로그인 필요'),
+                                        content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text('확인'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => LoginPage()),
+                                              ).then((value) => setState(() async {
+                                                Future.delayed(Duration(milliseconds: 500), () {
+                                                  setState(() {
+                                                    // 여기서 필요한 로그인 이후의 동작 수행
+                                                  });
+                                                });
+
+                                              }));
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                }
                                 setState(() {
                                   isSelected = index == 0 ? true : false;
                                 });
@@ -746,7 +773,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           SizedBox(height: 15),
         ],
-      ),
-    ),);
+      );}
+    ),
+      ),);
   }
 }

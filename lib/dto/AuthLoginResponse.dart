@@ -1,13 +1,15 @@
 class AuthLoginResponse{
   final int id;
   final String accessToken;
+  final String refreshToken;
 
-  AuthLoginResponse({required this.id, required this.accessToken});
+  AuthLoginResponse({required this.id, required this.accessToken, required this.refreshToken});
 
   factory AuthLoginResponse.fromJson(Map<String, dynamic> json) {
     return AuthLoginResponse(
       id: json['id'],
       accessToken: json['accessToken'],
+      refreshToken: json['refreshToken'],
     );
   }
 
@@ -16,6 +18,7 @@ class AuthLoginResponse{
     return {
       'id': id,
       'accessToken': accessToken,
+      'refreshToken' : refreshToken
     };
   }
 

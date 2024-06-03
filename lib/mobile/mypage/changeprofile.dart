@@ -9,6 +9,7 @@ import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_splim/constant.dart';
 import 'package:flutter_splim/service/userservice.dart';
+import 'package:flutter_splim/secure_storage/secure_service.dart';
 
 class ChangeProfilePage extends StatefulWidget {
 
@@ -22,14 +23,15 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   final ImagePicker picker = ImagePicker();
   TextEditingController _nickNameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  late UserDTO user;
+  final SecureService _secureService = SecureService();
+  late UserDTO? user;
   late UserService userService = UserService();
 
   @override
   void initState() {
     super.initState();
-    user = Provider.of<UserProvider>(context, listen: false).user!;
-    _nickNameController.text = user.nickname ?? '';
+    user = Provider.of<UserProvider>(context, listen: false).user;
+    _nickNameController.text = user?.nickname ?? '';
   }
 
   Future<void> getImage(ImageSource imageSource) async{
@@ -89,7 +91,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
         setState(() {
           _croppedFile = croppedFile;
         });
-        uploadImage(user.id, _croppedFile!);
+        uploadImage(user!.id, _croppedFile!);
       }
     }
   }
@@ -106,7 +108,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
       String image = await response.stream.bytesToString();
       print('Image: $image');
       setState(() {
-        user.profile = image; // 서버에서 받은 이미지
+        user!.profile = image; // 서버에서 받은 이미지
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('프로필 이미지가 기본 이미지로 변경되었습니다.')),
         );
@@ -122,7 +124,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
     if (response.statusCode == 200 && response.body == "Ok") {
       print('Profile reset successfully');
       setState(() {
-        user.profile = ""; // 프로필 이미지 URL을 빈 값으로 설정
+        user!.profile = null; // 프로필 이미지 URL을 빈 값으로 설정
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('프로필 이미지가 기본 이미지로 변경되었습니다.')),
@@ -167,10 +169,10 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
           CircleAvatar(
             radius: 60,
             backgroundColor: Colors.blue[200],
-            backgroundImage: user != null && user!.profile != "" && user!.profile!.isNotEmpty
+            backgroundImage: user != null && user!.profile != null && user!.profile!.isNotEmpty
                 ? NetworkImage("${Constants.baseUrl}/api/auth/images/${user!.profile!}")
                 : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
-            child: user != null && user!.profile != "" && user!.profile!.isNotEmpty
+            child: user != null && user!.profile != null && user!.profile!.isNotEmpty
                 ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
                 : Icon(Icons.person, size: 80, color: Colors.grey,), // 프로필 이미지가 없는 경우에 아이콘을 표시
           ),
@@ -229,12 +231,12 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
 
             ElevatedButton(
             onPressed: () async {
-              if (_formKey.currentState!.validate() && _nickNameController.text != user.nickname) {
+              if (_formKey.currentState!.validate() && _nickNameController.text != user!.nickname) {
 
-                String result = await userService.changeNickName(user.id, _nickNameController.text);
+                String result = await userService.changeNickName(user!.id, _nickNameController.text);
                 if (result != "error") {
                   setState(() {
-                    user.nickname = result;
+                    user!.nickname = result;
                   });
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -299,10 +301,10 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                 title: Text('갤러리에서 선택'),
               ),
             ),
-            if (user != null && user.profile != "" && user.profile!.isNotEmpty)
+            if (user != null && user!.profile != null && user!.profile!.isNotEmpty)
               SimpleDialogOption(
                 onPressed: () {
-                  resetProfileImage(user.id); // 기본 이미지로 변경
+                  resetProfileImage(user!.id); // 기본 이미지로 변경
                   Navigator.pop(context); // 다이얼로그 닫기
                 },
                 child: ListTile(

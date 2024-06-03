@@ -18,7 +18,6 @@ class LoginPage extends StatelessWidget{
 
     void _loginSuccess(UserDTO user) {
       userProvider.updateUser(user);
-      // 로그인 후에 홈 화면으로 이동하거나 다른 작업을 수행할 수 있습니다.
     }
 
     final TextEditingController _emailController = TextEditingController();
@@ -186,10 +185,12 @@ class LoginPage extends StatelessWidget{
 
                         try {
                           final response = await userService.login(email, password);
-                          secureService.writeToken("accesstoken", response.accessToken);
+                          secureService.writeToken("accessToken", response.accessToken);
+                          secureService.writeToken("refreshToken", response.refreshToken);
+                          final user = await userService.getUserInfo(response.refreshToken);
 
-
-                          Navigator.pop(context);
+                          _loginSuccess(user);
+                          Navigator.of(context).popUntil((route) => route.isFirst);
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('로그인 실패: $e')),

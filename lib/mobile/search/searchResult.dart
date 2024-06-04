@@ -189,7 +189,7 @@ class _SelectedPageState extends State<SelectedPage> {
 
                   if (selectedKindIndex != null && ranks.length > selectedKindIndex! && ranks[selectedKindIndex!] != null && ranks[selectedKindIndex!].isNotEmpty)
                     Container(
-                      width: 70, // 너비 설정
+                      width: 85, // 너비 설정
                       height: 50, // 높이 설정
                       child: DropdownButton<int>(
                         value: selectedRankIndex,

@@ -19,6 +19,9 @@ import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:flutter_splim/mobile/home/preferdetail.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_splim/mobile/home/AIrecipe.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_splim/constant.dart';
+import 'dart:convert';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -38,28 +41,14 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<UserDTO> userDTO;
   late Future<List<PriceDTO>> _futurePreferPrices;
   late int userId;
+  bool isNow = false;
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
     // 새로고침 로직을 여기에 구현하세요.
     await Future.delayed(Duration(seconds: 2));
-
-    setState(() {
-      date = getDate();
-      futurePrices = priceService.fetchPriceTop3(date!);
-      _increaseValues = priceService.fetchPriceIncreaseValues(date!);
-      _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
-      _futurePopularNames = priceService.fetchPopularItemPrices6();
-      userDTO = _fetchUser();
-      userDTO.then((user) {
-        if (user != null) {
-          userId = user.id;
-          _futurePreferPrices = priceService.fetchPreferPrice(userId);
-        }
-      });
-    });
-
+    initializeData();
     _refreshController.refreshCompleted();// 임시로 2초 대기
   }
 
@@ -71,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> initializeData() async {
-    date = getDate();
+    date = await getDate();
     futurePrices = priceService.fetchPriceTop3(date!);
     _increaseValues = priceService.fetchPriceIncreaseValues(date!);
     _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
@@ -97,13 +86,32 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  String getDate(){
+  Future<String> getDate() async {
     DateTime now = DateTime.now();
-    if(now.hour < 16){
-      DateTime previousDay = now.subtract(Duration(days: 1));
+    DateTime previousDay = now.subtract(Duration(days: 1));
+    if (now.hour < 16) {
       return DateFormat('yyyy-MM-dd').format(previousDay);
-    }else{
-      return DateFormat('yyyy-MM-dd').format(now);
+    } else {
+      String _date = DateFormat('yyyy-MM-dd').format(now);
+      await fetchLastRegday(_date);
+      if (isNow)
+        return DateFormat('yyyy-MM-dd').format(now);
+      else
+        return DateFormat('yyyy-MM-dd').format(previousDay);
+    }
+  }
+
+  Future<void> fetchLastRegday(String _date) async {
+    try {
+      final response = await http.get(Uri.parse('${Constants.baseUrl}/prices/last/regday'));
+      if (response.statusCode == 200) {
+        String responsebody = response.body;
+        isNow = (_date == responsebody);
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -112,36 +120,41 @@ class _MyHomePageState extends State<MyHomePage> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        title: Text('알뜰집밥'),
-        centerTitle: true,
-        backgroundColor: Colors.lightBlueAccent,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SearchPage()),).then((value) => setState(() {
-              }));
-            },
-          ),
-        ],
-      ),
+    return FutureBuilder<void>(
+        future: initializeData(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+        return Consumer<UserProvider>(
+          builder: (context, userProvider, child) {
+          return Scaffold(
+            appBar: AppBar(
+              scrolledUnderElevation: 0,
+              title: Text('알뜰집밥'),
+              backgroundColor: Colors.lightBlueAccent,
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SearchPage()),
+                    ).then((value) => setState(() {
 
-      body: SmartRefresher(
+                    }));
+                  },
+                ),
+              ],
+            ),
+        body: SmartRefresher(
         controller: _refreshController,
         onRefresh: _onRefresh,
-        child: Consumer<UserProvider>(
-          builder: (context, userProvider, child) {
-          if (userProvider.user != null) {
-          userId = userProvider.user!.id;
-          _futurePreferPrices = priceService.fetchPreferPrice(userId);
-        }
-          return ListView(
-          children: [
+        child: ListView(
+        children: <Widget>[
             Container(
               margin: EdgeInsets.only(
                 top: screenHeight * 0.01, right: screenWidth * 0.04),
@@ -781,9 +794,13 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           SizedBox(height: 15),
         ],
-      );}
-    ),
       ),
+      ),
+      );
+        },
+        );
+        }
+      },
     );
   }
 }

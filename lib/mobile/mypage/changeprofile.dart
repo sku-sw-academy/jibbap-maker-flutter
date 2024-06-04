@@ -226,6 +226,25 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                 }
                 return null;
               },
+                onFieldSubmitted: (_) async {
+                  if (_formKey.currentState!.validate() && _nickNameController.text != user!.nickname) {
+
+                    String result = await userService.changeNickName(user!.id, _nickNameController.text);
+                    if (result != "error") {
+                      setState(() {
+                        user!.nickname = result;
+                      });
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('닉네임 변경 성공')),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('닉네임 변경 실패')),
+                      );
+                    }
+                  }
+                },
             ),
             SizedBox(height: 12),
 

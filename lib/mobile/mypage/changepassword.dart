@@ -95,6 +95,32 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   }
                   return null;
                 },
+                onFieldSubmitted: (_) async {
+                  if (_formKey.currentState!.validate()) {
+                    try{
+                      String current = _currentPasswordController.text;
+                      String newPassword = _newPasswordController.text;
+                      String respone = await userService.changePassword(user.id, current, newPassword);
+
+                      if(respone != "Wrong password"){
+                        user.password = respone;
+                        Navigator.pop(context); // 다이얼로그 닫기
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('비밀번호가 성공적으로 변경되었습니다.')),
+                        );
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('현재 비밀번호가 잘못되었습니다.')),
+                        );
+                      }
+
+                    }catch(e){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("오류가 발생했습니다.")),
+                      );
+                    }
+                  }
+                },
               ),
               SizedBox(height: 20),
 

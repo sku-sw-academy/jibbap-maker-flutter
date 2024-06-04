@@ -121,8 +121,8 @@ class _IngredientAllState extends State<IngredientAll> {
           Expanded(
             child: isSearching
                 ? ListView.builder(
-              itemCount: filteredItems.length,
-              itemBuilder: (context, index) {
+                itemCount: filteredItems.length,
+                itemBuilder: (context, index) {
                 String itemName = filteredItems[index];
                 PreferDTO? itemPrefer;
 

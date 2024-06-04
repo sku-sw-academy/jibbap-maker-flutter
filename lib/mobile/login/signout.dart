@@ -158,9 +158,26 @@ class LoginPage extends StatelessWidget{
                               height: 0,
                               letterSpacing: -0.33,
                             ),
-
                           ),
                           controller: _passwordController,
+                          onFieldSubmitted: (_) async {
+                            String email = _emailController.text.trim();
+                            String password = _passwordController.text.trim();
+
+                            try {
+                              final response = await userService.login(email, password);
+                              secureService.writeToken("accessToken", response.accessToken);
+                              secureService.writeToken("refreshToken", response.refreshToken);
+                              final user = await userService.getUserInfo(response.refreshToken);
+
+                              _loginSuccess(user);
+                              Navigator.of(context).popUntil((route) => route.isFirst);
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('로그인 실패')),
+                              );
+                            }
+                          },
                         ),
                       )
                     ],

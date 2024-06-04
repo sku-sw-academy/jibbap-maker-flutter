@@ -317,6 +317,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         return null;
                       },
                       onSaved: (value) {},
+                      onFieldSubmitted: (_) async {
+                        if(_formKey.currentState!.validate()){
+                          _formKey.currentState!.save();
+
+                          String emailValue = _emailController.text.toString();
+                          String nicknameValue = _nickNameController.text.toString();
+                          String passwordValue = _passwordController.text.toString();
+
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => ValidateEmail(email: emailValue, nickname: nicknameValue, password: passwordValue,)));
+
+                        }
+                      },
                     ),
                   ),
                   Container(

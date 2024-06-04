@@ -163,6 +163,30 @@ class _ValidateEmailState extends State<ValidateEmail> {
                           // 다른 속성들 설정
                         ),
                         controller: _authController,
+                        onFieldSubmitted: (_) async {
+                          String authCode = _authController.text.toString();
+
+                          try {
+                            if (authCode == code) {
+                              final result = await _userService.register(widget.email, widget.nickname, widget.password);
+                              if (result == 'OK') {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('회원가입 성공')),
+                                );
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('인증번호가 틀렸습니다. 다시 입력하세요.')),
+                              );
+                            }
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Failed to register: $e')),
+                            );
+                          }
+                        },
                       ),
                     ),
                   ],

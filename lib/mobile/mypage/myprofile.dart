@@ -84,15 +84,11 @@ class _MyProfileState extends State<MyProfile> {
                     children: [
                       Text(
                         '${user?.nickname ?? ''}', // 여기에 닉네임을 넣어주세요
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
 
                       SizedBox(height: screenHeight / 80),
 
-                      Text(
-                        '이메일: ${user?.email ?? ''}', // 여기에 닉네임을 넣어주세요
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
                     ],
                   ),
                 ],

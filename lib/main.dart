@@ -16,6 +16,7 @@ import 'package:flutter_splim/mobile/login/signout.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/service/userservice.dart';
+import 'package:flutter_splim/desktop/admin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -171,14 +172,7 @@ class MyAppDesktop extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: Text(
-            'Desktop',
-            style: TextStyle(fontSize: 24.0),
-          ),
-        ),
-      ),
+      home: AdminPage()
     );
   }
 }

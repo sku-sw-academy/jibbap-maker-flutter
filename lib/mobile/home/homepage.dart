@@ -18,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:flutter_splim/mobile/home/preferdetail.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_splim/mobile/home/AIrecipe.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -178,13 +179,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         );
                         return;
+                      }else{
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AIRecipePage()));
                       }
                     },
                     child: Container(
-                      height: screenHeight * 0.33,
+                      height: screenHeight * 0.36,
                       child: Column(
                         children: [
-                          SizedBox(height: 40,),
+                          SizedBox(height: 59,),
                           Card(
                             elevation: 6.0,
                             color: Colors.blue[700],
@@ -231,7 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
                   child: Container(
                     width: double.infinity,
-                    height: screenHeight * 0.33,
+                    height: screenHeight * 0.36,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -325,38 +328,39 @@ class _MyHomePageState extends State<MyHomePage> {
                                       List<PriceDTO> prices = snapshot.data!;
                                       return Column(
                                         children: prices.map((price) {
-                                          return Container(
-                                            height: 61, // 고정 높이
-                                            decoration: BoxDecoration(
-                                              border: Border.all(color: Colors.black),
-                                              borderRadius: BorderRadius.circular(10),// 경계선 색상
-                                            ),
-                                            child: ListTile(
-                                              title: Text(
-                                                "${price.itemCode.itemName}\n${price.kindName}",
-                                                style: TextStyle(
-                                                  fontSize: 11,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                          return Padding(
+                                            padding: EdgeInsets.symmetric(vertical: 4), // 위아래 간격 조절
+                                            child: Container(
+                                              height: 61, // 고정 높이
+                                              decoration: BoxDecoration(
+                                                border: Border.all(color: Colors.black),
+                                                borderRadius: BorderRadius.circular(10), // 경계선 색상
                                               ),
-                                              trailing: Text(
-                                                "${price.value}%",
-                                                style: TextStyle(
-                                                  fontSize: 12,
+                                              child: ListTile(
+                                                title: Text(
+                                                  "${price.itemCode.itemName}\n${price.kindName}",
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                trailing: Text(
+                                                  "${price.value}%",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
                                                     color: Colors.blue,
                                                     fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
+                                                tileColor: Colors.white,
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => DetailPage(regday: date!)),
+                                                  ).then((value) => setState(() {}));
+                                                },
                                               ),
-                                              tileColor: Colors.white,
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(builder: (context) => DetailPage(regday: date!)),
-                                                ).then((value) => setState(() {
-
-                                                }));
-                                              },
                                             ),
                                           );
                                         }).toList(),
@@ -427,6 +431,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                               ),
                                             ),
                                           ] else ...[
+                                            SizedBox(height: 4,),
                                             Container(
                                               height: 60, // 고정 높이
                                               decoration: BoxDecoration(
@@ -461,6 +466,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 },
                                               ),
                                             ),
+                                            SizedBox(height: 8,),
+
                                             Container(
                                               height: 60, // 고정 높이
                                               decoration: BoxDecoration(
@@ -495,6 +502,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 },
                                               ),
                                             ),
+                                            SizedBox(height: 8,),
                                             Container(
                                               height: 60, // 고정 높이
                                               decoration: BoxDecoration(
@@ -529,6 +537,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 },
                                               ),
                                             ),
+                                            SizedBox(height: 4,),
                                           ],
                                         ],
                                       );

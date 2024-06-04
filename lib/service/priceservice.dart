@@ -104,4 +104,19 @@ class PriceService{
     }
   }
 
+  Future<String> fetchLastRegday() async {
+    try {
+      final response = await http.get(Uri.parse('${Constants.baseUrl}/prices/last/regday'));
+      if (response.statusCode == 200) {
+        String responsebody = utf8.decode(response.bodyBytes);
+        return responsebody; // 서버에서 'regday' 키의 값을 반환
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error: $e');
+      return ''; // 에러 발생 시 빈 문자열 반환
+    }
+  }
+
 }

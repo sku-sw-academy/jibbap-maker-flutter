@@ -127,7 +127,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
         user!.profile = null; // 프로필 이미지 URL을 빈 값으로 설정
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('프로필 이미지가 기본 이미지로 변경되었습니다.')),
+        SnackBar(content: Text('프로필 이미지가 변경되었습니다.')),
       );
     } else {
       print('Failed to reset profile image');

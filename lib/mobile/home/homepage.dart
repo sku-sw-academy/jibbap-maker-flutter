@@ -134,18 +134,17 @@ class _MyHomePageState extends State<MyHomePage> {
         controller: _refreshController,
         onRefresh: _onRefresh,
         child: Consumer<UserProvider>(
-        builder: (context, userProvider, child) {
+          builder: (context, userProvider, child) {
           if (userProvider.user != null) {
           userId = userProvider.user!.id;
           _futurePreferPrices = priceService.fetchPreferPrice(userId);
         }
-
-        return ListView(
-        children: [
-          Container(
-            margin: EdgeInsets.only(
+          return ListView(
+          children: [
+            Container(
+              margin: EdgeInsets.only(
                 top: screenHeight * 0.01, right: screenWidth * 0.04),
-            child: Row(
+              child: Row(
               children: [
                 Expanded(
                   child: GestureDetector(
@@ -775,6 +774,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       );}
     ),
-      ),);
+      ),
+    );
   }
 }

@@ -1,74 +1,141 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_splim/dto/PriceDTO.dart';
+import 'package:flutter_splim/dto/gptchatrequest.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_splim/constant.dart';
+import 'dart:convert';
 
-class AIRecipePage extends StatefulWidget{
+class AIRecipePage extends StatefulWidget {
+  final int userId;
+  final Future<List<PriceDTO>> futurePrices;
+
+  AIRecipePage({required this.userId, required this.futurePrices});
 
   @override
   _AIRecipePageState createState() => _AIRecipePageState();
 }
 
-class _AIRecipePageState extends State<AIRecipePage>{
+class _AIRecipePageState extends State<AIRecipePage> {
+  late String responseText;
+
+  Future<String> sendGptChatRequest(int userId, List<PriceDTO> prices) async {
+    final url = Uri.parse('${Constants.baseUrl}/api/gpt/recipe');
+
+    GptChatRequest request = GptChatRequest(
+      id: userId,
+      thriftyItems: prices.map((price) => price.itemCode.itemName).join(', '),
+    );
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: json.encode(request.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        responseText = response.body;
+      });
+      return response.body;
+    } else {
+      throw Exception('Failed to load recipe: ${response.statusCode}');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    responseText = '';
+    fetchRecipe(); // 초기화 시에 응답을 받기 위해 initState에서 호출
+  }
+
+  // 응답을 받는 메서드
+  void fetchRecipe() async {
+    try {
+      List<PriceDTO> prices = await widget.futurePrices;
+      String response = await sendGptChatRequest(widget.userId, prices);
+      print('Recipe: $response');
+      // Add further UI handling for the response if needed
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text("레시피"),
         centerTitle: true,
       ),
-      body: ListView(
-        children: [
-          Divider(),
-
-
-
-          Divider(),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  // 첫 번째 버튼 클릭 시 실행할 동작
-                },
-                child: Icon(Icons.save),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  surfaceTintColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
-                  ),
-                  side: BorderSide(color: Colors.black, width: 1),
-                    minimumSize: Size(50, 50)
-                  // 다른 스타일 속성들...
+      body: FutureBuilder<List<PriceDTO>>(
+        future: widget.futurePrices,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No data available'));
+          } else {
+            List<PriceDTO> prices = snapshot.data!;
+            return ListView(
+              children: [
+                Divider(),
+                // 여기에 데이터를 표시
+                Text(
+                  responseText,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
                 ),
-              ),
 
-              SizedBox(width: 40,),
+                Divider(),
 
-              ElevatedButton(
-                onPressed: () {
-                  // 두 번째 버튼 클릭 시 실행할 동작
-                },
-                child: Icon(Icons.refresh),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  surfaceTintColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
-                  ),
-                  side: BorderSide(color: Colors.black, width: 1),
-                    minimumSize: Size(50, 50)
-                  // 다른 스타일 속성들...
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+
+                      },
+                      child: Icon(Icons.save),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        surfaceTintColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        side: BorderSide(color: Colors.black, width: 1),
+                        minimumSize: Size(50, 50),
+                      ),
+                    ),
+                    SizedBox(width: 40),
+                    ElevatedButton(
+                      onPressed: () {
+                        fetchRecipe();
+                      },
+                      child: Icon(Icons.refresh),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        surfaceTintColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        side: BorderSide(color: Colors.black, width: 1),
+                        minimumSize: Size(50, 50),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            );
+          }
+        },
       ),
     );
   }
-
 }

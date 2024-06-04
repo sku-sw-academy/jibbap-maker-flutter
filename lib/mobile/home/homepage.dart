@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // 새로고침 로직을 여기에 구현하세요.
     await Future.delayed(Duration(seconds: 2));
     initializeData();
+    isSelected = true;
     _refreshController.refreshCompleted();// 임시로 2초 대기
   }
 
@@ -193,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         );
                         return;
                       }else{
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AIRecipePage()));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AIRecipePage(userId: userId, futurePrices: futurePrices,)));
                       }
                     },
                     child: Container(

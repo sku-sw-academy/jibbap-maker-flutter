@@ -15,7 +15,7 @@ class RecipePage extends StatefulWidget {
 
 class _RecipePageState extends State<RecipePage> {
   String _review = '후기';
-  String key = "";
+  String key = "accessToken";
   CroppedFile? _croppedFile;
   final ImagePicker picker = ImagePicker();
   final List<String> _comments = [];
@@ -35,8 +35,35 @@ class _RecipePageState extends State<RecipePage> {
         scrolledUnderElevation: 0,
         actions: [
           IconButton(icon: Icon(Icons.add),
-            onPressed: () {
+            onPressed: () async {
+              final storageService = Provider.of<SecureService>(context, listen: false);
+              String? token = await storageService.readToken(key);
+              if (token == null || token.isEmpty) {
+                showDialog(
+                  context: context,
+                  builder: (context) =>
+                      AlertDialog(
+                        title: Text('로그인 필요'),
+                        content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('확인'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => LoginPage()),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                );
+                return;
+              } else {
 
+              }
             },
           )
         ],

@@ -151,7 +151,7 @@ class _SearchPageState extends State<SearchPage> {
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
                     } else {
-                      List<String> recentSearchList = snapshot.data!.map((todo) => todo.name).toList();
+                      List<Record> recentSearchList = snapshot.data!;
                       return recentSearchList.isEmpty
                           ? Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -163,33 +163,46 @@ class _SearchPageState extends State<SearchPage> {
                         ),
                       )
                           : Column(
-                        children: recentSearchList.map((recentSearch) {
+                        children: recentSearchList.map((record) {
                           return ListTile(
-                            title: Text(recentSearch),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () async {
-                                await dbHelper.deleteRecord(recentSearch);
-                                setState(() {
-                                  recentSearches = dbHelper.getRecords();
-                                });
-                              },
+                            title: Text(
+                              record.name,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text((record.date as String).substring(5,10).replaceAll("-", "."), style: TextStyle(fontSize: 13),),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () async {
+                                    await dbHelper.deleteRecord(record.name);
+                                    setState(() {
+                                      recentSearches = dbHelper.getRecords();
+                                    });
+                                  },
+                                ),
+                                // 다른 위젯들을 추가할 수 있음
+                              ],
                             ),
 
                             onTap: () async {
-                              bool isExisting = await dbHelper.checkIfSuggestionExists(recentSearch);
+                              bool isExisting = await dbHelper.checkIfSuggestionExists(record.name);
 
                               if (isExisting) {
                                 // suggestion이 이미 존재하면 업데이트 수행
-                                await dbHelper.updateRecord(Record(name: recentSearch, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                                await dbHelper.updateRecord(Record(name: record.name, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
                               }
 
                               else {
                                 // suggestion이 존재하지 않으면 데이터베이스에 삽입
-                                await dbHelper.insertRecord(Record(name: recentSearch, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                                await dbHelper.insertRecord(Record(name: record.name, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
                               }
 
-                              await itemService.incrementItemCount(recentSearch);
+                              await itemService.incrementItemCount(record.name);
 
                               setState(() {
                                 recentSearches = dbHelper.getRecords();
@@ -197,7 +210,7 @@ class _SearchPageState extends State<SearchPage> {
 
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => SelectedPage(itemname: recentSearch),
+                                MaterialPageRoute(builder: (context) => SelectedPage(itemname: record.name),
                                 ),
                               ).then((value) => setState(() {
 

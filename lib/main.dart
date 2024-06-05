@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/service/userservice.dart';
 import 'package:flutter_splim/desktop/admin.dart';
+import 'package:flutter_splim/constant.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,8 +61,8 @@ class MainPage extends StatefulWidget{
 }
 
 class _MainPageState extends State<MainPage> {
-  bool _isLoggedIn = false;
   String key = "accessToken";
+  String refresh = "refreshToken";
   late UserDTO? user;
   final UserService userService = UserService();
 
@@ -73,11 +74,24 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> _checkLoginStatus() async {
     final storageService = Provider.of<SecureService>(context, listen: false);
-    String? token = await storageService.readToken(key);
-    bool isLoggedIn = token != null && token.isNotEmpty;
-    setState(() {
-      _isLoggedIn = isLoggedIn;
-    });
+    String? token = await storageService.readToken(refresh);
+    if (token != null && token.isNotEmpty) {
+      try {
+        UserDTO user = await userService.getUserInfo(token);
+        Provider.of<UserProvider>(context, listen: false).updateUser(user);
+        setState(() {
+          Constants.isLogined = true;
+        });
+      } catch (e) {
+        setState(() {
+          Constants.isLogined = false;
+        });
+      }
+    } else {
+      setState(() {
+        Constants.isLogined = false;
+      });
+    }
   }
 
   @override
@@ -118,7 +132,13 @@ class _MainPageState extends State<MainPage> {
           selectedItemColor: Colors.black,
 
           onTap: (int index) {
-            if (index == 1) {
+            if(index == 0){
+              setState(() {
+                _checkLoginStatus();
+              });
+            }
+
+            else if (index == 1) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SearchPage()),
@@ -135,14 +155,14 @@ class _MainPageState extends State<MainPage> {
 
               }));
             }else if (index == 3) {
-              if (_isLoggedIn) {
+              if (Constants.isLogined) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => MyPage()),
                 ).then((value) {
                   storageService.readToken(key).then((token) {
                     setState(() {
-                      _isLoggedIn = token != null && token.isNotEmpty;
+                      Constants.isLogined = token != null && token.isNotEmpty;
                     });
                   });
                 });
@@ -153,7 +173,7 @@ class _MainPageState extends State<MainPage> {
                 ).then((value) {
                   storageService.readToken(key).then((token) {
                     setState(() {
-                      _isLoggedIn = token != null && token.isNotEmpty;
+                      Constants.isLogined = token != null && token.isNotEmpty;
                     });
                   });
                 });

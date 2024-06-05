@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:flutter_splim/service/userservice.dart';
+import 'package:flutter_splim/constant.dart';
 
 class LoginPage extends StatelessWidget{
 
@@ -171,6 +172,7 @@ class LoginPage extends StatelessWidget{
                               final user = await userService.getUserInfo(response.refreshToken);
 
                               _loginSuccess(user);
+                              Constants.isLogined = true;
                               Navigator.of(context).popUntil((route) => route.isFirst);
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(

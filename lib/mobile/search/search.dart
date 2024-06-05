@@ -244,14 +244,13 @@ class _SearchPageState extends State<SearchPage> {
                               ),
                             ),
                     Padding(
-                    padding: EdgeInsets.only(left: 13.0), // Wrap 위젯에 왼쪽 패딩 추가
+                    padding: EdgeInsets.only(left: 10.0), // Wrap 위젯에 왼쪽 패딩 추가
                     child:
                             Wrap(
-                              spacing: 8.0,
-                              runSpacing: 4.0,
+                              spacing: 3.0,
+                              runSpacing: 3.0,
                               children: popularPrices.map((price) {
                                 return ElevatedButton(
-
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     surfaceTintColor: Colors.white,
@@ -261,8 +260,8 @@ class _SearchPageState extends State<SearchPage> {
                                     ),
                                     side: BorderSide(color: Colors.black, width: 2),
                                     elevation: 2.0,
-                                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                    minimumSize: Size(80, 40),
+
+                                    minimumSize: Size(63, 40),
                                   ),
                                   onPressed: () async {
                                     bool isExisting = await dbHelper.checkIfSuggestionExists(price.itemCode.itemName);

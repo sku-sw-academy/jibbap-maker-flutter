@@ -244,10 +244,6 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                         SnackBar(content: Text('닉네임 변경 실패')),
                       );
                     }
-                  }else if(_nickNameController.text == user!.nickname){
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('닉네임이 같습니다.')),
-                    );
                   }
                 },
             ),
@@ -262,6 +258,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                   setState(() {
                     user!.nickname = result;
                   });
+                  Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('닉네임 변경 성공')),
                   );
@@ -272,7 +269,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                 }
               }else if(_nickNameController.text == user!.nickname){
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('닉네임이 같습니다.')),
+                  SnackBar(content: Text('닉네임')),
                 );
               }
             },

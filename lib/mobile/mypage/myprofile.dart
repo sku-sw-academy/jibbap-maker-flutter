@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_splim/constant.dart';
 import 'package:flutter_splim/service/userservice.dart';
 
+
 class MyProfile extends StatefulWidget {
   @override
   _MyProfileState createState() => _MyProfileState();
@@ -234,6 +235,7 @@ class _MyProfileState extends State<MyProfile> {
                   onPressed: () async {
                     String? token = await _secureService.readToken(refresh);
                     userService.logout(AuthLogoutRequest(id: user!.id, refreshToken: token!));
+                    Constants.isSelelcted = true;
                     await _secureService.deleteToken(access);
                     await _secureService.deleteToken(refresh);
                     //Provider.of<UserProvider>(context).clearUser();

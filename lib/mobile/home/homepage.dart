@@ -48,8 +48,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onRefresh() async {
     // 새로고침 로직을 여기에 구현하세요.
     await Future.delayed(Duration(seconds: 2));
+    isSelected = Constants.isSelelcted;
     initializeData();
-    isSelected = true;
     _refreshController.refreshCompleted();// 임시로 2초 대기
   }
 
@@ -259,7 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             SizedBox(width: screenWidth  * 0.08),
                             Expanded(
                               child: ToggleButtons(
-                              isSelected: [isSelected, !isSelected],
+                              isSelected: [Constants.isSelelcted, !Constants.isSelelcted],
                               onPressed: (index) async {
                                 if (index == 1) {
                                   final storageService = Provider.of<SecureService>(context, listen: false);
@@ -295,7 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   }
                                 }
                                 setState(() {
-                                  isSelected = index == 0 ? true : false;
+                                  Constants.isSelelcted = index == 0 ? true : false;
                                 });
                               },
                               borderRadius: BorderRadius.circular(5),
@@ -307,13 +307,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                 Text(
                                   "알뜰 소비",
                                   style: TextStyle(
-                                    color: isSelected ? Colors.black : Colors.grey, // 버튼의 글자 색상
+                                    color: Constants.isSelelcted ? Colors.black : Colors.grey, // 버튼의 글자 색상
                                   ),
                                 ),
                                 Text(
                                   "맞춤 가격",
                                   style: TextStyle(
-                                    color: !isSelected ? Colors.black : Colors.grey, // 버튼의 글자 색상
+                                    color: !Constants.isSelelcted ? Colors.black : Colors.grey, // 버튼의 글자 색상
                                   ),
                                 ),
                                 ],
@@ -328,7 +328,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Expanded(
                           child: Column(
                             children: [
-                              if (isSelected) ...[
+                              if (Constants.isSelelcted) ...[
                                 FutureBuilder<List<PriceDTO>>(
                                   future: futurePrices,
                                   builder: (context, snapshot) {

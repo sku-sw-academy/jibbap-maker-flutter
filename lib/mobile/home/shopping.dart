@@ -134,7 +134,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
             Text("이번주: ${shop.price}원"),
             Text("지난주: ${shop.week_price}원"),
             Text(
-              "등락률: ${shop.values}",
+              "등락률: ${shop.values}%",
               style: TextStyle(color: textColor),
             ),
           ],

@@ -168,7 +168,9 @@ class _ValidateEmailState extends State<ValidateEmail> {
 
                           try {
                             if (authCode == code) {
-                              final result = await _userService.register(widget.email, widget.nickname, widget.password);
+                              final result = await _userService.register(
+                                  widget.email, widget.nickname,
+                                  widget.password);
                               if (result == 'OK') {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('회원가입 성공')),
@@ -178,7 +180,8 @@ class _ValidateEmailState extends State<ValidateEmail> {
                               }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('인증번호가 틀렸습니다. 다시 입력하세요.')),
+                                SnackBar(
+                                    content: Text('인증번호가 틀렸습니다. 다시 입력하세요.')),
                               );
                             }
                           } catch (e) {
@@ -197,7 +200,7 @@ class _ValidateEmailState extends State<ValidateEmail> {
                 child: Text(
                   '남은 시간: ${_formatTime(_remainingSeconds)}',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: Colors.red,
                     fontSize: 14,
                     fontFamily: 'GowunBatang',
                     fontWeight: FontWeight.w700,
@@ -217,12 +220,27 @@ class _ValidateEmailState extends State<ValidateEmail> {
                       borderRadius: BorderRadius.circular(8.0), // 원하는 값으로 조절
                     ),
                   ),
-                  onPressed: () async {
+                  onPressed: _canResend
+                      ? () async {
+                    try {
+                      code = await _userService.sendAuthEmail(widget.email);
+                      _startTimer();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('인증 이메일을 다시 전송했습니다.')),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to send email: $e')),
+                      );
+                    }
+                  }
+                      : () async {
                     String authCode = _authController.text.toString();
 
                     try {
                       if (authCode == code) {
-                        final result = await _userService.register(widget.email, widget.nickname, widget.password);
+                        final result = await _userService.register(widget.email,
+                            widget.nickname, widget.password);
                         if (result == 'OK') {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('회원가입 성공')),
@@ -244,7 +262,7 @@ class _ValidateEmailState extends State<ValidateEmail> {
                   child: Container(
                     alignment: Alignment.center,
                     child: Text(
-                      '확인',
+                      _canResend ? '재전송' : '확인', // 타이머가 종료되면 '재전송' 버튼으로 변경
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -257,25 +275,6 @@ class _ValidateEmailState extends State<ValidateEmail> {
                   ),
                 ),
               ),
-              if (_canResend)
-                Container(
-                  margin: EdgeInsets.only(top: heightRatio * 20),
-                  child: TextButton(
-                    onPressed: () async {
-                      code = await _userService.sendAuthEmail(widget.email);
-                      _startTimer();
-                    },
-                    child: Text(
-                      '인증번호 다시 보내기',
-                      style: TextStyle(
-                        color: Color(0xFF46B1C6),
-                        fontSize: 16,
-                        fontFamily: 'GowunBatang',
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
             ],
           ),
         ),

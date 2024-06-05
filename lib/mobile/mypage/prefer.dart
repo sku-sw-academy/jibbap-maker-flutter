@@ -21,7 +21,7 @@ class _MyPreferState extends State<MyPrefer>{
             scrolledUnderElevation: 0,
             title: Text("식재료 목록"),
             centerTitle: true,
-            backgroundColor: Colors.lightBlueAccent,
+            backgroundColor: Colors.lightBlueAccent[100],
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(48.0),
               child: Container(
@@ -32,9 +32,9 @@ class _MyPreferState extends State<MyPrefer>{
                   indicatorColor: Colors.blue, // 선택된 탭의 하단 선 색상
                   indicatorWeight: 3.0, // 선택된 탭의 하단 선 두께
                   tabs: [
-                    Tab(text: 'ALL'),
-                    Tab(text: 'Favorite'),
-                    Tab(text: 'Ban'),
+                    Tab(text: '전체'),
+                    Tab(text: '선호'),
+                    Tab(text: '차단'),
                   ],
                 ),
               ),

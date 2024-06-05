@@ -216,8 +216,9 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
               controller: _nickNameController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: '닉네임을 입력하시오.',
+                labelText: '닉네임',
               ),
+                maxLength: 20,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '닉네임을 입력해주세요';
@@ -243,6 +244,10 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                         SnackBar(content: Text('닉네임 변경 실패')),
                       );
                     }
+                  }else if(_nickNameController.text == user!.nickname){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('닉네임이 같습니다.')),
+                    );
                   }
                 },
             ),
@@ -257,7 +262,6 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                   setState(() {
                     user!.nickname = result;
                   });
-                  Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('닉네임 변경 성공')),
                   );
@@ -266,6 +270,10 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                     SnackBar(content: Text('닉네임 변경 실패')),
                   );
                 }
+              }else if(_nickNameController.text == user!.nickname){
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('닉네임이 같습니다.')),
+                );
               }
             },
             style: ElevatedButton.styleFrom(

@@ -243,68 +243,64 @@ class _SearchPageState extends State<SearchPage> {
                                 ),
                               ),
                             ),
+                    Padding(
+                    padding: EdgeInsets.only(left: 13.0), // Wrap 위젯에 왼쪽 패딩 추가
+                    child:
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 4.0,
+                              children: popularPrices.map((price) {
+                                return ElevatedButton(
 
-                            for (var i = 0; i < 3; i++)
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: 10,),
-                                  for (var j = i * 3; j < (i * 3) + 3; j++)
-                                    Padding(
-                                        padding: const EdgeInsets.all(3),
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.white,
-                                            surfaceTintColor: Colors.white,
-                                            foregroundColor: Colors.black,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(20), // 반지름 값을 버튼의 너비 또는 높이보다 작게 지정하여 원형으로 만듭니다.
-                                            ),
-                                            side: BorderSide(color: Colors.black, width: 2),
-                                            elevation: 2.0,
-                                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                            minimumSize: Size(80, 40),
-                                            // 다른 스타일 속성들...
-                                          ),
-                                          onPressed: () async{
-                                            bool isExisting = await dbHelper.checkIfSuggestionExists(popularPrices[j].itemCode.itemName);
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    surfaceTintColor: Colors.white,
+                                    foregroundColor: Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20), // 반지름 값을 버튼의 너비 또는 높이보다 작게 지정하여 원형으로 만듭니다.
+                                    ),
+                                    side: BorderSide(color: Colors.black, width: 2),
+                                    elevation: 2.0,
+                                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                    minimumSize: Size(80, 40),
+                                  ),
+                                  onPressed: () async {
+                                    bool isExisting = await dbHelper.checkIfSuggestionExists(price.itemCode.itemName);
 
-                                            if (isExisting) {
-                                              // suggestion이 이미 존재하면 업데이트 수행
-                                              await dbHelper.updateRecord(Record(name: popularPrices[j].itemCode.itemName, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
-                                            }
+                                    if (isExisting) {
+                                      // suggestion이 이미 존재하면 업데이트 수행
+                                      await dbHelper.updateRecord(Record(name: price.itemCode.itemName, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                                    } else {
+                                      // suggestion이 존재하지 않으면 데이터베이스에 삽입
+                                      await dbHelper.insertRecord(Record(name: price.itemCode.itemName, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                                    }
 
-                                            else {
-                                              // suggestion이 존재하지 않으면 데이터베이스에 삽입
-                                              await dbHelper.insertRecord(Record(name: popularPrices[j].itemCode.itemName, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
-                                            }
+                                    await itemService.incrementItemCount(price.itemCode.itemName);
 
-                                            await itemService.incrementItemCount(popularPrices[j].itemCode.itemName);
+                                    setState(() {
+                                      recentSearches = dbHelper.getRecords();
+                                    });
 
-                                            setState(() {
-                                              recentSearches = dbHelper.getRecords();
-                                            });
-
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => SelectedPage(itemname: popularPrices[j].itemCode.itemName),
-                                              ),
-                                            ).then((value) => setState(() {
-                                              futurePopularNames = priceService.fetchPopularItemPrices9();
-                                            }));
-                                          },
-                                          child: Text(
-                                            popularPrices[j].itemCode.itemName,
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SelectedPage(itemname: price.itemCode.itemName),
                                       ),
-                                ],
-                              ),
+                                    ).then((value) => setState(() {
+                                      futurePopularNames = priceService.fetchPopularItemPrices9();
+                                    }));
+                                  },
+                                  child: Text(
+                                    price.itemCode.itemName,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                    ),
                           ],
                         ),
                       );

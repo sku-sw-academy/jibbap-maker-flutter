@@ -40,14 +40,16 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("상세페이지"),
+        title: Text("맞춤 소비(등락률 기준)"),
         centerTitle: true,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.lightBlueAccent[100],
         scrolledUnderElevation: 0,
       ),
       body: _data.isEmpty
           ? Center(child: Text('No data found'))
-          : _buildTableView(_data),
+          : Scrollbar(
+        child: _buildTableView(_data),
+      ),
     );
   }
 
@@ -68,15 +70,40 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
         pinnedRowCount: 1,
         pinnedColumnCount: 0,
         columnBuilder: (index) {
+          double extent;
+          switch (index) {
+            case 0:
+            case 1:
+              extent = 0.15; // 좁은 열
+              break;
+            case 2:
+              extent = 0.10; // 좁은 열
+              break;
+            case 3:
+              extent = 0.10; // 좁은 열
+              break;
+            case 4:
+              extent = 0.20; // 넓은 열
+              break;
+            case 5:
+              extent = 0.10; // 좁은 열
+              break;
+            case 6:
+              extent = 0.20; // 넓은 열
+              break;
+            default:
+              extent = 1 / 7;
+              break;
+          }
           return TableSpan(
             foregroundDecoration: index == 0 ? decoration : null,
-            extent: const FractionalTableSpanExtent(1 / 7),
+            extent: FractionalTableSpanExtent(extent),
           );
         },
         rowBuilder: (index) {
           return TableSpan(
             foregroundDecoration: index == 0 ? decoration : null,
-            extent: const FixedTableSpanExtent(50),
+            extent: FixedTableSpanExtent(50),
           );
         },
         cellBuilder: (context, vicinity) {
@@ -99,10 +126,10 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
                 label = '등급';
                 break;
               case 4:
-                label = '당일가격';
+                label = '당일가격\n(원)';
                 break;
               case 5:
-                label = '등락률';
+                label = '등락률\n(%)';
                 break;
               case 6:
                 label = '날짜';

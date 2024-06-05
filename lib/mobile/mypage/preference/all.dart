@@ -168,11 +168,12 @@ class _IngredientAllState extends State<IngredientAll> {
                   trailing: ToggleButtons(
                     isSelected: List.generate(3, (index) => index == itemPrefer!.prefer),
                     onPressed: (toggleIndex) async {
+                      setState(() {
+                        itemPrefer!.prefer = toggleIndex;
+                      });
                       try {
                         await preferService.updatePrefer(itemPrefer!); // 새로운 정보를 서버로 전송합니다.
-                        setState(() {
-                          itemPrefer!.prefer = toggleIndex;
-                        });
+
                       } catch (e) {
                         // 업데이트에 실패한 경우 에러 처리를 수행합니다.
                         // 이 코드는 선택적입니다. 실패한 경우 사용자에게 알림을 제공하거나 다른 작업을 수행할 수 있습니다.

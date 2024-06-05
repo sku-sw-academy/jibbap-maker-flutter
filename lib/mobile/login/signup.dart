@@ -128,6 +128,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           letterSpacing: -0.33,
                         ),
                       ),
+                      maxLength: 20,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 13,
@@ -188,6 +189,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           letterSpacing: -0.33,
                         ),
                       ),
+                        maxLength: 50,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 13,
@@ -244,6 +246,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         ),
 
                       ),
+                      maxLength: 15,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 13,
@@ -299,6 +302,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         ),
 
                       ),
+                      maxLength: 15,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 13,

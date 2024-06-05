@@ -123,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return FutureBuilder<void>(
         future: initializeData(),
-    builder: (context, snapshot) {
+      builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {

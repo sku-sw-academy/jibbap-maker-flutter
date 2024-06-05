@@ -41,7 +41,7 @@ class _MyProfileState extends State<MyProfile> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: Text('MyProfile'),
+        title: Text('My Page'),
         backgroundColor: Colors.lightBlueAccent,
         centerTitle: true,
         actions: [
@@ -168,7 +168,6 @@ class _MyProfileState extends State<MyProfile> {
                 "My Custom",
                 style: TextStyle(fontSize: 20),
               ),
-
             ),
 
             ListTile(

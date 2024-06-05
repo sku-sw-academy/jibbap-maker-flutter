@@ -41,9 +41,9 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("상세페이지"),
+        title: Text("알뜰소비(등락률 기준)"),
         centerTitle: true,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.lightBlueAccent[100],
         scrolledUnderElevation: 0,
       ),
       body: FutureBuilder<List<PriceDTO>>(
@@ -75,108 +75,135 @@ class _DetailPageState extends State<DetailPage> {
 
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: TableView.builder(
-        columnCount: 7,
-        rowCount: prices.length + 1,
-        pinnedRowCount: 1,
-        pinnedColumnCount: 0,
-        columnBuilder: (index) {
-          return TableSpan(
-            foregroundDecoration: index == 0 ? decoration : null,
-            extent: const FractionalTableSpanExtent(1 / 7),
-          );
-        },
-        rowBuilder: (index) {
-          return TableSpan(
-            foregroundDecoration: index == 0 ? decoration : null,
-            extent: const FixedTableSpanExtent(50),
-          );
-        },
-        cellBuilder: (context, vicinity) {
-          final isStickyHeader = vicinity.yIndex == 0;
-          String label = '';
-          TextStyle textStyle = const TextStyle();
-
-          if (isStickyHeader) {
-            switch (vicinity.xIndex) {
+      child: Scrollbar(
+        child: TableView.builder(
+          columnCount: 7,
+          rowCount: prices.length + 1,
+          pinnedRowCount: 1,
+          pinnedColumnCount: 0,
+          columnBuilder: (index) {
+            double extent;
+            switch (index) {
               case 0:
-                label = '품목';
-                break;
               case 1:
-                label = '품종';
+                extent = 0.15; // 좁은 열
                 break;
               case 2:
-                label = '단위';
+                extent = 0.10; // 좁은 열
                 break;
               case 3:
-                label = '등급';
+                extent = 0.10; // 좁은 열
                 break;
               case 4:
-                label = '당일가격';
+                extent = 0.20; // 넓은 열
                 break;
               case 5:
-                label = '등락률';
+                extent = 0.10; // 좁은 열
                 break;
               case 6:
-                label = '날짜';
+                extent = 0.20; // 넓은 열
+                break;
+              default:
+                extent = 1 / 7;
                 break;
             }
-          } else {
-            final price = prices[vicinity.yIndex - 1];
-            switch (vicinity.xIndex) {
-              case 0:
-                label = price.itemCode.itemName;
-                break;
-              case 1:
-                label = price.kindName;
-                break;
-              case 2:
-                label = price.unit;
-                break;
-              case 3:
-                label = price.rankName;
-                break;
-              case 4:
-                label = price.dpr1;
-                break;
-              case 5:
-                label = price.value.toString();
-                textStyle = TextStyle(
-                  color: price.value < 0
-                      ? Colors.blue
-                      : price.value == 0
-                      ? Colors.black
-                      : Colors.red,
-                );
-                break;
-              case 6:
-                label = price.regday;
-                break;
-            }
-          }
+            return TableSpan(
+              foregroundDecoration: index == 0 ? decoration : null,
+              extent: FractionalTableSpanExtent(extent),
+            );
+          },
+          rowBuilder: (index) {
+            return TableSpan(
+              foregroundDecoration: index == 0 ? decoration : null,
+              extent: FixedTableSpanExtent(50),
+            );
+          },
+          cellBuilder: (context, vicinity) {
+            final isStickyHeader = vicinity.yIndex == 0;
+            String label = '';
+            TextStyle textStyle = const TextStyle();
 
-          return TableViewCell(
-            child: ColoredBox(
-              color: isStickyHeader ? Colors.transparent : colorScheme.background,
-              child: Center(
-                child: FittedBox(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      label,
-                      style: isStickyHeader
-                          ? TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
-                      )
-                          : textStyle,
+            if (isStickyHeader) {
+              switch (vicinity.xIndex) {
+                case 0:
+                  label = '품목';
+                  break;
+                case 1:
+                  label = '품종';
+                  break;
+                case 2:
+                  label = '단위';
+                  break;
+                case 3:
+                  label = '등급';
+                  break;
+                case 4:
+                  label = '당일가격\n(원)';
+                  break;
+                case 5:
+                  label = '등락률\n(%)';
+                  break;
+                case 6:
+                  label = '날짜';
+                  break;
+              }
+            } else {
+              final price = prices[vicinity.yIndex - 1];
+              switch (vicinity.xIndex) {
+                case 0:
+                  label = price.itemCode.itemName;
+                  break;
+                case 1:
+                  label = price.kindName;
+                  break;
+                case 2:
+                  label = price.unit;
+                  break;
+                case 3:
+                  label = price.rankName;
+                  break;
+                case 4:
+                  label = price.dpr1;
+                  break;
+                case 5:
+                  label = price.value.toString();
+                  textStyle = TextStyle(
+                    color: price.value < 0
+                        ? Colors.blue
+                        : price.value == 0
+                        ? Colors.black
+                        : Colors.red,
+                  );
+                  break;
+                case 6:
+                  label = price.regday;
+                  break;
+              }
+            }
+
+            return TableViewCell(
+              child: ColoredBox(
+                color: isStickyHeader ? Colors.transparent : colorScheme.background,
+                child: Center(
+                  child: FittedBox(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Text(
+                        label,
+                        style: isStickyHeader
+                            ? TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.onSurface,
+                        )
+                            : textStyle,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

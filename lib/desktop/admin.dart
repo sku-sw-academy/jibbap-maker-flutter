@@ -15,6 +15,8 @@ class _AdminPageState extends State<AdminPage> {
     Text('FAQ'),
     Text('답변'),
     Text('공지사항'),
+    Text('레시피 목록'),
+    Text('로그'),
   ];
 
   void _onItemTapped(int index) {
@@ -49,7 +51,7 @@ class _AdminPageState extends State<AdminPage> {
             ),
             ListTile(
               leading: Icon(Icons.people),
-              title: Text('User Management'),
+              title: Text('사용자'),
               onTap: () => _onItemTapped(0),
             ),
             ListTile(
@@ -70,6 +72,16 @@ class _AdminPageState extends State<AdminPage> {
               leading: Icon(Icons.speaker_notes),
               title: Text('공지사항'),
               onTap: () => _onItemTapped(4),
+            ),
+            ListTile(
+              leading: Icon(Icons.receipt_long),
+              title: Text('레시피 목록'),
+              onTap: () => _onItemTapped(5),
+            ),
+            ListTile(
+              leading: Icon(Icons.timelapse),
+              title: Text('로그'),
+              onTap: () => _onItemTapped(6),
             ),
           ],
         ),

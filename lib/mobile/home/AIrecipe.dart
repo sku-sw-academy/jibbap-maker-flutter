@@ -17,6 +17,7 @@ class AIRecipePage extends StatefulWidget {
 
 class _AIRecipePageState extends State<AIRecipePage> {
   late String responseText;
+  late Future<String> futureRecipe;
 
   Future<String> sendGptChatRequest(int userId, List<PriceDTO> prices) async {
     final url = Uri.parse('${Constants.baseUrl}/api/gpt/recipe');
@@ -48,18 +49,19 @@ class _AIRecipePageState extends State<AIRecipePage> {
   void initState() {
     super.initState();
     responseText = '';
-    fetchRecipe(); // 초기화 시에 응답을 받기 위해 initState에서 호출
+    futureRecipe = fetchRecipe(); // 초기화 시에 응답을 받기 위해 initState에서 호출
   }
 
   // 응답을 받는 메서드
-  void fetchRecipe() async {
+  Future<String> fetchRecipe() async {
     try {
       List<PriceDTO> prices = await widget.futurePrices;
       String response = await sendGptChatRequest(widget.userId, prices);
       print('Recipe: $response');
-      // Add further UI handling for the response if needed
+      return response;
     } catch (e) {
       print('Error: $e');
+      throw e;
     }
   }
 
@@ -70,8 +72,8 @@ class _AIRecipePageState extends State<AIRecipePage> {
         title: Text("레시피"),
         centerTitle: true,
       ),
-      body: FutureBuilder<List<PriceDTO>>(
-        future: widget.futurePrices,
+      body: FutureBuilder<String>(
+        future: futureRecipe,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -80,13 +82,12 @@ class _AIRecipePageState extends State<AIRecipePage> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No data available'));
           } else {
-            List<PriceDTO> prices = snapshot.data!;
             return ListView(
               children: [
                 Divider(),
                 // 여기에 데이터를 표시
                 Text(
-                  responseText,
+                  snapshot.data!,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
@@ -98,7 +99,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-
+                        // 저장 버튼 로직 추가
                       },
                       child: Icon(Icons.save),
                       style: ElevatedButton.styleFrom(
@@ -115,7 +116,9 @@ class _AIRecipePageState extends State<AIRecipePage> {
                     SizedBox(width: 40),
                     ElevatedButton(
                       onPressed: () {
-                        fetchRecipe();
+                        setState(() {
+                          futureRecipe = fetchRecipe();
+                        });
                       },
                       child: Icon(Icons.refresh),
                       style: ElevatedButton.styleFrom(

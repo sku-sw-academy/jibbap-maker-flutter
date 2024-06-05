@@ -26,12 +26,17 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   final SecureService _secureService = SecureService();
   late UserDTO? user;
   late UserService userService = UserService();
+  String? _savedProfileImage;
+  bool? _isDefaultImage;
 
   @override
   void initState() {
     super.initState();
     user = Provider.of<UserProvider>(context, listen: false).user;
     _nickNameController.text = user?.nickname ?? '';
+    _savedProfileImage = user?.profile;
+    print(_savedProfileImage);
+    _isDefaultImage = _savedProfileImage == null; // If _savedProfileImage is not null, set _isDefaultImage to true
   }
 
   Future<void> getImage(ImageSource imageSource) async{
@@ -90,8 +95,9 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
       if (croppedFile != null) {
         setState(() {
           _croppedFile = croppedFile;
+          _isDefaultImage = false;
+          _savedProfileImage = user!.profile;
         });
-        uploadImage(user!.id, _croppedFile!);
       }
     }
   }
@@ -160,6 +166,12 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   }
 
   Widget _buildPhotoArea() {
+    final profileImage = _croppedFile != null
+        ? FileImage(File(_croppedFile!.path))
+        : (_savedProfileImage != null && !_isDefaultImage! && _savedProfileImage != "")
+        ? NetworkImage("${Constants.baseUrl}/api/auth/images/$_savedProfileImage")
+        : null;
+
     return GestureDetector(
       onTap: () {
         showSheet(context);
@@ -169,12 +181,10 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
           CircleAvatar(
             radius: 60,
             backgroundColor: Colors.blue[200],
-            backgroundImage: user != null && user!.profile != null && user!.profile!.isNotEmpty
-                ? NetworkImage("${Constants.baseUrl}/api/auth/images/${user!.profile!}")
-                : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
-            child: user != null && user!.profile != null && user!.profile!.isNotEmpty
-                ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
-                : Icon(Icons.person, size: 80, color: Colors.grey,), // 프로필 이미지가 없는 경우에 아이콘을 표시
+            backgroundImage: profileImage as ImageProvider?,
+            child: profileImage == null
+                ? (_isDefaultImage! ? Icon(Icons.person, size: 80, color: Colors.grey) : null)
+                : null,
           ),
           Positioned(
             right: 5,
@@ -184,10 +194,10 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5), // 그림자 색상
-                    spreadRadius: 2, // 그림자의 확산 범위
-                    blurRadius: 5, // 그림자의 흐림 정도
-                    offset: Offset(0, 3), // 그림자의 위치 조절
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
@@ -202,6 +212,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
       ),
     );
   }
+
 
   Widget _buildTextField() {
     return Padding(
@@ -235,9 +246,22 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                       setState(() {
                         user!.nickname = result;
                       });
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('닉네임 변경 성공')),
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('성공'),
+                            content: Text('닉네임 변경 성공'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -258,18 +282,39 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                   setState(() {
                     user!.nickname = result;
                   });
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('닉네임 변경 성공')),
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('성공'),
+                        content: Text('닉네임 변경 성공'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('닉네임 변경 실패')),
                   );
                 }
-              }else if(_nickNameController.text == user!.nickname){
+              }
+              if(_croppedFile != null){
+                uploadImage(user!.id, _croppedFile!);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('닉네임')),
+                  SnackBar(content: Text('프로필 변경 성공')),
+                );
+              }
+              if(_isDefaultImage!){
+                resetProfileImage(user!.id);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('기본 이미지로 변경')),
                 );
               }
             },
@@ -325,10 +370,14 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                 title: Text('갤러리에서 선택'),
               ),
             ),
-            if (user != null && user!.profile != null && user!.profile!.isNotEmpty)
+            if (_savedProfileImage != null && _savedProfileImage!.isNotEmpty && !_isDefaultImage! && _savedProfileImage != "")
               SimpleDialogOption(
                 onPressed: () {
-                  resetProfileImage(user!.id); // 기본 이미지로 변경
+                  setState(() {
+                    _savedProfileImage = null;
+                    _isDefaultImage = true; // 기본 이미지로 변경
+                    _croppedFile = null;
+                  });
                   Navigator.pop(context); // 다이얼로그 닫기
                 },
                 child: ListTile(
@@ -341,5 +390,4 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
       },
     );
   }
-
 }

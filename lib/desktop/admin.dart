@@ -26,13 +26,37 @@ class _AdminPageState extends State<AdminPage> {
     Navigator.of(context).pop();  // Drawer를 닫기 위해
   }
 
+  void _onLogout() {
+    // 여기에 로그아웃 로직을 추가하세요.
+    print('Logged out');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Admin Page'),
         centerTitle: true,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'logout') {
+                _onLogout();
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return {'logout'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text('Logout'),
+                );
+              }).toList();
+            },
+            icon: Icon(Icons.person),
+          ),
+        ],
       ),
+
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,

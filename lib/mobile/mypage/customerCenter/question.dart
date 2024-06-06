@@ -48,9 +48,9 @@ class _QuestionPageState extends State<QuestionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("문의하기"),
+        title: Text("문의하기", style: TextStyle(fontSize: 25),),
         centerTitle: true,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.grey[100],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

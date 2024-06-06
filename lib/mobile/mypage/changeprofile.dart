@@ -64,7 +64,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: '이미지 자르기/회전하기',
-            toolbarColor: Colors.blue,
+            toolbarColor: Colors.grey[100],
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
@@ -149,8 +149,8 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: Text("프로필 수정"),
-        backgroundColor: Colors.lightBlueAccent,
+        title: Text("프로필 수정", style: TextStyle(fontSize: 25),),
+        backgroundColor: Colors.grey[100],
         centerTitle: true,
       ),
       body: Column(
@@ -184,7 +184,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
             backgroundImage: profileImage as ImageProvider?,
             child: profileImage == null
                 ? (_isDefaultImage! ? Icon(Icons.person, size: 80, color: Colors.grey) : null)
-                : null,
+                : Icon(Icons.person, size: 80, color: Colors.grey),
           ),
           Positioned(
             right: 5,

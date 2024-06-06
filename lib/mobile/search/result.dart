@@ -34,9 +34,9 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("통합검색 결과"),
+          title: Text("통합검색 결과", style: TextStyle(fontSize: 25),),
           centerTitle: true,
-          backgroundColor: Colors.lightBlueAccent,
+          backgroundColor: Colors.grey[100],
           scrolledUnderElevation: 0,
         ),
       body: Column(

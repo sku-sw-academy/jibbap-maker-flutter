@@ -42,7 +42,7 @@ class _ModifyPageState extends State<ModifyPage> {
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: '이미지 자르기/회전하기',
-            toolbarColor: Colors.blue,
+            toolbarColor: Colors.grey[100],
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
@@ -88,9 +88,9 @@ class _ModifyPageState extends State<ModifyPage> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: Text("레시피"),
+        title: Text("레시피", style: TextStyle(fontSize: 25),),
         centerTitle: true,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.grey[100],
       ),
       body: ListView(
         children: [

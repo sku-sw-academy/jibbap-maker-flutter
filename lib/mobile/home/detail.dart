@@ -41,9 +41,9 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("알뜰소비(등락률 기준)"),
+        title: Text("알뜰소비(등락률 기준)", style: TextStyle(fontSize: 25),),
         centerTitle: true,
-        backgroundColor: Colors.lightBlueAccent[100],
+        backgroundColor: Colors.grey[100],
         scrolledUnderElevation: 0,
       ),
       body: FutureBuilder<List<PriceDTO>>(

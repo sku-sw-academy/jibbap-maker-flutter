@@ -23,9 +23,9 @@ class _ShoppingPageState extends State<ShoppingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("알뜰장보기"),
+        title: Text("알뜰장보기", style: TextStyle(fontSize: 25),),
         centerTitle: true,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.grey[100],
         scrolledUnderElevation: 0,
         actions: [
           IconButton(

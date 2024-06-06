@@ -126,9 +126,9 @@ class _SelectedPageState extends State<SelectedPage> {
     if (searchData.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          title: Text('${widget.itemname}'),
+          title: Text('${widget.itemname}', style: TextStyle(fontSize: 25),),
           centerTitle: true,
-          backgroundColor: Colors.lightBlueAccent,
+          backgroundColor: Colors.grey[100],
         ),
         body: Center(
           child: CircularProgressIndicator(), // 데이터를 로딩하는 동안 로딩 표시기 표시
@@ -142,10 +142,10 @@ class _SelectedPageState extends State<SelectedPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.itemname}'),
+        title: Text('${widget.itemname}', style: TextStyle(fontSize: 25),),
         centerTitle: true,
         scrolledUnderElevation: 0,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.grey[100],
       ),
       body: ListView(
         children: [

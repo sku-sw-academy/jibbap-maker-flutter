@@ -19,9 +19,9 @@ class _MyPreferState extends State<MyPrefer>{
         Scaffold(
           appBar: AppBar(
             scrolledUnderElevation: 0,
-            title: Text("식재료 목록"),
+            title: Text("식재료 목록", style: TextStyle(fontSize: 25),),
             centerTitle: true,
-            backgroundColor: Colors.lightBlueAccent[100],
+            backgroundColor: Colors.grey[100],
             bottom: PreferredSize(
               preferredSize: Size.fromHeight(48.0),
               child: Container(

@@ -42,8 +42,8 @@ class _MyProfileState extends State<MyProfile> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: Text('My Page'),
-        backgroundColor: Colors.lightBlueAccent,
+        title: Text('My Page', style: TextStyle(fontSize: 25),),
+        backgroundColor: Colors.grey[100],
         centerTitle: true,
         actions: [
           IconButton(

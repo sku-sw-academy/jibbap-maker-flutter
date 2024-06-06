@@ -27,9 +27,9 @@ class _SharePageState extends State<SharePage> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: Text("레시피"),
+        title: Text("레시피", style: TextStyle(fontSize: 25),),
         centerTitle: true,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.grey[100],
       ),
       body: ListView(
         children: [

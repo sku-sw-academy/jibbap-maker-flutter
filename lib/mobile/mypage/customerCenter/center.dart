@@ -24,9 +24,9 @@ class _CenterPageState extends State<CenterPage> {
         child :
         Scaffold(
           appBar: AppBar(
-            title: Text("고객센터"),
+            title: Text("고객센터", style: TextStyle(fontSize: 25),),
             scrolledUnderElevation: 0,
-            backgroundColor: Colors.lightBlueAccent,
+            backgroundColor: Colors.grey[100],
             centerTitle: true,
             bottom:
             PreferredSize(

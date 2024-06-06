@@ -82,10 +82,10 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.itemname}'),
+        title: Text('${widget.itemname}', style: TextStyle(fontSize: 25),),
         centerTitle: true,
         scrolledUnderElevation: 0,
-        backgroundColor: Colors.lightBlueAccent,
+        backgroundColor: Colors.grey[100],
       ),
       body: ListView(
         children: [

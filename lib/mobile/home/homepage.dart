@@ -134,8 +134,8 @@ class _MyHomePageState extends State<MyHomePage> {
           return Scaffold(
             appBar: AppBar(
               scrolledUnderElevation: 0,
-              title: Text('알뜰집밥'),
-              backgroundColor: Colors.lightBlueAccent,
+              title: Text('알뜰집밥',style: TextStyle(fontSize: 25),),
+              backgroundColor: Colors.grey[100],
               centerTitle: true,
               actions: [
                 IconButton(

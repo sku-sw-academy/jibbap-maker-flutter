@@ -18,6 +18,8 @@ import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/service/userservice.dart';
 import 'package:flutter_splim/desktop/admin.dart';
 import 'package:flutter_splim/constant.dart';
+import 'package:flutter_splim/provider/adminprovider.dart';
+import 'package:flutter_splim/desktop/signout.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -189,9 +191,46 @@ class _MainPageState extends State<MainPage> {
 class MyAppDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AdminPage()
+    return MultiProvider(
+      providers: [
+        Provider<SecureService>(create: (_) => SecureService()),
+        ChangeNotifierProvider<AdminProvider>(create: (_) => AdminProvider()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+          useMaterial3: true,
+        ),
+        home: FutureBuilder<bool>(
+          future: _isAdminLoggedIn(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // 데이터를 기다리는 동안 로딩 표시를 표시할 수 있습니다.
+              return CircularProgressIndicator();
+            } else {
+              if (snapshot.hasError) {
+                // 에러가 발생한 경우 처리할 수 있습니다.
+                return Center(child: Text('Error occurred'));
+              } else {
+                // 토큰의 존재 여부에 따라 페이지를 결정합니다.
+                if (snapshot.data!) {
+                  return AdminPage();
+                } else {
+                  return LoginAdminPage();
+                }
+              }
+            }
+          },
+        ),
+      ),
     );
+  }
+
+  // 관리자가 로그인되어 있는지 확인하는 비동기 함수
+  Future<bool> _isAdminLoggedIn() async {
+    final storageService = SecureService();
+    String? token = await storageService.readToken("admin_accessToken");
+    return token != null && token.isNotEmpty;
   }
 }

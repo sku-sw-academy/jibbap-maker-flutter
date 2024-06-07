@@ -110,7 +110,7 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
           final isStickyHeader = vicinity.yIndex == 0;
           String label = '';
           TextStyle textStyle = const TextStyle();
-
+          Widget content;
           if (isStickyHeader) {
             switch (vicinity.xIndex) {
               case 0:
@@ -170,11 +170,15 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
           }
 
           return TableViewCell(
-            child: ColoredBox(
-              color: isStickyHeader ? Colors.transparent : colorScheme.background,
-              child: Center(
-                child: FittedBox(
-                  child: Padding(
+              child:Container(
+              decoration: BoxDecoration(
+              border: Border.all(color: theme.dividerColor),
+            ),
+              child: ColoredBox(
+                color: isStickyHeader ? Colors.transparent : colorScheme.background,
+                child: Center(
+                  child: FittedBox(
+                    child: Padding(
                     padding: const EdgeInsets.all(8),
                     child: Text(
                       label,
@@ -188,6 +192,7 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
                   ),
                 ),
               ),
+            ),
             ),
           );
         },

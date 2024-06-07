@@ -103,11 +103,19 @@ class _SelectedPageState extends State<SelectedPage> {
               DataColumn(label: Expanded(child: Text('등락률', textAlign: TextAlign.center))),
             ],
             rows: searchData.map((price) {
+              Color textColor;
+              if (price.value > 0) {
+                textColor = Colors.red;
+              } else if (price.value < 0) {
+                textColor = Colors.blue;
+              } else {
+                textColor = Colors.black;
+              }
               return DataRow(
                 cells: [
                   DataCell(Text(price.regday, textAlign: TextAlign.center)),
                   DataCell(Text(price.dpr1, textAlign: TextAlign.center)),
-                  DataCell(Text(price.value.toString(), textAlign: TextAlign.center)),
+                  DataCell(Text(price.value.toString()+"%", textAlign: TextAlign.center, style: TextStyle(color: textColor),)),
                 ],
               );
             }).toList(),

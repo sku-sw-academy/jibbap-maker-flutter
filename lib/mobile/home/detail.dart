@@ -182,7 +182,11 @@ class _DetailPageState extends State<DetailPage> {
             }
 
             return TableViewCell(
-              child: ColoredBox(
+              child:Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: theme.dividerColor),
+                ),
+                child: ColoredBox(
                 color: isStickyHeader ? Colors.transparent : colorScheme.background,
                 child: Center(
                   child: FittedBox(
@@ -201,6 +205,7 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                 ),
               ),
+            ),
             );
           },
         ),

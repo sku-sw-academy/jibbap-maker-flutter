@@ -75,6 +75,9 @@ class _DetailPageState extends State<DetailPage> {
 
     return Card(
       clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0), // Rectangular shape
+      ),
       child: Scrollbar(
         child: TableView.builder(
           columnCount: 7,

@@ -48,7 +48,7 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
       body: _data.isEmpty
           ? Center(child: Text('No data found'))
           : Scrollbar(
-        child: _buildTableView(_data),
+            child: _buildTableView(_data),
       ),
     );
   }
@@ -64,6 +64,9 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
 
     return Card(
       clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0), // Rectangular shape
+      ),
       child: TableView.builder(
         columnCount: 7,
         rowCount: prices.length + 1,

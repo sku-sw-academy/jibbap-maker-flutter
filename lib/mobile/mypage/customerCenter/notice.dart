@@ -62,10 +62,15 @@ class _NoticePageState extends State<NoticePage> {
         itemBuilder: (context, index) {
           var notice = notices[index];
           return ExpansionTile(
-            title: Text(notice['title'] , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+            title: Text(notice['title'] , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),),
+            subtitle: Text(notice['modifyDate'].toString().substring(0, 10).replaceAll("T", " ").replaceAll("-", ".") ?? '', style: TextStyle(fontSize: 14, color: Colors.grey),),
             children: [
-              ListTile(
-                title: Text(" "+notice['content'], style: TextStyle(fontSize: 16)),
+              Container(
+                color: Colors.grey[50],
+                child:ListTile(
+                  title: Text(" "+notice['content'], style: TextStyle(fontSize: 16)),
+
+              ),
               ),
             ],
             onExpansionChanged: (bool isExpanded) {

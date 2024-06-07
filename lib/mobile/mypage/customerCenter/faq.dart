@@ -62,10 +62,19 @@ class _FAQPageState extends State<FAQPage> {
         itemBuilder: (context, index) {
           var faq = faqs[index];
           return ExpansionTile(
-            title: Text(faq['title'] , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+            title: Text(
+              faq['title'],
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: faq['isExpanded'] ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
             children: [
-              ListTile(
-                title: Text(" "+faq['content'], style: TextStyle(fontSize: 16)),
+              Container(
+                color: Colors.grey[50],
+                child:ListTile(
+                  title: Text(" "+faq['content'], style: TextStyle(fontSize: 16)),
+                ),
               ),
             ],
             onExpansionChanged: (bool isExpanded) {

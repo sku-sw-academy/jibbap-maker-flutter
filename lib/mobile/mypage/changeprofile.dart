@@ -65,7 +65,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
           AndroidUiSettings(
             toolbarTitle: '이미지 자르기/회전하기',
             toolbarColor: Colors.grey[100],
-            toolbarWidgetColor: Colors.white,
+            toolbarWidgetColor: Colors.black,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
           ),
@@ -184,7 +184,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
             backgroundImage: profileImage as ImageProvider?,
             child: profileImage == null
                 ? (_isDefaultImage! ? Icon(Icons.person, size: 80, color: Colors.grey) : null)
-                : Icon(Icons.person, size: 80, color: Colors.grey),
+                : null,
           ),
           Positioned(
             right: 5,

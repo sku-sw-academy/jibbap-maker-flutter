@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_splim/dto/Shop.dart';
 import 'package:flutter_splim/mobile/search/search.dart';
 import 'package:flutter_splim/mobile/search/shoppingresult.dart';
+import 'package:flutter_splim/constant.dart';
 
 class ShoppingPage extends StatefulWidget {
   final Future<List<Shop>> increaseValues;
@@ -116,11 +117,6 @@ class _ShoppingPageState extends State<ShoppingPage> {
         elevation: 4.0,
         child: Column(
           children: [
-            Container(
-              height: 100,
-              color: Colors.grey[300], // 회색 배경색
-              child: Placeholder(), // 이미지 위젯을 대신하여 회색 영역을 나타냅니다.
-            ),
             SizedBox(height: 10),
             Text(
               shop.name + " (" + shop.unit + ")",
@@ -129,6 +125,24 @@ class _ShoppingPageState extends State<ShoppingPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            SizedBox(height: 10),
+
+            Expanded(
+              flex: 1,
+              child: Container(
+                height: 300,
+                color: Colors.grey[300], // 회색 배경색
+                child: shop.image != null
+                    ? Image.network('${Constants.baseUrl}/items/images/${shop.image}', fit: BoxFit.cover, // 이미지를 위젯에 맞게 조정
+                  width: double.infinity, // 가로 너비를 화면에 맞게 확장
+                  height: double.infinity,)
+                    : Icon(Icons.food_bank, size: 50),
+
+              ),
+            ),
+
+            SizedBox(height: 10),
+
             Text("품종: ${shop.kind}"),
             Text("등급: ${shop.rank}"),
             Text("이번주: ${shop.price}원"),
@@ -137,6 +151,8 @@ class _ShoppingPageState extends State<ShoppingPage> {
               "등락률: ${shop.values}%",
               style: TextStyle(color: textColor),
             ),
+
+            SizedBox(height: 10),
           ],
         ),
       ),

@@ -6,10 +6,11 @@ class Shop{
   final String price;
   final String week_price;
   final double values;
+  String? image;
 
   Shop({required this.name, required this.kind, required this.rank,
   required this.unit, required this.price, required this.week_price,
-  required this.values});
+  required this.values, this.image});
 
   factory Shop.fromJson(Map<String, dynamic> json) {
     return Shop(
@@ -20,6 +21,7 @@ class Shop{
         price: json['price'],
         week_price: json['week_price'],
         values: json['values'],
+        image: json['image']
     );
   }
 }

@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_splim/secure_storage/secure_service.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
+import 'package:flutter_splim/constant.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class QuestionPage extends StatefulWidget {
   @override
@@ -8,29 +15,51 @@ class QuestionPage extends StatefulWidget {
 class _QuestionPageState extends State<QuestionPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
+  late UserDTO? user;
 
-  void _handleSubmit() {
+  void _handleSubmit() async {
     if (_titleController.text.isNotEmpty && _contentController.text.isNotEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("문의"),
-            content: Text("문의되었습니다."),
-            actions: <Widget>[
-              TextButton(
-                child: Text("확인"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+      try {
+        final url = Uri.parse('${Constants.baseUrl}/question/save');
+        final response = await http.post(
+          url,
+          body: {
+            'id': user?.id.toString() ?? '',
+            'title': _titleController.text,
+            'content': _contentController.text,
+          },
+        );
+
+        if (response.statusCode == 200) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("문의"),
+                content: Text("문의되었습니다."),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text("확인"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
           );
-        },
-      );
+        } else {
+          throw Exception('Failed to submit inquiry');
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("문의를 제출하는 데 실패했습니다."),
+          ),
+        );
+      }
     } else {
-      // Handle the case when title or content is empty (if needed)
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("제목과 내용을 모두 입력해주세요."),
@@ -42,6 +71,7 @@ class _QuestionPageState extends State<QuestionPage> {
   @override
   void initState() {
     super.initState();
+    user = Provider.of<UserProvider>(context, listen: false).user;
   }
 
   @override

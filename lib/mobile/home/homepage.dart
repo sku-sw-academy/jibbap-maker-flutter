@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<PriceDTO>> _futurePreferPrices;
   late int userId;
   bool isNow = false;
+  final SecureService secureService = SecureService();
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
@@ -67,12 +68,23 @@ class _MyHomePageState extends State<MyHomePage> {
     _decreaseValues = priceService.fetchPriceDecreaseValues(date!);
     _futurePopularNames = priceService.fetchPopularItemPrices6();
     userDTO = _fetchUser();
-    userDTO.then((user) {
+    userDTO.then((user) async {
       if (user != null) {
         userId = user.id;
         _futurePreferPrices = priceService.fetchPreferPrice(userId);
+        if (user.push) {
+          await _updateFCMToken(user);
+        }
       }
     });
+  }
+
+  Future<void> _updateFCMToken(UserDTO user) async {
+    String? fcmToken = await secureService.readToken("fcmToken");
+    if (fcmToken != null) {
+      user.fcmtoken = fcmToken;
+      await userService.updateUserPushSettings(user);
+    }
   }
 
   Future<UserDTO> _fetchUser() async {

@@ -197,4 +197,19 @@ class UserService{
     }
   }
 
+  Future<void> updateUserPushSettings(UserDTO user) async {
+    final url = Uri.parse('${Constants.baseUrl}/api/auth/updatePushSettings');
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(user.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update push settings');
+    }
+  }
+
 }

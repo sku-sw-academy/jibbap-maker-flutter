@@ -16,10 +16,7 @@ import 'package:flutter_splim/mobile/login/signout.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/service/userservice.dart';
-import 'package:flutter_splim/desktop/admin.dart';
 import 'package:flutter_splim/constant.dart';
-import 'package:flutter_splim/provider/adminprovider.dart';
-import 'package:flutter_splim/desktop/signout.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -59,8 +56,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async{
   print('noti - title : ${notification?.title}, body : ${notification?.body}');
   Map<String, dynamic> data = message.data;
   await cancelNotification();
-  await requestPermissions();
-  await showNotification(title: data["title"], message: data["value"]);
+  //await requestPermissions();
+  await showNotification(title: notification?.title, message: notification?.body);
 }
 
 void main() async {
@@ -144,6 +141,7 @@ class _MainPageState extends State<MainPage> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

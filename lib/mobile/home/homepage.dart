@@ -22,6 +22,7 @@ import 'package:flutter_splim/mobile/home/AIrecipe.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_splim/constant.dart';
 import 'dart:convert';
+import 'package:flutter_splim/mobile/home/notification.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -150,6 +151,19 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.grey[100],
               centerTitle: true,
               actions: [
+                IconButton(
+                  icon: Icon(Icons.notifications),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationListPage(userId: userId),
+                      ),
+                    ).then((value) => setState(() {
+
+                    }));
+                  },
+                ),
                 IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {

@@ -90,7 +90,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
               crossAxisCount: 2, // 한 줄에 두 개의 항목을 배치
               crossAxisSpacing: 8.0, // 항목 사이의 가로 간격
               mainAxisSpacing: 8.0, // 항목 사이의 세로 간격
-              childAspectRatio: 2 / 3.9, // 카드의 가로 세로 비율
+              childAspectRatio: 2 / 3.7, // 카드의 가로 세로 비율
             ),
             itemCount: 4,
             itemBuilder: (context, index) {
@@ -114,7 +114,11 @@ class _ShoppingPageState extends State<ShoppingPage> {
         }));
       },
       child: Card(
-        elevation: 4.0,
+        elevation: 2.0,
+        color: Colors.lightGreenAccent[100],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0), // Adjust the value as needed
+        ),
         child: Column(
           children: [
             SizedBox(height: 10),
@@ -125,23 +129,25 @@ class _ShoppingPageState extends State<ShoppingPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10),
 
-            AspectRatio(
-              aspectRatio: 1, // 이미지를 정사각형 비율로 설정
-              child: Container(
-                color: Colors.grey[300], // 회색 배경색
-                child: shop.image != null
-                    ? Image.network(
-                  '${Constants.baseUrl}/items/images/${shop.image}',
-                  fit: BoxFit.cover, // 이미지를 위젯에 맞게 조정
-                  // 가로 너비를 화면에 맞게 확장
-                )
-                    : Icon(Icons.food_bank, size: 50),
+            Padding(
+              padding: EdgeInsets.all(6.0), // Adjust the padding value as needed
+              child: AspectRatio(
+                aspectRatio: 1, // 이미지를 정사각형 비율로 설정
+                child: Container(
+                  color: Colors.grey[300], // 회색 배경색
+                  child: shop.image != null
+                      ? Image.network(
+                    '${Constants.baseUrl}/items/images/${shop.image}',
+                    fit: BoxFit.cover, // 이미지를 위젯에 맞게 조정
+                    // 가로 너비를 화면에 맞게 확장
+                  )
+                      : Icon(Icons.food_bank, size: 50),
+                ),
               ),
             ),
 
-            SizedBox(height: 10),
+            SizedBox(height: 2),
 
             Text("품종: ${shop.kind}"),
             Text("등급: ${shop.rank}"),

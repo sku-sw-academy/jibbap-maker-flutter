@@ -24,7 +24,7 @@ class _DetailPageState extends State<DetailPage> {
 
   Future<void> _fetchAnswer() async {
     final response = await http.get(
-      Uri.parse('${Constants.baseUrl}/answer/${widget.inquiry["id"]}'),
+      Uri.parse('${Constants.baseUrl}/answer/question/${widget.inquiry["id"]}'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
       },

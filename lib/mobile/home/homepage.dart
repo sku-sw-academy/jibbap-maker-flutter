@@ -153,15 +153,46 @@ class _MyHomePageState extends State<MyHomePage> {
               actions: [
                 IconButton(
                   icon: Icon(Icons.notifications),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NotificationListPage(userId: userId),
-                      ),
-                    ).then((value) => setState(() {
+                  onPressed: () async {
+                    final storageService = Provider.of<SecureService>(context, listen: false);
+                    String? token = await storageService.readToken(key);
+                    if (token == null || token.isEmpty) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('로그인 필요'),
+                          content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('확인'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => LoginPage()),
+                                ).then((value) => setState(() async {
+                                  Future.delayed(Duration(milliseconds: 500), () {
+                                    setState(() {
+                                      // 여기서 필요한 로그인 이후의 동작 수행
+                                    });
+                                  });
+                                }));
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                      return;
+                    }else{
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NotificationListPage(userId: userId),
+                        ),
+                      ).then((value) => setState(() {
 
-                    }));
+                      }));
+                    }
                   },
                 ),
                 IconButton(

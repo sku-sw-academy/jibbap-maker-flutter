@@ -62,8 +62,17 @@ class _NotificationListPageState extends State<NotificationListPage> {
                 NotificationListDTO notification = snapshot.data![index];
                 return ListTile(
                   title: Text(notification.title),
-                  subtitle: Text(notification.body),
-                  trailing: Text(notification.modifyDate.toString().substring(5, 19).replaceAll("T", " ")),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(notification.body),
+                      SizedBox(height: 5), // 간격을 위해 추가
+                      Text(
+                        notification.modifyDate.toString().substring(5, 16).replaceAll("T", " ").replaceAll("-", "/"),
+                        style: TextStyle(color: Colors.grey, fontSize: 12), // 날짜 텍스트 스타일 조정
+                      ),
+                    ],
+                  ),
                 );
               },
             );

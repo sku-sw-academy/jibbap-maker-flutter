@@ -29,7 +29,6 @@ class _SearchResultPageState extends State<SearchResultPage> {
 
   @override
   Widget build(BuildContext context) {
-
     List<String> filteredSuggestions = getFilteredSuggestions(widget.searchText);
 
     return Scaffold(
@@ -59,33 +58,69 @@ class _SearchResultPageState extends State<SearchResultPage> {
             child: ListView.builder(
               itemCount: filteredSuggestions.length,
               itemBuilder: (context, index) {
+                String suggestion = filteredSuggestions[index];
+                String lowerCaseSuggestion = suggestion.toLowerCase();
+                String lowerCaseSearchText = widget.searchText.toLowerCase();
+
+                List<TextSpan> textSpans = [];
+                int startIndex = lowerCaseSuggestion.indexOf(lowerCaseSearchText);
+                if (startIndex != -1) {
+                  // 검색어가 포함된 경우에만 처리
+                  int endIndex = startIndex + widget.searchText.length;
+                  textSpans.add(TextSpan(text: suggestion.substring(0, startIndex)));
+                  textSpans.add(TextSpan(
+                    text: suggestion.substring(startIndex, endIndex),
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+                  ));
+                  textSpans.add(TextSpan(text: suggestion.substring(endIndex)));
+                } else {
+                  textSpans.add(TextSpan(text: suggestion));
+                }
+
                 return ListTile(
-                  title: Text(filteredSuggestions[index]),
-                  onTap: () async{
-                    bool isExisting = await dbHelper.checkIfSuggestionExists(filteredSuggestions[index]);
+                  title: RichText(
+                    text: TextSpan(
+                      style: TextStyle(color: Colors.black),
+                      children: textSpans,
+                    ),
+                  ),
+                  onTap: () async {
+                    bool isExisting = await dbHelper.checkIfSuggestionExists(suggestion);
+
                     if (isExisting) {
-                      await dbHelper.updateRecord(Record(name: filteredSuggestions[index], date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                      // suggestion이 이미 존재하면 업데이트 수행
+                      await dbHelper.updateRecord(Record(
+                          name: suggestion,
+                          date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                      setState(() {
+                        recentSearches = dbHelper.getRecords();
+                      });
+                    } else {
+                      // suggestion이 존재하지 않으면 데이터베이스에 삽입
+                      await dbHelper.insertRecord(Record(
+                          name: suggestion,
+                          date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
+                      setState(() {
+                        recentSearches = dbHelper.getRecords();
+                      });
                     }
 
-                    else {
-                      await dbHelper.insertRecord(Record(name: filteredSuggestions[index], date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
-                    }
-
-                    await itemService.incrementItemCount(filteredSuggestions[index]);
-
-                    setState(() {
-                      recentSearches = dbHelper.getRecords();
-                    });
+                    await itemService.incrementItemCount(suggestion);
 
                     Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => SelectedPage(itemname: filteredSuggestions[index]),
-                    ),
-                    );
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SelectedPage(itemname: suggestion),
+                      ),
+                    ).then((value) => setState(() {
+
+                    }));
                   },
                 );
               },
             ),
           ),
+
         ],
       ),
     );

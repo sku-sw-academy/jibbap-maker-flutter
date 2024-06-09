@@ -15,6 +15,9 @@ import 'package:flutter_splim/constant.dart';
 import 'package:flutter_splim/service/userservice.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_splim/mobile/home/notification.dart';
+import 'package:flutter_splim/provider/notificationProvider.dart';
+import 'package:badges/badges.dart' as badges;
 
 final FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin();
 
@@ -32,6 +35,7 @@ class _MyProfileState extends State<MyProfile> {
   String access = "accessToken";
   String refresh = "refreshToken";
   String fcm = "fcmToken";
+  late int userId;
 
   @override
   void initState() {
@@ -44,6 +48,7 @@ class _MyProfileState extends State<MyProfile> {
     UserDTO? user = Provider.of<UserProvider>(context, listen: false).user;
     setState(() {
       _switchValue = user?.push ?? false;
+      userId = user!.id;
     });
   }
 
@@ -96,6 +101,31 @@ class _MyProfileState extends State<MyProfile> {
         backgroundColor: Colors.grey[100],
         centerTitle: true,
         actions: [
+          Consumer<NotificationProvider>(
+            builder: (context, notificationProvider, child) {
+              return badges.Badge(
+                badgeContent: Text(
+                  notificationProvider.notificationCount.toString(),
+                  style: TextStyle(color: Colors.white),
+                ),
+                showBadge: notificationProvider.notificationCount > 0,
+                child: IconButton(
+                  icon: Icon(notificationProvider.notificationCount > 0 ? Icons.notifications : Icons.notifications_none,),
+                  onPressed: () async {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationListPage(userId: userId),
+                      ),
+                    ).then((value) => setState(() {
+                      Provider.of<NotificationProvider>(context, listen: false).resetCount();
+                    }));
+                  },
+                ),
+              );
+            },
+          ),
+
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {

@@ -20,6 +20,7 @@ import 'package:flutter_splim/constant.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_splim/provider/notificationProvider.dart';
 
 final FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin();
 
@@ -54,9 +55,6 @@ Future<void> showNotification({
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async{
   RemoteNotification? notification = message.notification;
   print('noti - title : ${notification?.title}, body : ${notification?.body}');
-  Map<String, dynamic> data = message.data;
-  await cancelNotification();
-  //await requestPermissions();
   await showNotification(title: notification?.title, message: notification?.body);
 }
 
@@ -91,6 +89,7 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<SecureService>(create: (_) => SecureService()),
         ChangeNotifierProvider<UserProvider>(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider(),),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

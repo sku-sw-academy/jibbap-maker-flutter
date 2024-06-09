@@ -23,6 +23,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_splim/constant.dart';
 import 'dart:convert';
 import 'package:flutter_splim/mobile/home/notification.dart';
+import 'package:flutter_splim/provider/notificationProvider.dart';
+import 'package:flutter_splim/provider/notificationProvider.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -44,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late int userId;
   bool isNow = false;
   final SecureService secureService = SecureService();
-
+  final FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin();
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
@@ -55,11 +60,33 @@ class _MyHomePageState extends State<MyHomePage> {
     _refreshController.refreshCompleted();// 임시로 2초 대기
   }
 
+  Future<void> showNotification({
+    required title,
+    required message
+  }) async{
+    notiPlugin.show(11, title, message,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          "channelId",
+          "channelName",
+          channelDescription: "channelDescription",
+          icon: "@mipmap/ic_launcher",
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     initializeData();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      Provider.of<NotificationProvider>(context, listen: false).incrementCount();
+      RemoteNotification? notification = message.notification;
+      print('noti - title : ${notification?.title}, body : ${notification?.body}');
+      await showNotification(title: notification?.title, message: notification?.body);
+    });
   }
 
   Future<void> initializeData() async {
@@ -151,48 +178,60 @@ class _MyHomePageState extends State<MyHomePage> {
               backgroundColor: Colors.grey[100],
               centerTitle: true,
               actions: [
-                IconButton(
-                  icon: Icon(Icons.notifications),
-                  onPressed: () async {
-                    final storageService = Provider.of<SecureService>(context, listen: false);
-                    String? token = await storageService.readToken(key);
-                    if (token == null || token.isEmpty) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('로그인 필요'),
-                          content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('확인'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => LoginPage()),
-                                ).then((value) => setState(() async {
-                                  Future.delayed(Duration(milliseconds: 500), () {
-                                    setState(() {
-                                      // 여기서 필요한 로그인 이후의 동작 수행
-                                    });
-                                  });
-                                }));
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                      return;
-                    }else{
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NotificationListPage(userId: userId),
-                        ),
-                      ).then((value) => setState(() {
-
-                      }));
-                    }
+                Consumer<NotificationProvider>(
+                  builder: (context, notificationProvider, child) {
+                    return badges.Badge(
+                      badgeContent: Text(
+                        notificationProvider.notificationCount.toString(),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      showBadge: notificationProvider.notificationCount > 0,
+                      child: IconButton(
+                        icon: Icon(notificationProvider.notificationCount > 0 ? Icons.notifications : Icons.notifications_none,),
+                        onPressed: () async {
+                          final storageService = Provider.of<SecureService>(context, listen: false);
+                          String? token = await storageService.readToken(key);
+                          if (token == null || token.isEmpty) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('로그인 필요'),
+                                content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('확인'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => LoginPage()),
+                                      ).then((value) => setState(() async {
+                                        Future.delayed(Duration(milliseconds: 500), () {
+                                          setState(() {
+                                            initializeData();
+                                          });
+                                        });
+                                      }));
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                            return;
+                          }else{
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NotificationListPage(userId: userId),
+                              ),
+                            ).then((value) => setState(() {
+                              initializeData();
+                              Provider.of<NotificationProvider>(context, listen: false).resetCount();
+                            }));
+                          }
+                        },
+                      ),
+                    );
                   },
                 ),
                 IconButton(
@@ -202,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       context,
                       MaterialPageRoute(builder: (context) => SearchPage()),
                     ).then((value) => setState(() {
-
+                      initializeData();
                     }));
                   },
                 ),
@@ -240,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ).then((value) => setState(() async {
                                     Future.delayed(Duration(milliseconds: 500), () {
                                       setState(() {
-                                        // 여기서 필요한 로그인 이후의 동작 수행
+                                        initializeData();
                                       });
                                     });
                                   }));

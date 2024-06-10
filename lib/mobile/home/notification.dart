@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_splim/constant.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_splim/mobile/mypage/customerCenter/question.dart';
-import 'package:flutter_splim/provider/userprovider.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_splim/secure_storage/secure_service.dart';
-import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/dto/NotificationListDTO.dart';
+import 'package:flutter_splim/mobile/mypage/customerCenter/center.dart';
+import 'package:flutter_splim/mobile/home/detail.dart';
 
 class NotificationListPage extends StatefulWidget {
   final int userId;
@@ -73,6 +70,12 @@ class _NotificationListPageState extends State<NotificationListPage> {
                       ),
                     ],
                   ),
+                  onTap: () {
+                    if(notification.title == "문의답변 완료")
+                      Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => CenterPage())
+                      );
+                  },
                 );
               },
             );

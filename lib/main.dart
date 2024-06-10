@@ -11,7 +11,6 @@ import 'firebase_options.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
-import 'package:flutter_splim/mobile/recipeview/recipe.dart';
 import 'package:flutter_splim/mobile/login/signout.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';

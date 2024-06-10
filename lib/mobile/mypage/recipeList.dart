@@ -3,11 +3,6 @@ import 'package:flutter_splim/constant.dart';
 import 'package:flutter_splim/dto/RecipeDTO.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:flutter_splim/provider/userprovider.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_splim/secure_storage/secure_service.dart';
-import 'package:flutter_splim/dto/UserDTO.dart';
-import 'package:flutter_splim/dto/RegisterDTO.dart';
 import 'package:flutter_splim/mobile/mypage/recipe/modify.dart';
 import 'package:flutter_splim/mobile/mypage/recipe/share.dart';
 
@@ -24,6 +19,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
   late Future<List<RecipeDTO>> recipeList;
   bool isEditing = false;
   List<int> selectedIds = [];
+  List<int> addSelectedIds = [];
 
   @override
   void initState() {
@@ -49,7 +45,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
     }
   }
 
-  Future<void> deleteRecipes(List<int> recipeIds) async {
+  Future<void> deleteRecipes(List<int> recipeIds, List<int> addSelectedIds) async {
     try {
       for (int id in recipeIds) {
         final response = await http.put(
@@ -67,6 +63,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
       setState(() {
         recipeList = fetchRecipeList(widget.userId);
         selectedIds.clear();
+        addSelectedIds.clear();
       });
     } catch (e) {
       print('Error deleting recipes: $e');
@@ -87,7 +84,10 @@ class _RecipeListPageState extends State<RecipeListPage> {
             onPressed: () {
               setState(() {
                 isEditing = !isEditing;
-                if (!isEditing) selectedIds.clear();
+                if (!isEditing) {
+                  selectedIds.clear();
+                  addSelectedIds.clear();
+                }
               });
             },
             child: Text(
@@ -124,7 +124,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                             recipeList = fetchRecipeList(widget.userId);
                           }));
                         }else{
-
+                          // 다른 사용자의 레시피를 클릭한 경우 추가 동작을 정의할 수 있습니다.
                         }
                       }else{
                         Navigator.push(context, MaterialPageRoute(builder: (context) => ModifyPage(recipeDTO: recipeDTO,))).then((value) => setState(() {
@@ -135,15 +135,18 @@ class _RecipeListPageState extends State<RecipeListPage> {
                   },
                   leading: isEditing
                       ? Checkbox(
-                    value: selectedIds.contains(recipeDTO.id),
+                    value: selectedIds.contains(recipeDTO.id) || addSelectedIds.contains(recipeDTO.id),
                     onChanged: (value) {
                       setState(() {
                         if (value != null && value) {
                           if(recipeDTO.userDTO.id == widget.userId){
                             selectedIds.add(recipeDTO.id);
+                          } else {
+                            addSelectedIds.add(recipeDTO.id);
                           }
                         } else {
                           selectedIds.remove(recipeDTO.id);
+                          addSelectedIds.remove(recipeDTO.id);
                         }
                       });
                     },
@@ -157,14 +160,14 @@ class _RecipeListPageState extends State<RecipeListPage> {
       ),
       floatingActionButton: isEditing
           ? FloatingActionButton(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.red,
-            onPressed: () {
-            deleteRecipes(selectedIds);
-            },
-            child: Icon(Icons.delete),
-      ) : null, // Only show FAB when editing
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.red,
+        onPressed: () {
+          deleteRecipes(selectedIds, addSelectedIds);
+        },
+        child: Icon(Icons.delete),
+      )
+          : null, // 편집 모드에서만 삭제 버튼을 표시
     );
   }
 }
-

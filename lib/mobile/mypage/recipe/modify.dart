@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:flutter_splim/mobile/mypage/recipe/share.dart';
+import 'package:flutter_splim/dto/RecipeDTO.dart';
 
 class ModifyPage extends StatefulWidget {
+  final RecipeDTO recipeDTO;
+
+  ModifyPage({required this.recipeDTO});
 
   @override
   _ModifyPageState createState() => _ModifyPageState();
@@ -17,15 +20,20 @@ class _ModifyPageState extends State<ModifyPage> {
   CroppedFile? _croppedFile;
   final ImagePicker picker = ImagePicker();
 
-  Future<void> getImage(ImageSource imageSource) async{
-    try{
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> getImage(ImageSource imageSource) async {
+    try {
       final XFile? pickedFile = await picker.pickImage(source: imageSource);
-      if(pickedFile != null){
+      if (pickedFile != null) {
         _image = XFile(pickedFile.path);
         cropImage();
       }
-    }catch(e){
-
+    } catch (e) {
+      print(e); // 에러 처리
     }
   }
 
@@ -35,15 +43,12 @@ class _ModifyPageState extends State<ModifyPage> {
         sourcePath: _image!.path,
         compressFormat: ImageCompressFormat.jpg,
         compressQuality: 100,
-        aspectRatio: CropAspectRatio(
-          ratioX: 1,
-          ratioY: 1,
-        ),
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: '이미지 자르기/회전하기',
             toolbarColor: Colors.grey[100],
-            toolbarWidgetColor: Colors.white,
+            toolbarWidgetColor: Colors.black,
             initAspectRatio: CropAspectRatioPreset.square,
             lockAspectRatio: true,
           ),
@@ -54,15 +59,8 @@ class _ModifyPageState extends State<ModifyPage> {
           WebUiSettings(
             context: context,
             presentStyle: CropperPresentStyle.dialog,
-            boundary: CroppieBoundary(
-              width: 520,
-              height: 520,
-            ),
-            viewPort: CroppieViewPort(
-              width: 480,
-              height: 480,
-              type: 'circle',
-            ),
+            boundary: CroppieBoundary(width: 520, height: 520),
+            viewPort: CroppieViewPort(width: 480, height: 480, type: 'circle'),
             enableExif: true,
             enableZoom: true,
             showZoomer: true,
@@ -78,17 +76,12 @@ class _ModifyPageState extends State<ModifyPage> {
     }
   }
 
-  void initState() {
-
-  }
-
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: Text("레시피", style: TextStyle(fontSize: 25),),
+        title: Text(widget.recipeDTO.title, style: TextStyle(fontSize: 25)),
         centerTitle: true,
         backgroundColor: Colors.grey[100],
       ),
@@ -96,18 +89,16 @@ class _ModifyPageState extends State<ModifyPage> {
         children: [
           SizedBox(height: 20),
           _buildPhotoArea(),
-          SizedBox(height: 15,),
+          SizedBox(height: 15),
           Divider(),
-
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              "내용",
+              widget.recipeDTO.content,
               style: TextStyle(fontSize: 16.0),
             ),
           ),
           Divider(),
-
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
@@ -123,27 +114,22 @@ class _ModifyPageState extends State<ModifyPage> {
               },
             ),
           ),
-
           SizedBox(height: 20),
-
           Center(
             child: ElevatedButton(
               onPressed: () {
                 if (_image != null && _review.isNotEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('공유되었습니다.'),
-                    ),
+                    SnackBar(content: Text('공유되었습니다.')),
                   );
                   Navigator.pop(context);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SharePage()),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SharePage(recipeDTO: widget.recipeDTO)),
                   );
                 } else {
-                  // 이미지 또는 후기가 없을 때 토스트 출력
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('이미지와 후기를 모두 작성하세요.'),
-                    ),
+                    SnackBar(content: Text('이미지와 후기를 모두 작성하세요.')),
                   );
                 }
               },
@@ -152,17 +138,15 @@ class _ModifyPageState extends State<ModifyPage> {
                 surfaceTintColor: Colors.white,
                 foregroundColor: Colors.black,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 side: BorderSide(color: Colors.black, width: 1),
                 fixedSize: Size(100, 50),
-                // 다른 스타일 속성들...
               ),
               child: Text("공유하기"),
             ),
           ),
           SizedBox(height: 20),
-
         ],
       ),
     );
@@ -170,7 +154,7 @@ class _ModifyPageState extends State<ModifyPage> {
 
   Widget _buildPhotoArea() {
     return Center(
-      child: GestureDetector(// 이미지 선택 기능 추가
+      child: GestureDetector(
         onTap: () {
           showSheet(context);
         },
@@ -200,10 +184,10 @@ class _ModifyPageState extends State<ModifyPage> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.5), // 그림자 색상
-                      spreadRadius: 2, // 그림자의 확산 범위
-                      blurRadius: 5, // 그림자의 흐림 정도
-                      offset: Offset(0, 3), // 그림자의 위치 조절
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
                     ),
                   ],
                 ),
@@ -226,28 +210,26 @@ class _ModifyPageState extends State<ModifyPage> {
       builder: (BuildContext context) {
         return SimpleDialog(
           backgroundColor: Colors.white,
-          // 배경색상을 변경
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10), // 경계선을 둥글게 만듦
-            // 경계선 색상 및 두께 설정
+            borderRadius: BorderRadius.circular(10),
           ),
           elevation: 5.0,
           title: Text('레시피 사진'),
           children: <Widget>[
             SimpleDialogOption(
               onPressed: () {
-                getImage(ImageSource.camera); // 카메라 열기
-                Navigator.pop(context); // BottomSheet 닫기
+                getImage(ImageSource.camera);
+                Navigator.pop(context);
               },
               child: ListTile(
                 leading: Icon(Icons.photo_camera),
-                title: Text('카메라로 찍기'), 
+                title: Text('카메라로 찍기'),
               ),
             ),
             SimpleDialogOption(
               onPressed: () {
-                getImage(ImageSource.gallery); // 갤러리에서 이미지 선택
-                Navigator.pop(context); // BottomSheet 닫기
+                getImage(ImageSource.gallery);
+                Navigator.pop(context);
               },
               child: ListTile(
                 leading: Icon(Icons.photo),
@@ -259,5 +241,4 @@ class _ModifyPageState extends State<ModifyPage> {
       },
     );
   }
-
 }

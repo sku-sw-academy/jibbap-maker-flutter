@@ -119,11 +119,15 @@ class _RecipeListPageState extends State<RecipeListPage> {
                   onTap: (){
                     if(!isEditing){
                       if(recipeDTO.status){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SharePage())).then((value) => setState(() {
-                          recipeList = fetchRecipeList(widget.userId);
-                        }));
+                        if(recipeDTO.userDTO.id == widget.userId){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => SharePage(recipeDTO: recipeDTO))).then((value) => setState(() {
+                            recipeList = fetchRecipeList(widget.userId);
+                          }));
+                        }else{
+
+                        }
                       }else{
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => ModifyPage())).then((value) => setState(() {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ModifyPage(recipeDTO: recipeDTO,))).then((value) => setState(() {
                           recipeList = fetchRecipeList(widget.userId);
                         }));
                       }
@@ -135,7 +139,9 @@ class _RecipeListPageState extends State<RecipeListPage> {
                     onChanged: (value) {
                       setState(() {
                         if (value != null && value) {
-                          selectedIds.add(recipeDTO.id);
+                          if(recipeDTO.userDTO.id == widget.userId){
+                            selectedIds.add(recipeDTO.id);
+                          }
                         } else {
                           selectedIds.remove(recipeDTO.id);
                         }

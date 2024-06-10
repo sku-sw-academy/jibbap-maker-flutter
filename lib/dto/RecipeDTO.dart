@@ -4,7 +4,7 @@ class RecipeDTO {
   final int id; // Immutable
   final UserDTO userDTO; // Immutable
   final String title;// Immutable
-  final String? content;
+  final String content;
   String? comment; // Mutable and nullable
   String? image; // Mutable and nullable
   bool status; // Mutable

@@ -4,8 +4,12 @@ import 'package:flutter_splim/mobile/mypage/recipe/modify.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter_splim/dto/RecipeDTO.dart';
 
 class SharePage extends StatefulWidget {
+  final RecipeDTO recipeDTO;
+
+  SharePage({required this.recipeDTO});
 
   @override
   _SharePageState createState() => _SharePageState();
@@ -13,7 +17,6 @@ class SharePage extends StatefulWidget {
 
 class _SharePageState extends State<SharePage> {
   String _review = '후기';
-  XFile? _image;
   CroppedFile? _croppedFile;
   final ImagePicker picker = ImagePicker();
 
@@ -62,7 +65,7 @@ class _SharePageState extends State<SharePage> {
           Center(
             child: ElevatedButton(
               onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ModifyPage()),);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ModifyPage(recipeDTO: widget.recipeDTO)),);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,

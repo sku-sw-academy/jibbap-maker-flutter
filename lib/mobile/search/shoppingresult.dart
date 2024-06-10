@@ -22,6 +22,7 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
   final PriceService priceService = PriceService();
   List<PriceDTO> searchData = [];
   List<FlSpot> spots = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -76,6 +77,10 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
           );
 
           spots = _getSpots(searchData);
+
+          setState(() {
+            isLoading = false;
+          });
         });
       } catch (e) {
         print('Failed to load search data: $e');
@@ -95,30 +100,29 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
         scrolledUnderElevation: 0,
         backgroundColor: Colors.grey[100],
       ),
-      body: ListView(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator()) // 로딩 중이면 로딩 표시
+          : ListView(
         children: [
           SizedBox(height: 20,),
-
           Center(
-            child: Text("$kindName$rankName$unit", style: TextStyle(
-              fontSize: 18, // 폰트 크기
-              fontWeight: FontWeight.bold, // 폰트 굵기
-              color: Colors.black, // 폰트 색상
-            ),
+            child: Text(
+              "$kindName$rankName$unit",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
           ),
-
           SizedBox(height: 20),
-
           Center(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: dataTable,
             ),
           ),
-
           SizedBox(height: 20),
-
           _buildLineChart(searchData),
         ],
       ),

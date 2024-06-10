@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter_splim/mobile/recipeview/recipe.dart';
+import 'package:flutter_splim/dto/RecipeDTO.dart';
+import 'package:flutter_splim/constant.dart';
 
 class RecipeView extends StatefulWidget {
   @override
@@ -8,7 +12,26 @@ class RecipeView extends StatefulWidget {
 
 class _RecipeViewState extends State<RecipeView> {
   String searchText = '';
-  List<String> recipes = ['Recipe 1', 'Recipe 2', 'Recipe 3', 'Recipe 4', 'Delicious Recipe', 'Tasty Recipe'];
+  List<RecipeDTO> recipes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchRecipes();
+  }
+
+  Future<void> fetchRecipes() async {
+    final response = await http.get(Uri.parse('${Constants.baseUrl}/recipe/share'));
+    if (response.statusCode == 200) {
+      var responsebody = utf8.decode(response.bodyBytes);
+      List<dynamic> body = jsonDecode(responsebody);
+      setState(() {
+        recipes = body.map((item) => RecipeDTO.fromJson(item)).toList();
+      });
+    } else {
+      throw Exception('Failed to load recipes');
+    }
+  }
 
   void handleSearchChange(String searchTerm) {
     setState(() {
@@ -16,14 +39,14 @@ class _RecipeViewState extends State<RecipeView> {
     });
   }
 
-  List<String> getFilteredSuggestions(String searchTerm) {
-    return recipes.where((recipe) => recipe.toLowerCase().contains(searchTerm.toLowerCase())).toList();
+  List<RecipeDTO> getFilteredRecipes(String searchTerm) {
+    return recipes.where((recipe) => recipe.title.toLowerCase().contains(searchTerm.toLowerCase())).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    List<String> filteredRecipes = getFilteredSuggestions(searchText);
+    List<RecipeDTO> filteredRecipes = getFilteredRecipes(searchText);
 
     return Scaffold(
       appBar: AppBar(
@@ -53,12 +76,12 @@ class _RecipeViewState extends State<RecipeView> {
             ),
             itemCount: filteredRecipes.length,
             itemBuilder: (context, index) {
-              String recipe = filteredRecipes[index];
+              RecipeDTO recipe = filteredRecipes[index];
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => RecipePage()),
+                    MaterialPageRoute(builder: (context) => RecipePage(recipe: recipe)),
                   );
                 },
                 child: Card(
@@ -70,14 +93,20 @@ class _RecipeViewState extends State<RecipeView> {
                           aspectRatio: 1,
                           child: Container(
                             color: Colors.grey[300],
-                            child: Icon(Icons.food_bank, size: 50),
+                            child: recipe.image != null && recipe.image!.isNotEmpty
+                                ? Image.network('${Constants.baseUrl}/recipe/images/${recipe.image}')
+                                : CircleAvatar(
+                              backgroundColor: Colors.grey[300],
+                              radius: 50,
+                              child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
+                            ),
                           ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          recipe,
+                          recipe.title,
                           style: TextStyle(fontSize: 16.0),
                           textAlign: TextAlign.center,
                         ),

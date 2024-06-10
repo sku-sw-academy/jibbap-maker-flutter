@@ -6,8 +6,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_splim/dto/RecipeDTO.dart';
+import 'package:flutter_splim/constant.dart';
 
 class RecipePage extends StatefulWidget {
+  final RecipeDTO recipe;
+
+  RecipePage({required this.recipe});
 
   @override
   _RecipePageState createState() => _RecipePageState();
@@ -22,6 +27,7 @@ class _RecipePageState extends State<RecipePage> {
 
   void initState() {
     super.initState();
+    _review = widget.recipe.comment!;
   }
 
   @override
@@ -29,7 +35,7 @@ class _RecipePageState extends State<RecipePage> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text("레시피", style: TextStyle(fontSize: 25),),
+        title: Text(widget.recipe.title, style: TextStyle(fontSize: 25),),
         centerTitle: true,
         backgroundColor: Colors.grey[100],
         scrolledUnderElevation: 0,
@@ -105,7 +111,7 @@ class _RecipePageState extends State<RecipePage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              "내용",
+               widget.recipe.content,
               style: TextStyle(fontSize: 16.0),
             ),
           ),
@@ -136,20 +142,21 @@ class _RecipePageState extends State<RecipePage> {
 
   Widget _buildPhotoArea() {
     return Center(
-      child: GestureDetector( // 이미지 선택 기능 추가
+      child: GestureDetector(
+        // 이미지 선택 기능 추가
         child: Container(
           width: 300,
           height: 300,
           decoration: BoxDecoration(
             color: Colors.blue[200],
-            image: _croppedFile != null
+            image: widget.recipe.image!.isNotEmpty
                 ? DecorationImage(
-              image: FileImage(File(_croppedFile!.path)),
+              image: NetworkImage('${Constants.baseUrl}/recipe/images/${widget.recipe.image}'),
               fit: BoxFit.cover,
             )
                 : null,
           ),
-          child: _croppedFile == null
+          child: widget.recipe.image!.isEmpty
               ? Icon(Icons.food_bank, color: Colors.grey, size: 70)
               : null,
         ),

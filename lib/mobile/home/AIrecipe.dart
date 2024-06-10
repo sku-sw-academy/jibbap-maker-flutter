@@ -77,7 +77,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
             } else if (!snapshot.hasData || snapshot.data!.title.isEmpty) {
               return Text('No title available');
             } else {
-              return Text(snapshot.data!.title);
+              return Text(snapshot.data!.title.replaceAll("title :", ""));
             }
           },
         ),
@@ -98,7 +98,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                 Divider(),
                 // 여기에 데이터를 표시
                 Text(
-                  snapshot.data!.content,
+                  snapshot.data!.content.replaceAll("content : ", "내용"),
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),

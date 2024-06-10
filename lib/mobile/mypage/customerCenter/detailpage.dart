@@ -52,6 +52,7 @@ class _DetailPageState extends State<DetailPage> {
       appBar: AppBar(
         title: Text("내 문의"),
         centerTitle: true,
+        scrolledUnderElevation: 0,
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

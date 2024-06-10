@@ -78,6 +78,7 @@ class _QuestionPageState extends State<QuestionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text("문의하기", style: TextStyle(fontSize: 25),),
         centerTitle: true,
         backgroundColor: Colors.grey[100],

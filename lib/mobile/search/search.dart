@@ -256,10 +256,10 @@ class _SearchPageState extends State<SearchPage> {
                                 ),
                               ),
                             ),
-                    Padding(
-                    padding: EdgeInsets.only(left: 10.0), // Wrap 위젯에 왼쪽 패딩 추가
-                    child:
-                            Wrap(
+                              Padding(
+                                padding: EdgeInsets.only(left: 10.0), // Wrap 위젯에 왼쪽 패딩 추가
+                            child:
+                                Wrap(
                               spacing: 3.0,
                               runSpacing: 3.0,
                               children: popularPrices.map((price) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_splim/mobile/recipeview/recipe.dart';
 
 class RecipeView extends StatefulWidget {
   @override
@@ -6,48 +7,89 @@ class RecipeView extends StatefulWidget {
 }
 
 class _RecipeViewState extends State<RecipeView> {
-  List<ItemModel> items = [];
+  String searchText = '';
+  List<String> recipes = ['Recipe 1', 'Recipe 2', 'Recipe 3', 'Recipe 4', 'Delicious Recipe', 'Tasty Recipe'];
+
+  void handleSearchChange(String searchTerm) {
+    setState(() {
+      searchText = searchTerm;
+    });
+  }
+
+  List<String> getFilteredSuggestions(String searchTerm) {
+    return recipes.where((recipe) => recipe.toLowerCase().contains(searchTerm.toLowerCase())).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    List<String> filteredRecipes = getFilteredSuggestions(searchText);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recipe'),
-      ),
-
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 4.0,
-          mainAxisSpacing: 4.0,
+        scrolledUnderElevation: 0,
+        title: Container(
+          width: screenWidth * 0.7,
+          child: TextField(
+            onChanged: handleSearchChange,
+            decoration: InputDecoration(
+              hintText: "검색어를 입력하세요",
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+            ),
+            style: TextStyle(color: Colors.black),
+          ),
         ),
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(items[index].text),
-            leading: Image.network(items[index].imageUrl),
-          );
-        },
       ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            items.add(ItemModel(
-              text: 'Item ${items.length + 1}',
-              imageUrl: 'https://via.placeholder.com/150', // 예시 이미지 URL
-            ));
-          });
-        },
-        child: Icon(Icons.add),
+      body: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: Scrollbar( // Scrollbar 추가
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 3 / 3.8,
+              crossAxisSpacing: 10.0,
+              mainAxisSpacing: 10.0,
+            ),
+            itemCount: filteredRecipes.length,
+            itemBuilder: (context, index) {
+              String recipe = filteredRecipes[index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RecipePage()),
+                  );
+                },
+                child: Card(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(6.0),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            color: Colors.grey[300],
+                            child: Icon(Icons.food_bank, size: 50),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          recipe,
+                          style: TextStyle(fontSize: 16.0),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
-}
-
-class ItemModel {
-  final String text;
-  final String imageUrl;
-
-  ItemModel({required this.text, required this.imageUrl});
 }

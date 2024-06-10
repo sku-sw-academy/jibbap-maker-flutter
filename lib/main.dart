@@ -23,6 +23,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_splim/provider/notificationProvider.dart';
 
 final FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin();
+NotificationProvider? notificationProvider;
 
 Future<void> cancelNotification() async{
   await notiPlugin.cancelAll();
@@ -56,6 +57,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async{
   RemoteNotification? notification = message.notification;
   print('noti - title : ${notification?.title}, body : ${notification?.body}');
   await showNotification(title: notification?.title, message: notification?.body);
+  notificationProvider?.incrementCount();
 }
 
 void main() async {
@@ -141,7 +143,6 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -190,18 +191,26 @@ class _MainPageState extends State<MainPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SearchPage()),
-              ).then((value) => setState(() {
-
-              }));
+              ).then((value){
+                storageService.readToken(key).then((token) {
+                  setState(() {
+                    Constants.isLogined = token != null && token.isNotEmpty;
+                  });
+                });
+              });
             } else if (index == 2) {
               // 마이페이지는 홈 화면과 같이 TabBarView에 표시됩니다.
               // 탭 인덱스를 이용하여 화면을 전환합니다.
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RecipePage()),
-              ).then((value) => setState((){
-
-              }));
+                MaterialPageRoute(builder: (context) => RecipeView()),
+              ).then((value){
+                storageService.readToken(key).then((token) {
+                  setState(() {
+                    Constants.isLogined = token != null && token.isNotEmpty;
+                  });
+                });
+              });
             }else if (index == 3) {
               if (Constants.isLogined) {
                 Navigator.push(

@@ -18,6 +18,34 @@ class AIRecipePage extends StatefulWidget {
 
 class _AIRecipePageState extends State<AIRecipePage> {
   late Future<GptChatResponse> futureRecipe;
+  bool isSave = false;
+
+  Future<void> saveRecipe(GptChatResponse recipe) async {
+    final url = Uri.parse('${Constants.baseUrl}/recipe/save');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'userId': widget.userId.toString(),
+        'title': recipe.title.replaceAll("title : ", ""),
+        'content': recipe.content.replaceAll("content : ", ""),
+      },
+    );
+
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Recipe saved successfully')),
+      );
+      setState(() {
+        isSave = true;
+      });
+    } else {
+      throw Exception('Failed to save recipe: ${response.statusCode}');
+    }
+  }
 
   Future<GptChatResponse> sendGptChatRequest(int userId, List<PriceDTO> prices) async {
     final url = Uri.parse('${Constants.baseUrl}/api/gpt/recipe');
@@ -109,8 +137,16 @@ class _AIRecipePageState extends State<AIRecipePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: () {
-                        // 저장 버튼 로직 추가
+                      onPressed: () async {
+                        try {
+                          if(!isSave){
+                            await saveRecipe(snapshot.data!);
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Failed to save recipe: $e')),
+                          );
+                        }
                       },
                       child: Icon(Icons.save),
                       style: ElevatedButton.styleFrom(
@@ -127,6 +163,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
+                          isSave = false;
                           futureRecipe = fetchRecipe();
                         });
                       },

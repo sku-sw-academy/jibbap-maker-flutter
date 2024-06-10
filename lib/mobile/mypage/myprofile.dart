@@ -8,7 +8,7 @@ import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/mobile/mypage/customerCenter/center.dart';
 import 'package:flutter_splim/mobile/mypage/recipe/modify.dart';
-import 'package:flutter_splim/mobile/mypage/recipe/recipelist.dart';
+import 'package:flutter_splim/mobile/mypage/recipeList.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/constant.dart';
@@ -248,7 +248,7 @@ class _MyProfileState extends State<MyProfile> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ModifyPage()),
+                MaterialPageRoute(builder: (context) => RecipeListPage(userId: userId)),
               ).then((value) => setState(() {}));
             },
           ),

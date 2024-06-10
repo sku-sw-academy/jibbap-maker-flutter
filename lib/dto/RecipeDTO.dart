@@ -8,6 +8,7 @@ class RecipeDTO {
   String? comment; // Mutable and nullable
   String? image; // Mutable and nullable
   bool status; // Mutable
+  final DateTime modifyDate;
 
   RecipeDTO({
     required this.id,
@@ -17,6 +18,7 @@ class RecipeDTO {
     this.comment,
     this.image,
     required this.status,
+    required this.modifyDate,
   });
 
   factory RecipeDTO.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class RecipeDTO {
       comment: json['comment'],
       image: json['image'],
       status: json['status'],
+      modifyDate: DateTime.parse(json['modifyDate']),
     );
   }
 
@@ -39,5 +42,6 @@ class RecipeDTO {
     'comment' : comment,
     'image' : image,
     'status' : status,
+    'modifyDate': modifyDate.toIso8601String(),
   };
 }

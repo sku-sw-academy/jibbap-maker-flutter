@@ -95,6 +95,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: FutureBuilder<GptChatResponse>(
           future: futureRecipe,
           builder: (context, snapshot) {

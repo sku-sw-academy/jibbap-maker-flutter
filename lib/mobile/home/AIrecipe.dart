@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_splim/dto/GptChatResponse.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'package:flutter_splim/dto/gptchatrequest.dart';
 import 'package:http/http.dart' as http;
@@ -16,10 +17,9 @@ class AIRecipePage extends StatefulWidget {
 }
 
 class _AIRecipePageState extends State<AIRecipePage> {
-  late String responseText;
-  late Future<String> futureRecipe;
+  late Future<GptChatResponse> futureRecipe;
 
-  Future<String> sendGptChatRequest(int userId, List<PriceDTO> prices) async {
+  Future<GptChatResponse> sendGptChatRequest(int userId, List<PriceDTO> prices) async {
     final url = Uri.parse('${Constants.baseUrl}/api/gpt/recipe');
 
     GptChatRequest request = GptChatRequest(
@@ -36,10 +36,9 @@ class _AIRecipePageState extends State<AIRecipePage> {
     );
 
     if (response.statusCode == 200) {
-      setState(() {
-        responseText = response.body;
-      });
-      return response.body;
+      var responsebody = utf8.decode(response.bodyBytes);
+      final responseData = jsonDecode(responsebody);
+      return GptChatResponse.fromJson(responseData);
     } else {
       throw Exception('Failed to load recipe: ${response.statusCode}');
     }
@@ -48,16 +47,15 @@ class _AIRecipePageState extends State<AIRecipePage> {
   @override
   void initState() {
     super.initState();
-    responseText = '';
     futureRecipe = fetchRecipe(); // 초기화 시에 응답을 받기 위해 initState에서 호출
   }
 
   // 응답을 받는 메서드
-  Future<String> fetchRecipe() async {
+  Future<GptChatResponse> fetchRecipe() async {
     try {
       List<PriceDTO> prices = await widget.futurePrices;
-      String response = await sendGptChatRequest(widget.userId, prices);
-      print('Recipe: $response');
+      GptChatResponse response = await sendGptChatRequest(widget.userId, prices);
+      print('Recipe: ${response.title}');
       return response;
     } catch (e) {
       print('Error: $e');
@@ -69,17 +67,30 @@ class _AIRecipePageState extends State<AIRecipePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("레시피"),
+        title: FutureBuilder<GptChatResponse>(
+          future: futureRecipe,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text('Loading...');
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else if (!snapshot.hasData || snapshot.data!.title.isEmpty) {
+              return Text('No title available');
+            } else {
+              return Text(snapshot.data!.title);
+            }
+          },
+        ),
         centerTitle: true,
       ),
-      body: FutureBuilder<String>(
+      body: FutureBuilder<GptChatResponse>(
         future: futureRecipe,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          } else if (!snapshot.hasData || snapshot.data!.content.isEmpty) {
             return Center(child: Text('No data available'));
           } else {
             return ListView(
@@ -87,7 +98,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                 Divider(),
                 // 여기에 데이터를 표시
                 Text(
-                  snapshot.data!,
+                  snapshot.data!.content,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
@@ -104,7 +115,6 @@ class _AIRecipePageState extends State<AIRecipePage> {
                       child: Icon(Icons.save),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        surfaceTintColor: Colors.white,
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -123,7 +133,6 @@ class _AIRecipePageState extends State<AIRecipePage> {
                       child: Icon(Icons.refresh),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        surfaceTintColor: Colors.white,
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),

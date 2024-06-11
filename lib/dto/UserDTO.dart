@@ -1,5 +1,5 @@
 class UserDTO{
-  final int id;
+  late final int id;
   final String email;
   late String nickname;
   String? profile;

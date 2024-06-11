@@ -8,6 +8,10 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/dto/RecipeDTO.dart';
 import 'package:flutter_splim/constant.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
 
 class RecipePage extends StatefulWidget {
   final RecipeDTO recipe;
@@ -21,14 +25,61 @@ class RecipePage extends StatefulWidget {
 class _RecipePageState extends State<RecipePage> {
   String _review = '후기';
   String key = "accessToken";
-  CroppedFile? _croppedFile;
   final ImagePicker picker = ImagePicker();
   final List<String> _comments = [];
+  late UserDTO? user;
+  int? currentId;
 
   void initState() {
     super.initState();
     _review = widget.recipe.comment!;
+    user = Provider.of<UserProvider>(context, listen: false).user;
+    if(user != null)
+      currentId = user!.id;
+    print(currentId);
   }
+
+  Future<String> checkRecipeExist() async {
+    // 사용자 ID와 레시피 ID 설정
+    int? userId = currentId;
+    int recipeId = widget.recipe.id;
+    // API 엔드포인트 설정
+    String apiUrl = '${Constants.baseUrl}/add/exist?userId=$userId&recipeId=$recipeId';
+    // GET 요청 보내기
+    var response = await http.get(Uri.parse(apiUrl));
+    // 서버로부터의 응답 확인
+    if (response.statusCode == 200) {
+      // 서버로부터의 응답을 문자열로 반환
+      return response.body;
+    } else {
+      // 오류가 발생한 경우 빈 문자열 반환
+      return '';
+    }
+  }
+
+  Future<String> addSave() async {
+    try {
+      // 사용자 ID와 레시피 ID 설정
+      int? userId = currentId;
+      int recipeId = widget.recipe.id;
+      // API 엔드포인트 설정
+      String apiUrl = '${Constants.baseUrl}/add/save?userId=$userId&recipeId=$recipeId';
+      // POST 요청 보내기
+      var response = await http.post(Uri.parse(apiUrl));
+      // 서버로부터의 응답 확인
+      if (response.statusCode == 200) {
+        // 서버로부터의 응답을 문자열로 반환
+        return response.body;
+      } else {
+        // 실패한 경우 빈 문자열 반환
+        return '';
+      }
+    } catch (e) {
+      // 오류 발생 시 빈 문자열 반환
+      return '';
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +119,35 @@ class _RecipePageState extends State<RecipePage> {
                 );
                 return;
               } else {
-
+                if(widget.recipe.userDTO.id == currentId){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('본인 레시피는 추가할 수 없습니다.'),
+                      duration: Duration(seconds: 2), // Snackbar 표시 시간 설정
+                    ),
+                  );
+                }else{
+                  String result = await checkRecipeExist();
+                  // 이미 추가된 경우
+                  if (result == "No") {
+                    // Snackbar를 통해 이미 추가되었다는 메시지를 표시
+                    String message = await addSave();
+                    if(message == "success")
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('추가되었습니다.'),
+                          duration: Duration(seconds: 2), // Snackbar 표시 시간 설정
+                        ),
+                      );
+                  }else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('이미 추가되었습니다.'),
+                        duration: Duration(seconds: 2), // Snackbar 표시 시간 설정
+                      ),
+                    );
+                  }
+                }
               }
             },
           )

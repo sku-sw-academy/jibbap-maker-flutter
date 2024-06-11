@@ -93,13 +93,13 @@ class _RecipePageState extends State<RecipePage> {
               SizedBox(width: 15,),
 
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("닉네임"),
-
+                  Text("닉네임: " + widget.recipe.userDTO.nickname, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
                   SizedBox(height: 8),
                   Text(
-                    _review, // 사용자의 후기를 텍스트로 표시
-                    style: TextStyle(fontSize: 16),
+                    "후기: " + _review, // 사용자의 후기를 텍스트로 표시
+                    style: TextStyle(fontSize: 16, ),
                   ),
                 ],
               )
@@ -111,7 +111,7 @@ class _RecipePageState extends State<RecipePage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-               widget.recipe.content,
+                widget.recipe.content,
               style: TextStyle(fontSize: 16.0),
             ),
           ),

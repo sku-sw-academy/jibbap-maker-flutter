@@ -28,6 +28,7 @@ class _ModifyPageState extends State<ModifyPage> {
   void initState() {
     super.initState();
     _textEditingController = TextEditingController(text: widget.recipeDTO.comment ?? "");
+    _review = widget.recipeDTO.comment ?? "";
   }
 
   Future<void> getImage(ImageSource imageSource) async {

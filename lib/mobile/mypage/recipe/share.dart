@@ -4,6 +4,8 @@ import 'package:flutter_splim/mobile/mypage/recipe/modify.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_splim/dto/RecipeDTO.dart';
 import 'package:flutter_splim/constant.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; // If you need to decode JSON responses
 
 class SharePage extends StatefulWidget {
   final RecipeDTO recipeDTO;
@@ -20,6 +22,25 @@ class _SharePageState extends State<SharePage> {
   void initState() {
 
   }
+
+  Future<void> updateRecipeShareStatus(int id) async {
+    final url = Uri.parse('${Constants.baseUrl}/recipe/status/$id'); // Adjust the URL as per your backend endpoint
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Successfully updated
+      print('Recipe status updated successfully.');
+    } else {
+      // Handle error
+      print('Failed to update recipe status.');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,26 +79,53 @@ class _SharePageState extends State<SharePage> {
             ),
             ),
           ),
+           Row(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ModifyPage(recipeDTO: widget.recipeDTO)),);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      surfaceTintColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
+                      ),
+                      side: BorderSide(color: Colors.black, width: 1),
+                      fixedSize: Size(100, 50),
+                      // 다른 스타일 속성들...
+                    ),
+                    child: Text("수정하기"),
+                  ),
 
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ModifyPage(recipeDTO: widget.recipeDTO)),);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                surfaceTintColor: Colors.white,
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
-                ),
-                side: BorderSide(color: Colors.black, width: 1),
-                fixedSize: Size(100, 50),
-                // 다른 스타일 속성들...
-              ),
-              child: Text("수정하기"),
-            ),
+                  SizedBox(width: 20),
+
+                  ElevatedButton(
+                    onPressed: () async {
+                      await updateRecipeShareStatus(widget.recipeDTO.id);
+                      widget.recipeDTO.status = false;
+                      Navigator.pop(context);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ModifyPage(recipeDTO: widget.recipeDTO)),);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      surfaceTintColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
+                      ),
+                      side: BorderSide(color: Colors.black, width: 1),
+                      fixedSize: Size(110, 50),
+                      // 다른 스타일 속성들...
+                    ),
+                    child: Text("공유 중지"),
+                  ),
+                ]
+
           ),
+
           SizedBox(height: 20),
 
         ],

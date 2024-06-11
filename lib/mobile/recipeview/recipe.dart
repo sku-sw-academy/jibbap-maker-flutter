@@ -133,10 +133,19 @@ class _RecipePageState extends State<RecipePage> {
                     // Snackbar를 통해 이미 추가되었다는 메시지를 표시
                     String message = await addSave();
                     if(message == "success")
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('추가되었습니다.'),
-                          duration: Duration(seconds: 2), // Snackbar 표시 시간 설정
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('성공'),
+                          content: Text('저장되었습니다.'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('확인'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
                         ),
                       );
                   }else{

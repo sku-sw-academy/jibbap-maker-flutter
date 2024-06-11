@@ -36,8 +36,20 @@ class _AIRecipePageState extends State<AIRecipePage> {
     );
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Recipe saved successfully')),
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('성공'),
+          content: Text('저장되었습니다.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
       );
       setState(() {
         isSave = true;

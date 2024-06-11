@@ -12,22 +12,20 @@ class RecipeView extends StatefulWidget {
 
 class _RecipeViewState extends State<RecipeView> {
   String searchText = '';
-  List<RecipeDTO> recipes = [];
+  Future<List<RecipeDTO>>? recipeList;
 
   @override
   void initState() {
     super.initState();
-    fetchRecipes();
+    recipeList = fetchRecipes();
   }
 
-  Future<void> fetchRecipes() async {
+  Future<List<RecipeDTO>> fetchRecipes() async {
     final response = await http.get(Uri.parse('${Constants.baseUrl}/recipe/share'));
     if (response.statusCode == 200) {
       var responsebody = utf8.decode(response.bodyBytes);
       List<dynamic> body = jsonDecode(responsebody);
-      setState(() {
-        recipes = body.map((item) => RecipeDTO.fromJson(item)).toList();
-      });
+      return body.map((item) => RecipeDTO.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load recipes');
     }
@@ -39,14 +37,13 @@ class _RecipeViewState extends State<RecipeView> {
     });
   }
 
-  List<RecipeDTO> getFilteredRecipes(String searchTerm) {
+  List<RecipeDTO> getFilteredRecipes(List<RecipeDTO> recipes, String searchTerm) {
     return recipes.where((recipe) => recipe.title.toLowerCase().contains(searchTerm.toLowerCase())).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    List<RecipeDTO> filteredRecipes = getFilteredRecipes(searchText);
 
     return Scaffold(
       appBar: AppBar(
@@ -66,57 +63,71 @@ class _RecipeViewState extends State<RecipeView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(6.0),
-        child: Scrollbar( // Scrollbar 추가
-          child: GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 3 / 3.8,
-              crossAxisSpacing: 10.0,
-              mainAxisSpacing: 10.0,
-            ),
-            itemCount: filteredRecipes.length,
-            itemBuilder: (context, index) {
-              RecipeDTO recipe = filteredRecipes[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => RecipePage(recipe: recipe)),
-                  );
-                },
-                child: Card(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(6.0),
-                        child: AspectRatio(
-                          aspectRatio: 1,
-                          child: Container(
-                            color: Colors.grey[300],
-                            child: recipe.image != null && recipe.image!.isNotEmpty
-                                ? Image.network('${Constants.baseUrl}/recipe/images/${recipe.image}')
-                                : CircleAvatar(
-                              backgroundColor: Colors.grey[300],
-                              radius: 50,
-                                  child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          recipe.title,
-                          style: TextStyle(fontSize: 16.0),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
+        child: FutureBuilder<List<RecipeDTO>>(
+          future: recipeList,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Failed to load recipes'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('레시피 목록이 없습니다.'));
+            } else {
+              List<RecipeDTO> filteredRecipes = getFilteredRecipes(snapshot.data!, searchText);
+              return Scrollbar(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 3 / 3.8,
+                    crossAxisSpacing: 10.0,
+                    mainAxisSpacing: 10.0,
                   ),
+                  itemCount: filteredRecipes.length,
+                  itemBuilder: (context, index) {
+                    RecipeDTO recipe = filteredRecipes[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RecipePage(recipe: recipe)),
+                        );
+                      },
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(6.0),
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: Container(
+                                  color: Colors.grey[300],
+                                  child: recipe.image != null && recipe.image!.isNotEmpty
+                                      ? Image.network('${Constants.baseUrl}/recipe/images/${recipe.image}')
+                                      : CircleAvatar(
+                                    backgroundColor: Colors.grey[300],
+                                    radius: 50,
+                                    child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                recipe.title,
+                                style: TextStyle(fontSize: 16.0),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               );
-            },
-          ),
+            }
+          },
         ),
       ),
     );

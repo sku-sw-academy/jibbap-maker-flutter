@@ -98,7 +98,7 @@ class _RecipeViewState extends State<RecipeView> {
                                 : CircleAvatar(
                               backgroundColor: Colors.grey[300],
                               radius: 50,
-                              child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
+                                  child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
                             ),
                           ),
                         ),

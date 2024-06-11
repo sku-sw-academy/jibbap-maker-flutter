@@ -85,9 +85,23 @@ class _RecipePageState extends State<RecipePage> {
               SizedBox(width: 10,),
 
               CircleAvatar(
-                backgroundColor: Colors.cyan,
                 radius: 50,
-                child: Icon(Icons.person, color: Colors.grey, size: 30,),
+                backgroundColor: Colors.blue[200],
+                backgroundImage:
+                    widget.recipe.userDTO.profile != null &&
+                        widget.recipe.userDTO.profile!.isNotEmpty
+                    ? NetworkImage(
+                    "${Constants.baseUrl}/api/auth/images/${widget.recipe.userDTO.profile}")
+                    : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
+                child:
+                    widget.recipe.userDTO.profile != null &&
+                    widget.recipe.userDTO.profile!.isNotEmpty
+                    ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
+                    : Icon(
+                  Icons.person,
+                  size: 60,
+                  color: Colors.grey,
+                ), // 프로필 이미지가 없는 경우에 아이콘을 표시
               ),
 
               SizedBox(width: 15,),

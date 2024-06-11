@@ -422,7 +422,7 @@ class _SelectedPageState extends State<SelectedPage> {
         }
       }
 
-      return maxDpr1 * 1.03; //
+      return maxDpr1 * 1.07; //
     }else{
       return 1.0;
     }

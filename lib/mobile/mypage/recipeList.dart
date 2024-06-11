@@ -136,9 +136,9 @@ class _RecipeListPageState extends State<RecipeListPage> {
                   return Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(0),
                     ),
-                    margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    margin: EdgeInsets.symmetric(vertical: 0, horizontal: 3),
                     child: ListTile(
                       title: Text(recipeDTO.title),
                       trailing: Text(

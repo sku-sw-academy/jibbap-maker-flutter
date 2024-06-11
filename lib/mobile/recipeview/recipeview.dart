@@ -121,6 +121,10 @@ class _RecipeViewState extends State<RecipeView> {
                         );
                       },
                       child: Card(
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0), // Adjust the value as needed
+                        ),
                         child: Column(
                           children: [
                             Padding(
@@ -132,9 +136,9 @@ class _RecipeViewState extends State<RecipeView> {
                                   child: recipe.image != null && recipe.image!.isNotEmpty
                                       ? Image.network('${Constants.baseUrl}/recipe/images/${recipe.image}')
                                       : CircleAvatar(
-                                    backgroundColor: Colors.grey[300],
-                                    radius: 50,
-                                    child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
+                                        backgroundColor: Colors.grey[300],
+                                        radius: 50,
+                                        child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
                                   ),
                                 ),
                               ),

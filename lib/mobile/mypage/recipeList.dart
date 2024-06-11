@@ -141,7 +141,17 @@ class _RecipeListPageState extends State<RecipeListPage> {
                     margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                     child: ListTile(
                       title: Text(recipeDTO.title),
-                      trailing: Text(recipeDTO.modifyDate.toString().substring(5, 10).replaceAll("-", "/")),
+                      trailing: Text(
+                        recipeDTO.userDTO.id == widget.userId
+                            ? (recipeDTO.status ? '공유' : '소장')
+                            : '외부 레시피',
+                        style: TextStyle(
+                          color: recipeDTO.userDTO.id == widget.userId
+                              ? (recipeDTO.status ? Colors.green : Colors.blue)
+                              : Colors.orange,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       onTap: () {
                         if (!isEditing) {
                           if (recipeDTO.status) {

@@ -41,6 +41,34 @@ class _RecipeViewState extends State<RecipeView> {
     return recipes.where((recipe) => recipe.title.toLowerCase().contains(searchTerm.toLowerCase())).toList();
   }
 
+  List<TextSpan> _highlightText(String text, String searchTerm) {
+    if (searchTerm.isEmpty) {
+      return [TextSpan(text: text)];
+    }
+
+    List<TextSpan> spans = [];
+    int start = 0;
+    int index = text.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
+
+    while (index >= 0) {
+      if (index > start) {
+        spans.add(TextSpan(text: text.substring(start, index)));
+      }
+      spans.add(TextSpan(
+        text: text.substring(index, index + searchTerm.length),
+        style: TextStyle(color: Colors.red),
+      ));
+      start = index + searchTerm.length;
+      index = text.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
+    }
+
+    if (start < text.length) {
+      spans.add(TextSpan(text: text.substring(start)));
+    }
+
+    return spans;
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -113,9 +141,11 @@ class _RecipeViewState extends State<RecipeView> {
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                recipe.title,
-                                style: TextStyle(fontSize: 16.0),
+                              child: RichText(
+                                text: TextSpan(
+                                  style: TextStyle(fontSize: 16.0, color: Colors.black),
+                                  children: _highlightText(recipe.title, searchText),
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ),

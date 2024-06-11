@@ -20,7 +20,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
   late Future<List<RecipeDTO>> recipeList;
   bool isEditing = false;
   List<int> selectedIds = [];
-  List<int> addSelectedIds = [];
+  List<int> selectedOtherIds = [];
 
   @override
   void initState() {
@@ -46,8 +46,9 @@ class _RecipeListPageState extends State<RecipeListPage> {
     }
   }
 
-  Future<void> deleteRecipes(List<int> recipeIds, List<int> addSelectedIds) async {
+  Future<void> deleteRecipesAndselected(List<int> recipeIds, List<int> addSelectedIds) async {
     try {
+      // 레시피 삭제
       for (int id in recipeIds) {
         final response = await http.put(
           Uri.parse('${Constants.baseUrl}/recipe/deleteAt/$id'),
@@ -56,18 +57,34 @@ class _RecipeListPageState extends State<RecipeListPage> {
           },
         );
         if (response.statusCode == 200) {
-          print('Recipe with ID $id deleted successfully');
+          print('ID가 $id인 레시피가 성공적으로 삭제되었습니다.');
         } else {
-          print('Failed to delete recipe with ID $id: ${response.reasonPhrase}');
+          print('ID가 $id인 레시피 삭제에 실패했습니다: ${response.reasonPhrase}');
         }
       }
+
+      // 선택된 추가 레시피 삭제
+      for (int id in addSelectedIds) {
+        final response = await http.delete(
+          Uri.parse('${Constants.baseUrl}/add/delete/$id'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+        );
+        if (response.statusCode == 200) {
+          print('ID가 $id인 선택된 추가 레시피가 성공적으로 삭제되었습니다.');
+        } else {
+          print('ID가 $id인 선택된 추가 레시피 삭제에 실패했습니다: ${response.reasonPhrase}');
+        }
+      }
+
       setState(() {
         recipeList = fetchRecipeList(widget.userId);
         selectedIds.clear();
-        addSelectedIds.clear();
+        selectedOtherIds.clear();
       });
     } catch (e) {
-      print('Error deleting recipes: $e');
+      print('레시피 삭제 중 오류 발생: $e');
     }
   }
 
@@ -87,7 +104,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                 isEditing = !isEditing;
                 if (!isEditing) {
                   selectedIds.clear();
-                  addSelectedIds.clear();
+                  selectedOtherIds.clear();
                 }
               });
             },
@@ -149,34 +166,45 @@ class _RecipeListPageState extends State<RecipeListPage> {
                               }));
                             }
                           } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ModifyPage(recipeDTO: recipeDTO),
-                              ),
-                            ).then((value) => setState(() {
-                              recipeList = fetchRecipeList(widget.userId);
-                            }));
+                            if (recipeDTO.userDTO.id == widget.userId){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ModifyPage(recipeDTO: recipeDTO),
+                                ),
+                              ).then((value) => setState(() {
+                                recipeList = fetchRecipeList(widget.userId);
+                              }));
+                            }else{
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OtherRecipePage(recipeDTO: recipeDTO),
+                                ),
+                              ).then((value) => setState(() {
+                                recipeList = fetchRecipeList(widget.userId);
+                              }));
+                            }
                           }
                         }
                       },
                       leading: isEditing
                           ? Checkbox(
-                        value: selectedIds.contains(recipeDTO.id) || addSelectedIds.contains(recipeDTO.id),
+                        value: selectedIds.contains(recipeDTO.id) || selectedOtherIds.contains(recipeDTO.id),
                         onChanged: (value) {
                           setState(() {
                             if (value != null && value) {
                               if (recipeDTO.userDTO.id == widget.userId) {
                                 selectedIds.add(recipeDTO.id);
                               } else {
-                                addSelectedIds.add(recipeDTO.id);
+                                selectedOtherIds.add(recipeDTO.id);
                               }
                             } else {
                               if (selectedIds.contains(recipeDTO.id)) {
                                 selectedIds.remove(recipeDTO.id);
                               }
-                              if (addSelectedIds.contains(recipeDTO.id)) {
-                                addSelectedIds.remove(recipeDTO.id);
+                              if (selectedOtherIds.contains(recipeDTO.id)) {
+                                selectedOtherIds.remove(recipeDTO.id);
                               }
                             }
                           });
@@ -193,12 +221,12 @@ class _RecipeListPageState extends State<RecipeListPage> {
       ),
       floatingActionButton: isEditing
           ? FloatingActionButton(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.red,
-        onPressed: () {
-          deleteRecipes(selectedIds, addSelectedIds);
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.red,
+            onPressed: () {
+              deleteRecipesAndselected(selectedIds, selectedOtherIds);
         },
-        child: Icon(Icons.delete),
+            child: Icon(Icons.delete),
       )
           : null, // 편집 모드에서만 삭제 버튼을 표시
     );

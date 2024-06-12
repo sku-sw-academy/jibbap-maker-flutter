@@ -212,7 +212,7 @@ class LoginPage extends StatelessWidget{
                           Navigator.of(context).popUntil((route) => route.isFirst);
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('로그인 실패: $e')),
+                            SnackBar(content: Text('로그인 실패')),
                           );
                         }
                       },

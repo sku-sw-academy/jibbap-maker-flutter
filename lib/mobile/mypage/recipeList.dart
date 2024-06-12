@@ -131,8 +131,8 @@ class _RecipeListPageState extends State<RecipeListPage> {
         ),
       ),
     ),
-    Expanded(
-    child:FutureBuilder<List<RecipeDTO>>(
+      Expanded(
+        child:FutureBuilder<List<RecipeDTO>>(
         future: recipeList,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

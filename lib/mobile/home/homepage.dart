@@ -297,13 +297,29 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: screenHeight * 0.36,
                       child: Column(
                         children: [
-                          SizedBox(height: 59,),
+                          SizedBox(height: screenHeight * 0.008,),
+                          Container(
+                            height: screenHeight * 0.05,
+                            width: screenWidth * 0.3,
+                            child: Center(
+                                child: Text("AI 레시피",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
+                                )
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: Colors.lightBlueAccent),
+                              color: Colors.lightBlueAccent[100], // 배경색 바꾸기
+                            ),
+                          ),
+                          SizedBox(height: screenHeight * 0.018,),
                           Card(
                             shape: CircleBorder(),
                             elevation: 4.0,
                             color: Colors.white,
                             child: Container(
-                              height: screenHeight * 0.24,
+                              height: screenHeight * 0.245,
                               width: screenWidth * 0.4,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
@@ -312,29 +328,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 borderRadius: BorderRadius.circular(14.0),
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Text(
-                                  //   '오늘의 추천 레시피',
-                                  //   style: TextStyle(
-                                  //     fontSize: 18.0,
-                                  //     fontWeight: FontWeight.bold,
-                                  //     color: Colors.white,
-                                  //   ),
-                                  // ),
-                                  // SizedBox(height: 80.0),
-                                  // Text(
-                                  //   'AI 기반 맞춤 레시피를\n확인해보세요!',
-                                  //   textAlign: TextAlign.center,
-                                  //   style: TextStyle(
-                                  //     fontSize: 13.0,
-                                  //     fontWeight: FontWeight.bold,
-                                  //     color: Colors.amberAccent,
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
+
                             ),
                           ),
                         ],

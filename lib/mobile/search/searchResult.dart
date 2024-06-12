@@ -302,7 +302,7 @@ class _SelectedPageState extends State<SelectedPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: leftTitleWidgets,
-                  reservedSize: 36,
+                  reservedSize: 35,
                 ),
               ),
               rightTitles: AxisTitles(
@@ -310,13 +310,12 @@ class _SelectedPageState extends State<SelectedPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: rightTitleWidgets,
-                  reservedSize: 18,
+                  reservedSize: 32,
                 ),
               ),
               topTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: false,
-
                 ),
               ),
               bottomTitles: AxisTitles(

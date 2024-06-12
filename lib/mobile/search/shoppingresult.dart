@@ -157,7 +157,7 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: leftTitleWidgets,
-                  reservedSize: 36,
+                  reservedSize: 35,
                 ),
               ),
               rightTitles: AxisTitles(
@@ -165,7 +165,7 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: rightTitleWidgets,
-                  reservedSize: 18,
+                    reservedSize: 31,
                 ),
               ),
               topTitles: AxisTitles(

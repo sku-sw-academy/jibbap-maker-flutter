@@ -117,7 +117,22 @@ class _RecipeListPageState extends State<RecipeListPage> {
           ),
         ],
       ),
-      body: FutureBuilder<List<RecipeDTO>>(
+      body: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+      Padding(
+      padding: EdgeInsets.all(16.0),
+      child: Text(
+        '(공개 : 공유 상태, 비공개 : 비공개, 외부 : 외부 레시피)',
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey
+        ),
+      ),
+    ),
+    Expanded(
+    child:FutureBuilder<List<RecipeDTO>>(
         future: recipeList,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -143,8 +158,8 @@ class _RecipeListPageState extends State<RecipeListPage> {
                       title: Text(recipeDTO.title),
                       trailing: Text(
                         recipeDTO.userDTO.id == widget.userId
-                            ? (recipeDTO.status ? '공유' : '소장')
-                            : '외부 레시피',
+                            ? (recipeDTO.status ? '공개' : '비공개')
+                            : '외부',
                         style: TextStyle(
                           color: recipeDTO.userDTO.id == widget.userId
                               ? (recipeDTO.status ? Colors.green : Colors.blue)
@@ -228,6 +243,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
             );
           }
         },
+      ),),]
       ),
       floatingActionButton: isEditing
           ? FloatingActionButton(

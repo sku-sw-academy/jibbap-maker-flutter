@@ -117,10 +117,10 @@ class _SharePageState extends State<SharePage> {
                         borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
                       ),
                       side: BorderSide(color: Colors.black, width: 1),
-                      fixedSize: Size(110, 50),
+                      fixedSize: Size(100, 50),
                       // 다른 스타일 속성들...
                     ),
-                    child: Text("공유 중지"),
+                    child: Text("비공개"),
                   ),
                 ]
 

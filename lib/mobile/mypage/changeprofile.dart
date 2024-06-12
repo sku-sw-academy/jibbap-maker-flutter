@@ -119,10 +119,10 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
       String image = await response.stream.bytesToString();
       print('Image: $image');
       setState(() {
-        user!.profile = image; // 서버에서 받은 이미지
+        user!.profile = image;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('프로필 이미지가 변경되었습니다.')),
-        );
+          SnackBar(content: Text('프로필 이미지 변경')),
+        );// 서버에서 받은 이미지
       });
     } else {
       print('Failed to upload image');
@@ -135,11 +135,11 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
     if (response.statusCode == 200 && response.body == "Ok") {
       print('Profile reset successfully');
       setState(() {
-        user!.profile = null; // 프로필 이미지 URL을 빈 값으로 설정
+        user!.profile = null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('기본 이미지로 변경')),
+        );// 프로필 이미지 URL을 빈 값으로 설정
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('프로필 이미지가 기본 이미지로 변경되었습니다.')),
-      );
     } else {
       print('Failed to reset profile image');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -278,15 +278,9 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                   }
                   if(_croppedFile != null){
                     uploadImage(user!.id, _croppedFile!);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('프로필 변경 성공')),
-                    );
                   }
                   if(_isDefaultImage!){
                     resetProfileImage(user!.id);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('기본 이미지로 변경')),
-                    );
                   }
                 },
             ),
@@ -326,15 +320,9 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
               }
               if(_croppedFile != null){
                 uploadImage(user!.id, _croppedFile!);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('프로필 변경 성공')),
-                );
               }
               if(_isDefaultImage!){
                 resetProfileImage(user!.id);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('기본 이미지로 변경')),
-                );
               }
             },
             style: ElevatedButton.styleFrom(

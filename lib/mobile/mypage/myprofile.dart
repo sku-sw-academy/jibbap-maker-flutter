@@ -7,7 +7,6 @@ import 'package:flutter_splim/mobile/mypage/changepassword.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/mobile/mypage/customerCenter/center.dart';
-import 'package:flutter_splim/mobile/mypage/recipe/modify.dart';
 import 'package:flutter_splim/mobile/mypage/recipeList.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +17,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_splim/mobile/home/notification.dart';
 import 'package:flutter_splim/provider/notificationProvider.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:http/http.dart' as http;
 
 final FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin();
 
@@ -36,6 +38,10 @@ class _MyProfileState extends State<MyProfile> {
   String refresh = "refreshToken";
   String fcm = "fcmToken";
   late int userId;
+  bool? _isDefaultImage = false;
+  XFile? _image;
+  CroppedFile? _croppedFile;
+  final ImagePicker picker = ImagePicker();
 
   @override
   void initState() {
@@ -45,10 +51,11 @@ class _MyProfileState extends State<MyProfile> {
 
   Future<void> _loadUserSettings() async {
     // 사용자 정보 불러오기
-    UserDTO? user = Provider.of<UserProvider>(context, listen: false).user;
+    user = Provider.of<UserProvider>(context, listen: false).user;
     setState(() {
       _switchValue = user?.push ?? false;
-      userId = user!.id;
+      userId = user?.id ?? -1;
+      _isDefaultImage = user?.profile == null || user!.profile!.isEmpty ?? true;
     });
   }
 
@@ -82,6 +89,110 @@ class _MyProfileState extends State<MyProfile> {
       setState(() {
         _switchValue = false;
       });
+    }
+  }
+
+  Future<void> getImage(ImageSource imageSource) async{
+    try{
+      final XFile? pickedFile = await picker.pickImage(source: imageSource);
+      if(pickedFile != null){
+        _image = XFile(pickedFile.path);
+        cropImage();
+      }
+    }catch(e){
+
+    }
+  }
+
+  Future<void> cropImage() async {
+    if (_image != null) {
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: _image!.path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 100,
+        aspectRatio: CropAspectRatio(
+          ratioX: 1,
+          ratioY: 1,
+        ),
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: '이미지 자르기/회전하기',
+            toolbarColor: Colors.grey[100],
+            toolbarWidgetColor: Colors.black,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true,
+          ),
+          IOSUiSettings(
+            title: '이미지 자르기/회전하기',
+            aspectRatioLockEnabled: true,
+          ),
+          WebUiSettings(
+            context: context,
+            presentStyle: CropperPresentStyle.dialog,
+            boundary: CroppieBoundary(
+              width: 520,
+              height: 520,
+            ),
+            viewPort: CroppieViewPort(
+              width: 480,
+              height: 480,
+              type: 'circle',
+            ),
+            enableExif: true,
+            enableZoom: true,
+            showZoomer: true,
+          ),
+        ],
+      );
+
+      if (croppedFile != null) {
+        setState(() {
+          //_croppedFile = croppedFile;
+          uploadImage(userId, croppedFile);
+          _isDefaultImage = false;
+        });
+      }
+    }
+  }
+
+  Future uploadImage(int userId, CroppedFile imageFile) async {
+    var url = Uri.parse('${Constants.baseUrl}/api/auth/upload');
+    var request = http.MultipartRequest('POST', url);
+    request.fields['userId'] = userId.toString(); // 사용자 ID 추가
+    request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      print('Image uploaded successfully');
+      String image = await response.stream.bytesToString();
+      print('Image: $image');
+      setState(() {
+        user!.profile = image;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('프로필 이미지 변경')),
+        );// 서버에서 받은 이미지
+      });
+    } else {
+      print('Failed to upload image');
+    }
+  }
+
+  Future<void> resetProfileImage(int userId) async {
+    var url = Uri.parse('${Constants.baseUrl}/api/auth/reset-profile');
+    var response = await http.post(url, body: {'userId': userId.toString()});
+    if (response.statusCode == 200 && response.body == "Ok") {
+      print('Profile reset successfully');
+      setState(() {
+        user!.profile = null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('기본 이미지로 변경')),
+        );// 프로필 이미지 URL을 빈 값으로 설정
+      });
+    } else {
+      print('Failed to reset profile image');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('프로필 이미지 변경 실패')),
+      );
     }
   }
 
@@ -144,24 +255,25 @@ class _MyProfileState extends State<MyProfile> {
             padding: EdgeInsets.all(16),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.blue[200],
-                  backgroundImage: user != null &&
-                      user!.profile != null &&
-                      user!.profile!.isNotEmpty
-                      ? NetworkImage(
-                      "${Constants.baseUrl}/api/auth/images/${user!.profile!}")
-                      : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
-                  child: user != null &&
-                      user!.profile != null &&
-                      user!.profile!.isNotEmpty
-                      ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
-                      : Icon(
-                    Icons.person,
-                    size: 80,
-                    color: Colors.grey,
-                  ), // 프로필 이미지가 없는 경우에 아이콘을 표시
+                GestureDetector(
+                  onTap: () {
+                    showSheet(context);
+                  },
+                  child: CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.blue[200],
+                    backgroundImage: user != null &&
+                        user!.profile != null &&
+                        user!.profile!.isNotEmpty
+                        ? NetworkImage(
+                        "${Constants.baseUrl}/api/auth/images/${user!.profile!}")
+                        : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
+                    child: user != null &&
+                        user!.profile != null &&
+                        user!.profile!.isNotEmpty
+                        ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
+                        : Icon(Icons.person, size: 80, color: Colors.grey,), // 프로필 이미지가 없는 경우에 아이콘을 표시
+                  ),
                 ),
                 SizedBox(width: screenWidth / 50),
                 Column(
@@ -324,6 +436,58 @@ class _MyProfileState extends State<MyProfile> {
           ),
         ],
       ),
+    );
+  }
+
+  void showSheet(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10), // 경계선을 둥글게 만듦
+          ),
+          elevation: 5.0,
+          title: Text('프로필 사진 변경'),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {
+                getImage(ImageSource.camera); // 카메라 열기
+                Navigator.pop(context); // 다이얼로그 닫기
+              },
+              child: ListTile(
+                leading: Icon(Icons.photo_camera),
+                title: Text('카메라로 찍기'),
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                getImage(ImageSource.gallery); // 갤러리에서 이미지 선택
+                Navigator.pop(context); // 다이얼로그 닫기
+              },
+              child: ListTile(
+                leading: Icon(Icons.photo),
+                title: Text('갤러리에서 선택'),
+              ),
+            ),
+            if (user!.profile != null && user!.profile!.isNotEmpty && !_isDefaultImage! && user!.profile != "")
+              SimpleDialogOption(
+                onPressed: () {
+                  setState(() {
+                    resetProfileImage(userId);// 기본 이미지로 변경
+                    _croppedFile = null;
+                  });
+                  Navigator.pop(context); // 다이얼로그 닫기
+                },
+                child: ListTile(
+                  leading: Icon(Icons.restore),
+                  title: Text('기본 이미지로 변경'),
+                ),
+              ),
+          ],
+        );
+      },
     );
   }
 }

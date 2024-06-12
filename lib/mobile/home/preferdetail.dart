@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
+import 'package:flutter_splim/mobile/search/shoppingresult.dart';
 
 class PreferDetailPage extends StatefulWidget {
   final List<PriceDTO> price;
@@ -48,7 +49,7 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
       body: _data.isEmpty
           ? Center(child: Text('No data found'))
           : Scrollbar(
-            child: _buildTableView(_data),
+        child: _buildTableView(_data),
       ),
     );
   }
@@ -77,22 +78,22 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
           switch (index) {
             case 0:
             case 1:
-              extent = 0.15; // 좁은 열
+              extent = 0.15; // Narrow columns
               break;
             case 2:
-              extent = 0.10; // 좁은 열
+              extent = 0.10; // Narrow columns
               break;
             case 3:
-              extent = 0.10; // 좁은 열
+              extent = 0.10; // Narrow columns
               break;
             case 4:
-              extent = 0.20; // 넓은 열
+              extent = 0.20; // Wide columns
               break;
             case 5:
-              extent = 0.10; // 좁은 열
+              extent = 0.10; // Narrow columns
               break;
             case 6:
-              extent = 0.20; // 넓은 열
+              extent = 0.20; // Wide columns
               break;
             default:
               extent = 1 / 7;
@@ -173,33 +174,49 @@ class _PreferDetailPageState extends State<PreferDetailPage> {
           }
 
           return TableViewCell(
-              child:Container(
-              decoration: BoxDecoration(
-              border: Border.all(color: theme.dividerColor),
-            ),
-              child: ColoredBox(
-                color: isStickyHeader ? Colors.transparent : colorScheme.background,
-                child: Center(
-                  child: FittedBox(
-                    child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Text(
-                      label,
-                      style: isStickyHeader
-                          ? TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
-                      )
-                          : textStyle,
+            child: GestureDetector(
+              onTap: () {
+                if (!isStickyHeader) {
+                  _onCellTap(vicinity);
+                }
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: theme.dividerColor),
+                ),
+                child: ColoredBox(
+                  color: isStickyHeader ? Colors.transparent : colorScheme.background,
+                  child: Center(
+                    child: FittedBox(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Text(
+                          label,
+                          style: isStickyHeader
+                              ? TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onSurface,
+                          )
+                              : textStyle,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-            ),
           );
         },
       ),
     );
+  }
+
+  void _onCellTap(TableVicinity vicinity) {
+    final row = vicinity.yIndex - 1; // Adjust for header row
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => ShoppingResultPage(itemname: _data[row].itemCode.itemName, kindname: _data[row].kindName, rankname: _data[row].rankName))).then(
+            (value) => setState(() {
+
+    }));
   }
 }

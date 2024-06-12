@@ -299,38 +299,40 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: [
                           SizedBox(height: 59,),
                           Card(
-                            elevation: 6.0,
-                            color: Colors.blue[700],
+                            shape: CircleBorder(),
+                            elevation: 4.0,
+                            color: Colors.white,
                             child: Container(
                               height: screenHeight * 0.24,
                               width: screenWidth * 0.4,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                  image: AssetImage('asset/food/ai.jpeg'), // 여기에 로컬 이미지 경로를 입력하세요
+                                  image: AssetImage('asset/food/playstore-icon1.png'), // 여기에 로컬 이미지 경로를 입력하세요
                                   fit: BoxFit.fill, // 이미지를 Container의 크기에 맞게 조정합니다.
                                 ),
+                                borderRadius: BorderRadius.circular(14.0),
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    '오늘의 추천 레시피',
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  SizedBox(height: 80.0),
-                                  Text(
-                                    'AI 기반 맞춤 레시피를\n확인해보세요!',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 13.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.amberAccent,
-                                    ),
-                                  ),
+                                  // Text(
+                                  //   '오늘의 추천 레시피',
+                                  //   style: TextStyle(
+                                  //     fontSize: 18.0,
+                                  //     fontWeight: FontWeight.bold,
+                                  //     color: Colors.white,
+                                  //   ),
+                                  // ),
+                                  // SizedBox(height: 80.0),
+                                  // Text(
+                                  //   'AI 기반 맞춤 레시피를\n확인해보세요!',
+                                  //   textAlign: TextAlign.center,
+                                  //   style: TextStyle(
+                                  //     fontSize: 13.0,
+                                  //     fontWeight: FontWeight.bold,
+                                  //     color: Colors.amberAccent,
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),

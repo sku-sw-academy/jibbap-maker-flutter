@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
+import 'package:flutter_splim/mobile/search/shoppingresult.dart';
 
 class DetailPage extends StatefulWidget {
   final String regday;
@@ -185,34 +186,49 @@ class _DetailPageState extends State<DetailPage> {
             }
 
             return TableViewCell(
-              child:Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: theme.dividerColor),
-                ),
-                child: ColoredBox(
-                color: isStickyHeader ? Colors.transparent : colorScheme.background,
-                child: Center(
-                  child: FittedBox(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Text(
-                        label,
-                        style: isStickyHeader
-                            ? TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: colorScheme.onSurface,
-                        )
-                            : textStyle,
+              child: GestureDetector(
+                onTap: () {
+                  if (!isStickyHeader) {
+                    _onCellTap(vicinity, prices[vicinity.yIndex - 1]);
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: theme.dividerColor),
+                  ),
+                  child: ColoredBox(
+                    color: isStickyHeader ? Colors.transparent : colorScheme.background,
+                    child: Center(
+                      child: FittedBox(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Text(
+                            label,
+                            style: isStickyHeader
+                                ? TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme.onSurface,
+                            )
+                                : textStyle,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
             );
           },
         ),
       ),
     );
+  }
+
+  void _onCellTap(TableVicinity vicinity, PriceDTO price) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => ShoppingResultPage(itemname: price.itemCode.itemName, kindname: price.kindName, rankname: price.rankName))).then(
+            (value) => setState(() {
+
+        }));
   }
 }

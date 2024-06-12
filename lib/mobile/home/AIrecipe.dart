@@ -140,7 +140,6 @@ class _AIRecipePageState extends State<AIRecipePage> {
                 // 여기에 데이터를 표시
                 Text(
                   snapshot.data!.content.replaceAll("content : ", "내용"),
-                  textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
 
@@ -154,6 +153,10 @@ class _AIRecipePageState extends State<AIRecipePage> {
                         try {
                           if(!isSave){
                             await saveRecipe(snapshot.data!);
+                          }else{
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('이미 저장되었습니다.'),)
+                            );
                           }
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(

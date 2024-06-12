@@ -47,6 +47,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     double widthRatio = deviceWidth / 375;
     double heightRatio = deviceHeight / 812;
 
+    bool _containsSpecialCharacters(String value) {
+      final RegExp regExp = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+      return regExp.hasMatch(value);
+    }
+
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -143,6 +148,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           return '닉네임을 입력하세요.';
                         }else if(value.length > 20){
                           return '닉네임을 20자 이하로 해주세요.';
+                        }else if (_containsSpecialCharacters(value)) {
+                          return '특수 문자를 포함할 수 없습니다.';
                         }
                           return null;
                       },

@@ -39,6 +39,11 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
     _isDefaultImage = _savedProfileImage == null; // If _savedProfileImage is not null, set _isDefaultImage to true
   }
 
+  bool _containsSpecialCharacters(String value) {
+    final RegExp regExp = RegExp(r'[!@#$%^&*(),.?":{}|<>]');
+    return regExp.hasMatch(value);
+  }
+
   Future<void> getImage(ImageSource imageSource) async{
     try{
       final XFile? pickedFile = await picker.pickImage(source: imageSource);
@@ -235,6 +240,8 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                   return '닉네임을 입력해주세요';
                 } else if (_nickNameController.text.length > 20) {
                   return '20자 이하로 해주세요.';
+                }else if (_containsSpecialCharacters(value)) {
+                  return '특수 문자를 포함할 수 없습니다.';
                 }
                 return null;
               },
@@ -268,6 +275,18 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                         SnackBar(content: Text('닉네임 변경 실패')),
                       );
                     }
+                  }
+                  if(_croppedFile != null){
+                    uploadImage(user!.id, _croppedFile!);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('프로필 변경 성공')),
+                    );
+                  }
+                  if(_isDefaultImage!){
+                    resetProfileImage(user!.id);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('기본 이미지로 변경')),
+                    );
                   }
                 },
             ),

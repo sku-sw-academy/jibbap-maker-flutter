@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'dart:io';
 import 'package:flutter_splim/mobile/login/signout.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/dto/RecipeDTO.dart';
 import 'package:flutter_splim/constant.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_splim/provider/userprovider.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
 
 class RecipePage extends StatefulWidget {
@@ -30,12 +27,12 @@ class _RecipePageState extends State<RecipePage> {
   late UserDTO? user;
   int currentId = 0;
 
+  @override
   void initState() {
     super.initState();
     _review = widget.recipe.comment!;
     user = Provider.of<UserProvider>(context, listen: false).user;
-    if(user != null)
-      currentId = user!.id;
+    if (user != null) currentId = user!.id;
   }
 
   Future<String> checkRecipeExist() async {
@@ -84,80 +81,81 @@ class _RecipePageState extends State<RecipePage> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.recipe.title, style: TextStyle(fontSize: 25),),
+        title: Text(widget.recipe.title, style: TextStyle(fontSize: 25)),
         centerTitle: true,
         backgroundColor: Colors.grey[100],
         scrolledUnderElevation: 0,
         actions: [
-          IconButton(icon: Icon(Icons.add),
-            onPressed: () async {
-              final storageService = Provider.of<SecureService>(context, listen: false);
-              String? token = await storageService.readToken(key);
-              if (token == null || token.isEmpty) {
-                showDialog(
-                  context: context,
-                  builder: (context) =>
-                      AlertDialog(
-                        title: Text('로그인 필요'),
-                        content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text('확인'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              Navigator.pop(context);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => LoginPage()),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                );
-                return;
-              } else {
-                if(widget.recipe.userDTO.id == currentId){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('본인 레시피는 추가할 수 없습니다.'),
-                      duration: Duration(seconds: 2), // Snackbar 표시 시간 설정
+          if (widget.recipe.userDTO.id != currentId) // Check if the recipe's user ID is different from the current user ID
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () async {
+                final storageService = Provider.of<SecureService>(context, listen: false);
+                String? token = await storageService.readToken(key);
+                if (token == null || token.isEmpty) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text('로그인 필요'),
+                      content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('확인'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => LoginPage()),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   );
-                }else{
-                  String result = await checkRecipeExist();
-                  // 이미 추가된 경우
-                  if (result == "No") {
-                    // Snackbar를 통해 이미 추가되었다는 메시지를 표시
-                    String message = await addSave();
-                    if(message == "success")
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('성공'),
-                          content: Text('저장되었습니다.'),
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text('확인'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        ),
-                      );
-                  }else{
+                  return;
+                } else {
+                  if (widget.recipe.userDTO.id == currentId) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('이미 추가되었습니다.'),
+                        content: Text('본인 레시피는 추가할 수 없습니다.'),
                         duration: Duration(seconds: 2), // Snackbar 표시 시간 설정
                       ),
                     );
+                  } else {
+                    String result = await checkRecipeExist();
+                    // 이미 추가된 경우
+                    if (result == "No") {
+                      // Snackbar를 통해 이미 추가되었다는 메시지를 표시
+                      String message = await addSave();
+                      if (message == "success")
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('성공'),
+                            content: Text('저장되었습니다.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('확인'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('이미 추가되었습니다.'),
+                          duration: Duration(seconds: 2), // Snackbar 표시 시간 설정
+                        ),
+                      );
+                    }
                   }
                 }
-              }
-            },
-          )
+              },
+            ),
         ],
       ),
       body: ListView(
@@ -165,22 +163,18 @@ class _RecipePageState extends State<RecipePage> {
           SizedBox(height: 20),
           _buildPhotoArea(),
           Divider(),
-
           Row(
             children: [
-              SizedBox(width: 10,),
-
+              SizedBox(width: 10),
               CircleAvatar(
                 radius: 50,
                 backgroundColor: Colors.blue[200],
-                backgroundImage:
-                    widget.recipe.userDTO.profile != null &&
-                        widget.recipe.userDTO.profile!.isNotEmpty
+                backgroundImage: widget.recipe.userDTO.profile != null &&
+                    widget.recipe.userDTO.profile!.isNotEmpty
                     ? NetworkImage(
                     "${Constants.baseUrl}/api/auth/images/${widget.recipe.userDTO.profile}")
                     : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
-                child:
-                    widget.recipe.userDTO.profile != null &&
+                child: widget.recipe.userDTO.profile != null &&
                     widget.recipe.userDTO.profile!.isNotEmpty
                     ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
                     : Icon(
@@ -189,34 +183,34 @@ class _RecipePageState extends State<RecipePage> {
                   color: Colors.grey,
                 ), // 프로필 이미지가 없는 경우에 아이콘을 표시
               ),
-
-              SizedBox(width: 15,),
-
+              SizedBox(width: 15),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("닉네임: " + widget.recipe.userDTO.nickname, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                  Text(
+                    "닉네임: " + widget.recipe.userDTO.nickname,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(height: 8),
                   Text(
                     "후기: " + _review, // 사용자의 후기를 텍스트로 표시
-                    style: TextStyle(fontSize: 16, ),
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
                   ),
                 ],
               )
             ],
           ),
-
           Divider(),
-
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-                widget.recipe.content,
+              widget.recipe.content,
               style: TextStyle(fontSize: 16.0),
             ),
           ),
           Divider(),
-
           Container(
             margin: EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
@@ -233,7 +227,6 @@ class _RecipePageState extends State<RecipePage> {
               ),
             ),
           ),
-
           SizedBox(height: 20),
         ],
       ),
@@ -273,10 +266,7 @@ class _RecipePageState extends State<RecipePage> {
       builder: (BuildContext context) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery
-                .of(context)
-                .viewInsets
-                .bottom,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: Container(
             padding: EdgeInsets.all(20),
@@ -294,11 +284,12 @@ class _RecipePageState extends State<RecipePage> {
                 Expanded(
                   child: ListView(
                     shrinkWrap: true,
-                    children: _comments.map((comment) =>
-                        ListTile(
-                          title: Text(comment),
-                          tileColor: Colors.white,
-                        )).toList(),
+                    children: _comments
+                        .map((comment) => ListTile(
+                      title: Text(comment),
+                      tileColor: Colors.white,
+                    ))
+                        .toList(),
                   ),
                 ),
                 Divider(),
@@ -322,24 +313,23 @@ class _RecipePageState extends State<RecipePage> {
                         if (token == null || token.isEmpty) {
                           showDialog(
                             context: context,
-                            builder: (context) =>
-                                AlertDialog(
-                                  title: Text('로그인 필요'),
-                                  content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: Text('확인'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        Navigator.pop(context);
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => LoginPage()),
-                                        );
-                                      },
-                                    ),
-                                  ],
+                            builder: (context) => AlertDialog(
+                              title: Text('로그인 필요'),
+                              content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('확인'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => LoginPage()),
+                                    );
+                                  },
                                 ),
+                              ],
+                            ),
                           );
                           return;
                         } else {
@@ -362,5 +352,4 @@ class _RecipePageState extends State<RecipePage> {
       },
     );
   }
-
 }

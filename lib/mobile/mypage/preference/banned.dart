@@ -32,7 +32,8 @@ class _BannedPageState extends State<BannedPage>{
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      body: ListView.builder(
+      body: Scrollbar(child:
+        ListView.builder(
         itemCount: list.length,  // _childLists의 길이만큼 아이템을 생성
         itemBuilder: (context, index) {
           final prefer = list[index];
@@ -63,6 +64,7 @@ class _BannedPageState extends State<BannedPage>{
           );
         },
       ),
+    ),
     );
 
   }

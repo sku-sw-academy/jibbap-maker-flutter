@@ -31,7 +31,8 @@ class _FavoritePageState extends State<FavoritePage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: ListView.builder(
+      body: Scrollbar(child :
+      ListView.builder(
         itemCount: list.length,  // _childLists의 길이만큼 아이템을 생성
         itemBuilder: (context, index) {
           final prefer = list[index];
@@ -66,6 +67,7 @@ class _FavoritePageState extends State<FavoritePage> {
             },// 각 아이템을 ListTile로 변환하여 표시
           );
         },
+        ),
       ),
     );
   }

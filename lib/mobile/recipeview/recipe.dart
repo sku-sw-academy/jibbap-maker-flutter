@@ -28,7 +28,7 @@ class _RecipePageState extends State<RecipePage> {
   final ImagePicker picker = ImagePicker();
   final List<String> _comments = [];
   late UserDTO? user;
-  int? currentId;
+  int currentId = 0;
 
   void initState() {
     super.initState();
@@ -36,7 +36,6 @@ class _RecipePageState extends State<RecipePage> {
     user = Provider.of<UserProvider>(context, listen: false).user;
     if(user != null)
       currentId = user!.id;
-    print(currentId);
   }
 
   Future<String> checkRecipeExist() async {
@@ -79,7 +78,6 @@ class _RecipePageState extends State<RecipePage> {
       return '';
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

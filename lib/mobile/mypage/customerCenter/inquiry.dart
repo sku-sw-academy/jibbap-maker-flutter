@@ -138,7 +138,8 @@ class _InquiryPageState extends State<InquiryPage> {
               : inquiries.isEmpty
               ? Center(child: Text('문의내역이 없습니다.'))
               : Expanded(
-                child: ListView.builder(
+                child: Scrollbar(
+                  child: ListView.builder(
                   itemCount: inquiries.length,
                   itemBuilder: (context, index) {
                   var inquiry = inquiries[index];
@@ -185,6 +186,7 @@ class _InquiryPageState extends State<InquiryPage> {
                   );
               },
             ),
+                ),
           ),
         ],
       ),

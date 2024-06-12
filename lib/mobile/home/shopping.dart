@@ -42,7 +42,8 @@ class _ShoppingPageState extends State<ShoppingPage> {
           ),
         ],
       ),
-      body: ListView(
+      body: Scrollbar(
+        child:ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -68,7 +69,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
 
           buildCategory(widget.decreaseValues),
         ],
-      ),
+      ),)
     );
   }
 
@@ -96,7 +97,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
             itemBuilder: (context, index) {
               return buildShopCard(shops[index]);
             },
-          );
+            );
         } else {
           return Text('No data available');
         }

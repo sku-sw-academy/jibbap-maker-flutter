@@ -57,7 +57,8 @@ class _NoticePageState extends State<NoticePage> {
     return Scaffold(
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
+          : Scrollbar(child:
+            ListView.builder(
         itemCount: notices.length,
         itemBuilder: (context, index) {
           var notice = notices[index];
@@ -81,6 +82,7 @@ class _NoticePageState extends State<NoticePage> {
             initiallyExpanded: notice['isExpanded'] ?? false,
           );
         },
+      ),
       ),
     );
   }

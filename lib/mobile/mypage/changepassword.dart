@@ -58,6 +58,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     icon: Icon(_showCurrentPassword ? Icons.visibility : Icons.visibility_off),
                   ),
                 ),
+                maxLength: 15,
                 obscureText: !_showCurrentPassword,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -73,6 +74,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   labelText: '새 비밀번호',
                   border: OutlineInputBorder(),
                 ),
+                maxLength: 15,
                 validator: (value) {
                   if (CheckValidate().validatePassword(_passwordFocus, value) != null) {
                     return CheckValidate().validatePassword(_passwordFocus, value);
@@ -87,6 +89,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   labelText: '새 비밀번호 확인',
                   border: OutlineInputBorder(),
                 ),
+                maxLength: 15,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return '비밀번호를 입력하세요.';

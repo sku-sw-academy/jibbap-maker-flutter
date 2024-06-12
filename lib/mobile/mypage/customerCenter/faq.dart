@@ -57,7 +57,8 @@ class _FAQPageState extends State<FAQPage> {
     return Scaffold(
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
+          : Scrollbar(child:
+          ListView.builder(
         itemCount: faqs.length,
         itemBuilder: (context, index) {
           var faq = faqs[index];
@@ -85,6 +86,7 @@ class _FAQPageState extends State<FAQPage> {
             initiallyExpanded: faq['isExpanded'] ?? false,
           );
         },
+      ),
       ),
     );
   }

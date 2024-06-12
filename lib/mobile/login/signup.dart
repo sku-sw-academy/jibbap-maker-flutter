@@ -189,7 +189,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           letterSpacing: -0.33,
                         ),
                       ),
-                        maxLength: 50,
+                        maxLength: 80,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 13,

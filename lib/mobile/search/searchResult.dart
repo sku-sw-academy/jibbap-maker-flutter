@@ -6,6 +6,11 @@ import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_splim/constant.dart';
 import 'dart:io';
+import 'package:flutter_splim/dto/ItemDTO.dart';
+import 'package:flutter_splim/dto/PreferDTO.dart';
+import 'package:flutter_splim/service/preferservice.dart';
+import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:provider/provider.dart';
 
 class SelectedPage extends StatefulWidget {
   final String itemname;
@@ -25,6 +30,7 @@ class _SelectedPageState extends State<SelectedPage> {
   final PriceService priceService = PriceService();
   List<PriceDTO> searchData = [];
   List<FlSpot> spots = [];
+  ItemDTO? itemData;
 
   @override
   void initState() {
@@ -38,6 +44,26 @@ class _SelectedPageState extends State<SelectedPage> {
       rows: [],
     );
     fetchKinds();
+    fetchItemData();
+  }
+
+  Future<void> fetchItemData() async {
+    final response = await http.get(
+      Uri.parse('${Constants.baseUrl}/items/prefer/${widget.itemname}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        var responsebody = utf8.decode(response.bodyBytes);
+        itemData = ItemDTO.fromJson(json.decode(responsebody));
+      });
+    } else {
+      // Handle error
+      print('Failed to load item data: ${response.statusCode}');
+    }
   }
 
   Future<void> fetchKinds() async {

@@ -412,7 +412,7 @@ class _MyProfileState extends State<MyProfile> {
                   Constants.isSelelcted = true;
                   await _secureService.deleteToken(access);
                   await _secureService.deleteToken(refresh);
-                  //Provider.of<UserProvider>(context).clearUser();
+                  Provider.of<UserProvider>(context, listen: false).clearUser();
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 style: ElevatedButton.styleFrom(

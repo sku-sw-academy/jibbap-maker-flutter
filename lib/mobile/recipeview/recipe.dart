@@ -386,48 +386,47 @@ class _RecipePageState extends State<RecipePage> {
                           ? Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
+                            TextButton(onPressed:(){
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditCommentPage(
-                                    commentId: comment.id,
-                                    currentContent: comment.content,
-                                  ),
-                                ),
-                              ).then((value) {
-                                // Handle callback or update logic if needed
-                                _fetchComments();
-                              });
+                              context,
+                              MaterialPageRoute(
+                              builder: (context) => EditCommentPage(
+                                commentId: comment.id,
+                                currentContent: comment.content,
+                              ),
+                            ),
+                            ).then((value) {
+                            // Handle callback or update logic if needed
+                              _fetchComments();
+                            });
                             },
+                              child: Text("수정", style: TextStyle(color: Colors.green, ),)
                           ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              _deleteComment(comment.id);
-                              setState(() {
-                                _fetchComments();
-                                Navigator.pop(context);
-                              });
-                            },
+
+                          TextButton(onPressed:(){
+                            _deleteComment(comment.id);
+                            setState(() {
+                            _fetchComments();
+                            Navigator.pop(context);
+                          });
+                          },
+                              child: Text("삭제", style: TextStyle(color: Colors.red),)
                           ),
+
                         ],
                       )
                           : isRecipeOwner
                           ? Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              _deleteComment(comment.id);
-                              setState(() {
-                                _fetchComments();
-                                Navigator.pop(context);
-                              });
-                            },
+                          TextButton(onPressed:(){
+                            _deleteComment(comment.id);
+                            setState(() {
+                              _fetchComments();
+                              Navigator.pop(context);
+                            });
+                          },
+                              child: Text("삭제", style: TextStyle(color: Colors.red),)
                           ),
                         ],
                       )
@@ -435,32 +434,31 @@ class _RecipePageState extends State<RecipePage> {
                           ? Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditCommentPage(
-                                    commentId: comment.id,
-                                    currentContent: comment.content,
-                                  ),
+                          TextButton(onPressed:(){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditCommentPage(
+                                  commentId: comment.id,
+                                  currentContent: comment.content,
                                 ),
-                              ).then((value) {
-                                // Handle callback or update logic if needed
-                                _fetchComments();
-                              });
-                            },
+                              ),
+                            ).then((value) {
+                              // Handle callback or update logic if needed
+                              _fetchComments();
+                            });
+                          },
+                              child: Text("수정", style: TextStyle(color: Colors.green),)
                           ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              _deleteComment(comment.id);
-                              setState(() {
-                                _fetchComments();
-                                Navigator.pop(context);
-                              });
-                            },
+
+                          TextButton(onPressed:(){
+                            _deleteComment(comment.id);
+                            setState(() {
+                              _fetchComments();
+                              Navigator.pop(context);
+                            });
+                          },
+                              child: Text("삭제", style: TextStyle(color: Colors.red),)
                           ),
                         ],
                       )

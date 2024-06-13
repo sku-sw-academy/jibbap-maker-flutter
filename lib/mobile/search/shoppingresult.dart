@@ -5,6 +5,11 @@ import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:io';
+import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_splim/service/preferservice.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
+import 'package:flutter_splim/dto/PreferDTO.dart';
 
 class ShoppingResultPage extends StatefulWidget {
   final String itemname;
@@ -23,6 +28,9 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
   List<PriceDTO> searchData = [];
   List<FlSpot> spots = [];
   bool isLoading = true;
+  UserDTO? user;
+  final PreferService preferService = PreferService();
+  PreferDTO? preferDTO;
 
   @override
   void initState() {
@@ -36,6 +44,17 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
       rows: [],
     );
     updateDataTable();
+    user = Provider.of<UserProvider>(context, listen: false).user;
+    if(user != null)
+      fetchPreference();
+  }
+
+  Future<void> fetchPreference() async {
+    PreferService preferService = PreferService();
+    PreferDTO? result = await preferService.getPreference(user!.id, widget.itemname);
+    setState(() {
+      preferDTO = result;
+    });
   }
 
   void updateDataTable() async {
@@ -93,12 +112,101 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
     String kindName = searchData.isNotEmpty && searchData[0].kindName != null ? "종류: " + searchData[0].kindName + ", ": "";
     String unit = searchData.isNotEmpty && searchData[0].unit != null ? "단위: " + searchData[0].unit : "";
 
+    List<Widget> _buildAppBarActions() {
+      List<Widget> actions = [];
+
+      if (user != null) {
+        actions.addAll([
+          TextButton(
+            onPressed:() async{
+              if (preferDTO != null) {
+                if (preferDTO!.prefer != 0) {
+                  setState(() {
+                    preferDTO!.prefer = 0;
+                  });
+                  await preferService.updatePrefer(preferDTO!);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('선호 명단에 추가되었습니다.'),
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('이미 선호 식재료에 있습니다.'),
+                      backgroundColor: Colors.orange,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Preference data not loaded yet.'),
+                    backgroundColor: Colors.red,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+
+            } , child: Text("선호",
+            style: TextStyle(color: Colors.green),
+          ),
+          ),
+
+          TextButton(
+            onPressed:() async{
+              if (preferDTO != null) {
+                if (preferDTO!.prefer != 2) {
+                  setState(() {
+                    preferDTO!.prefer = 2;
+                  });
+                  await preferService.updatePrefer(preferDTO!);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('차단 명단에 추가되었습니다.'),
+                      backgroundColor: Colors.red[200],
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('이미 차단된 식재료 입니다.'),
+                      backgroundColor: Colors.orange,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Preference data not loaded yet.'),
+                    backgroundColor: Colors.red,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+            } , child: Text("차단",
+            style: TextStyle(color: Colors.red),
+          ),
+
+          ),
+        ]);
+      }
+
+      return actions;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.itemname}', style: TextStyle(fontSize: 25),),
         centerTitle: true,
         scrolledUnderElevation: 0,
         backgroundColor: Colors.grey[100],
+        actions: _buildAppBarActions(),
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator()) // 로딩 중이면 로딩 표시

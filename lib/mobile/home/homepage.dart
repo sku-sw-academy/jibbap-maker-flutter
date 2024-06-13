@@ -24,7 +24,6 @@ import 'package:flutter_splim/constant.dart';
 import 'dart:convert';
 import 'package:flutter_splim/mobile/home/notification.dart';
 import 'package:flutter_splim/provider/notificationProvider.dart';
-import 'package:flutter_splim/provider/notificationProvider.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';

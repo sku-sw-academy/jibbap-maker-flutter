@@ -68,4 +68,22 @@ class PreferService{
       return []; // 빈 리스트를 반환하여 실패한 경우 처리합니다.
     }
   }
+
+  Future<PreferDTO?> getPreference(int id, String itemName) async {
+    final url = Uri.parse('${Constants.baseUrl}/prefer/$id/$itemName');
+    final response = await http.get(url, headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    });
+
+    if (response.statusCode == 200) {
+      var responsebody = utf8.decode(response.bodyBytes);
+      final body = jsonDecode(responsebody);
+      return PreferDTO.fromJson(body);
+    } else {
+      print('Failed to load preference: ${response.statusCode}');
+      return null;
+    }
+  }
+
+
 }

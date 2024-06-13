@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_splim/dto/PreferDTO.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
@@ -6,11 +8,10 @@ import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_splim/constant.dart';
 import 'dart:io';
-import 'package:flutter_splim/dto/ItemDTO.dart';
-import 'package:flutter_splim/dto/PreferDTO.dart';
 import 'package:flutter_splim/service/preferservice.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_splim/secure_storage/secure_service.dart';
 
 class SelectedPage extends StatefulWidget {
   final String itemname;
@@ -28,9 +29,11 @@ class _SelectedPageState extends State<SelectedPage> {
   int? selectedRankIndex;
   late DataTable dataTable;
   final PriceService priceService = PriceService();
+  final PreferService preferService = PreferService();
   List<PriceDTO> searchData = [];
   List<FlSpot> spots = [];
-  ItemDTO? itemData;
+  UserDTO? user;
+  PreferDTO? preferDTO;
 
   @override
   void initState() {
@@ -44,26 +47,17 @@ class _SelectedPageState extends State<SelectedPage> {
       rows: [],
     );
     fetchKinds();
-    fetchItemData();
+    user = Provider.of<UserProvider>(context, listen: false).user;
+    if(user != null)
+      fetchPreference();
   }
 
-  Future<void> fetchItemData() async {
-    final response = await http.get(
-      Uri.parse('${Constants.baseUrl}/items/prefer/${widget.itemname}'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      setState(() {
-        var responsebody = utf8.decode(response.bodyBytes);
-        itemData = ItemDTO.fromJson(json.decode(responsebody));
-      });
-    } else {
-      // Handle error
-      print('Failed to load item data: ${response.statusCode}');
-    }
+  Future<void> fetchPreference() async {
+    PreferService preferService = PreferService();
+    PreferDTO? result = await preferService.getPreference(user!.id, widget.itemname);
+    setState(() {
+      preferDTO = result;
+    });
   }
 
   Future<void> fetchKinds() async {
@@ -157,6 +151,7 @@ class _SelectedPageState extends State<SelectedPage> {
 
   @override
   Widget build(BuildContext context) {
+
     if (searchData.isEmpty) {
       return Scaffold(
         appBar: AppBar(
@@ -174,12 +169,101 @@ class _SelectedPageState extends State<SelectedPage> {
     String kindName = searchData.isNotEmpty && searchData[0].kindName != null ? "종류: " + searchData[0].kindName + ", ": "";
     String unit = searchData.isNotEmpty && searchData[0].unit != null ? "단위: " + searchData[0].unit : "";
 
+    List<Widget> _buildAppBarActions() {
+      List<Widget> actions = [];
+
+      if (user != null) {
+        actions.addAll([
+          TextButton(
+              onPressed:() async{
+                if (preferDTO != null) {
+                  if (preferDTO!.prefer != 0) {
+                    setState(() {
+                      preferDTO!.prefer = 0;
+                    });
+                    await preferService.updatePrefer(preferDTO!);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('선호 명단에 추가되었습니다.'),
+                        backgroundColor: Colors.green,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('이미 선호 식재료에 있습니다.'),
+                        backgroundColor: Colors.orange,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Preference data not loaded yet.'),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+
+          } , child: Text("선호",
+            style: TextStyle(color: Colors.green),
+          ),
+          ),
+
+          TextButton(
+            onPressed:() async{
+              if (preferDTO != null) {
+                if (preferDTO!.prefer != 2) {
+                  setState(() {
+                    preferDTO!.prefer = 2;
+                  });
+                  await preferService.updatePrefer(preferDTO!);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('차단 명단에 추가되었습니다.'),
+                      backgroundColor: Colors.red[200],
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('이미 차단된 식재료 입니다.'),
+                      backgroundColor: Colors.orange,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Preference data not loaded yet.'),
+                    backgroundColor: Colors.red,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+            } , child: Text("차단",
+            style: TextStyle(color: Colors.red),
+          ),
+
+          ),
+        ]);
+      }
+
+      return actions;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.itemname}', style: TextStyle(fontSize: 25),),
         centerTitle: true,
         scrolledUnderElevation: 0,
         backgroundColor: Colors.grey[100],
+        actions: _buildAppBarActions(),
       ),
       body: ListView(
         children: [

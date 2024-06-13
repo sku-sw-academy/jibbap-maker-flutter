@@ -7,6 +7,10 @@ import 'package:flutter_splim/dto/RecipeDTO.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_splim/constant.dart'; // Constants.baseUrl을 위한 import
+import 'package:flutter_splim/secure_storage/secure_service.dart';
+import 'package:flutter_splim/dto/UserDTO.dart';
+import 'package:flutter_splim/provider/userprovider.dart';
+import 'package:provider/provider.dart';
 
 class ModifyPage extends StatefulWidget {
   final RecipeDTO recipeDTO;
@@ -23,12 +27,16 @@ class _ModifyPageState extends State<ModifyPage> {
   XFile? _image;
   CroppedFile? _croppedFile;
   final ImagePicker picker = ImagePicker();
+  bool? _isDefaultImage = false;
+  String? _savedProfileImage;
 
   @override
   void initState() {
     super.initState();
     _textEditingController = TextEditingController(text: widget.recipeDTO.comment ?? "");
     _review = widget.recipeDTO.comment ?? "";
+    _savedProfileImage = widget.recipeDTO.image;
+    _isDefaultImage = widget.recipeDTO.image == null || widget.recipeDTO.image!.isEmpty ?? true;
   }
 
   Future<void> getImage(ImageSource imageSource) async {
@@ -77,6 +85,8 @@ class _ModifyPageState extends State<ModifyPage> {
       if (croppedFile != null) {
         setState(() {
           _croppedFile = croppedFile;
+          _isDefaultImage = false;
+          _savedProfileImage = widget.recipeDTO.image;
         });
       }
     }
@@ -110,6 +120,53 @@ class _ModifyPageState extends State<ModifyPage> {
       return image;
     } else {
       throw Exception('Failed to upload image and comment');
+    }
+  }
+
+  Future<String> saveImageAndComment(File imageFile, String comment, int recipeId) async {
+    var uri = Uri.parse('${Constants.baseUrl}/recipe/save/image'); // 서버 URL 수정 필요
+    var request = http.MultipartRequest('POST', uri)
+      ..fields['id'] = recipeId.toString()
+      ..fields['comment'] = comment
+      ..files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      String image = await response.stream.bytesToString();
+      return image;
+    } else {
+      throw Exception('Failed to upload image and comment');
+    }
+  }
+
+  Future<String> saveComment(String comment, int recipeId) async {
+    var uri = Uri.parse('${Constants.baseUrl}/recipe/save/review'); // 서버 URL 수정 필요
+    var request = http.MultipartRequest('POST', uri)
+      ..fields['id'] = recipeId.toString()
+      ..fields['comment'] = comment;
+
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      String image = await response.stream.bytesToString();
+      return image;
+    } else {
+      throw Exception('Failed to upload image and comment');
+    }
+  }
+
+  Future<void> resetImage(int recipeId) async {
+    var url = Uri.parse('${Constants.baseUrl}/recipe/reset-image');
+    var response = await http.post(url, body: {'recipeId': recipeId.toString()});
+    if (response.statusCode == 200 && response.body == "Ok") {
+      print('Profile reset successfully');
+      setState(() {
+        widget.recipeDTO.image = null;// 프로필 이미지 URL을 빈 값으로 설정
+      });
+    } else {
+      print('Failed to reset profile image');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('이미지 변경 실패')),
+      );
     }
   }
 
@@ -158,8 +215,43 @@ class _ModifyPageState extends State<ModifyPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    if(_isDefaultImage!){
+                      resetImage(widget.recipeDTO.id);
+                    }
 
+                    if (_review.isNotEmpty) {
+                      try {
+
+                        if(_croppedFile != null){
+                          String imageName = await saveImageAndComment(
+                            File(_croppedFile!.path),
+                            _review,
+                            widget.recipeDTO.id,
+                          );
+                          setState(() {
+                            widget.recipeDTO.image = imageName;
+                            widget.recipeDTO.comment = _review;
+                          });
+                        }else{
+                          String ok = await saveComment(_review, widget.recipeDTO.id);
+                          if(ok == "ok"){
+                            setState(() {
+                              widget.recipeDTO.comment = _review;
+                            });
+                          }
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('저장되었습니다.')),
+                        );
+
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('업로드에 실패했습니다.')),
+                        );
+                      }
+
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -268,14 +360,14 @@ class _ModifyPageState extends State<ModifyPage> {
                   image: FileImage(File(_croppedFile!.path)),
                   fit: BoxFit.cover,
                 )
-                    : widget.recipeDTO.image != null && widget.recipeDTO.image!.isNotEmpty
+                    : (_savedProfileImage != null && !_isDefaultImage! && _savedProfileImage != "")
                     ? DecorationImage(
-                  image: NetworkImage('${Constants.baseUrl}/recipe/images/${widget.recipeDTO.image}'),
+                  image: NetworkImage('${Constants.baseUrl}/recipe/images/$_savedProfileImage'),
                   fit: BoxFit.cover,
                 )
                     : null,
               ),
-              child: (_croppedFile == null && (widget.recipeDTO.image == null || widget.recipeDTO.image!.isEmpty))
+              child: (_croppedFile == null && (_savedProfileImage == null || _savedProfileImage!.isEmpty))
                   ? Icon(Icons.food_bank, color: Colors.grey, size: 70)
                   : null,
             ),
@@ -339,6 +431,21 @@ class _ModifyPageState extends State<ModifyPage> {
                 title: Text('갤러리에서 선택'),
               ),
             ),
+            if (_savedProfileImage != null && _savedProfileImage!.isNotEmpty && !_isDefaultImage! && _savedProfileImage != "")
+              SimpleDialogOption(
+                onPressed: () {
+                  setState(() {
+                    _savedProfileImage = null;
+                    _isDefaultImage = true;
+                    _croppedFile = null;
+                  });
+                  Navigator.pop(context); // 다이얼로그 닫기
+                },
+                child: ListTile(
+                  leading: Icon(Icons.restore),
+                  title: Text('기본 이미지로 변경'),
+                ),
+              ),
           ],
         );
       },

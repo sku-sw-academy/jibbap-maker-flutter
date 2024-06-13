@@ -218,7 +218,6 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
     );
   }
 
-
   Widget _buildTextField() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -321,6 +320,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
               if(_croppedFile != null){
                 uploadImage(user!.id, _croppedFile!);
               }
+
               if(_isDefaultImage!){
                 resetProfileImage(user!.id);
               }

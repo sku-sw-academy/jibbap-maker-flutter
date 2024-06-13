@@ -164,7 +164,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                           );
                         }
                       },
-                      child: Icon(Icons.save),
+                      child: Text("저장", textAlign: TextAlign.center,),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
@@ -183,7 +183,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                           futureRecipe = fetchRecipe();
                         });
                       },
-                      child: Icon(Icons.refresh),
+                      child: Text("다시", textAlign: TextAlign.center,),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,

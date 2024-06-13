@@ -251,6 +251,10 @@ class _ModifyPageState extends State<ModifyPage> {
                         );
                       }
 
+                    }else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('후기를 작성하세요.')),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(

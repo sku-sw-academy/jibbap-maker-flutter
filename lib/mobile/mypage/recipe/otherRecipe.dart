@@ -41,7 +41,6 @@ class _OtherRecipePageState extends State<OtherRecipePage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -56,6 +55,42 @@ class _OtherRecipePageState extends State<OtherRecipePage> {
         children: [
           SizedBox(height: 20),
           _buildPhotoArea(),
+          Divider(),
+
+          Row(
+            children: [
+              SizedBox(width: 10),
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.blue[200],
+                backgroundImage: widget.recipeDTO.userDTO.profile != null &&
+                    widget.recipeDTO.userDTO.profile!.isNotEmpty
+                    ? NetworkImage(
+                    "${Constants.baseUrl}/api/auth/images/${widget.recipeDTO.userDTO.profile}")
+                    : null,
+                child: widget.recipeDTO.userDTO.profile != null &&
+                    widget.recipeDTO.userDTO.profile!.isNotEmpty
+                    ? null
+                    : Icon(
+                  Icons.person,
+                  size: 60,
+                  color: Colors.grey,
+                ),
+              ),
+              SizedBox(width: 15),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "닉네임: " + widget.recipeDTO.userDTO.nickname,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+
+                ],
+              )
+            ],
+          ),
           Divider(),
 
           Padding(

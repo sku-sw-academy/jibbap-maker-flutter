@@ -12,6 +12,7 @@ class RecipeView extends StatefulWidget {
 
 class _RecipeViewState extends State<RecipeView> {
   String searchText = '';
+  String sortOption = 'latest'; // Default sort option
   Future<List<RecipeDTO>>? recipeList;
 
   @override
@@ -37,8 +38,22 @@ class _RecipeViewState extends State<RecipeView> {
     });
   }
 
+  void handleSortChange(String option) {
+    setState(() {
+      sortOption = option;
+    });
+  }
+
   List<RecipeDTO> getFilteredRecipes(List<RecipeDTO> recipes, String searchTerm) {
-    return recipes.where((recipe) => recipe.title.toLowerCase().contains(searchTerm.toLowerCase())).toList();
+    List<RecipeDTO> filteredRecipes = recipes.where((recipe) => recipe.title.toLowerCase().contains(searchTerm.toLowerCase())).toList();
+
+    if (sortOption == 'comments') {
+
+    } else {
+      filteredRecipes.sort((a, b) => b.modifyDate.compareTo(a.modifyDate));
+    }
+
+    return filteredRecipes;
   }
 
   List<TextSpan> _highlightText(String text, String searchTerm) {
@@ -76,16 +91,39 @@ class _RecipeViewState extends State<RecipeView> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        title: Container(
-          width: screenWidth * 0.7,
-          child: TextField(
-            onChanged: handleSearchChange,
-            decoration: InputDecoration(
-              hintText: "검색어를 입력하세요",
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+        title: Text("공유페이지"),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: handleSortChange,
+            itemBuilder: (BuildContext context) {
+              return {'latest', 'comments'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice == 'latest' ? '최신순' : '댓글 수'),
+                );
+              }).toList();
+            },
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(50.0), // Adjust the height as needed
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.9, // Adjust the width as needed
+            // Add some margin if needed
+            child: TextField(
+              onChanged: handleSearchChange,
+              decoration: InputDecoration(
+                hintText: "검색어를 입력하세요",
+                border: OutlineInputBorder( // Here you can change the border
+                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                  borderRadius: BorderRadius.circular(8.0), // Optional, to make rounded borders
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+              ),
+              style: TextStyle(color: Colors.black),
             ),
-            style: TextStyle(color: Colors.black),
           ),
         ),
       ),
@@ -136,9 +174,9 @@ class _RecipeViewState extends State<RecipeView> {
                                   child: recipe.image != null && recipe.image!.isNotEmpty
                                       ? Image.network('${Constants.baseUrl}/recipe/images/${recipe.image}')
                                       : CircleAvatar(
-                                        backgroundColor: Colors.grey[300],
-                                        radius: 50,
-                                        child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
+                                    backgroundColor: Colors.grey[300],
+                                    radius: 50,
+                                    child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
                                   ),
                                 ),
                               ),
@@ -147,7 +185,8 @@ class _RecipeViewState extends State<RecipeView> {
                               padding: const EdgeInsets.all(8.0),
                               child: RichText(
                                 text: TextSpan(
-                                  style: TextStyle(fontSize: 16.0, color: Colors.black),
+                                  style: TextStyle(fontSize: recipe.title.length > 14 ? 10.0 : 14.0,
+                                      color: Colors.black),
                                   children: _highlightText(recipe.title, searchText),
                                 ),
                                 textAlign: TextAlign.center,

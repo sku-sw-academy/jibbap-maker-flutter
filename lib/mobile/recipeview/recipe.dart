@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
 import 'dart:convert';
+import 'package:flutter_splim/mobile/recipeview/editCommentPage.dart';
 
 class RecipePage extends StatefulWidget {
   final RecipeDTO recipe;
@@ -222,9 +223,31 @@ class _RecipePageState extends State<RecipePage> {
                 _showCommentBottomSheet(context);
               },
               title: Text(
-                _comments.isNotEmpty ? _comments.first.content : "댓글이 없습니다",
-                style: TextStyle(fontSize: 16),
+                _comments.isNotEmpty ? "댓글: ${_comments.length}" : "댓글이 없습니다",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
+              subtitle:
+              _comments.isNotEmpty ? Row(children: [
+                CircleAvatar(
+                  radius: 10,
+                  backgroundColor: Colors.blue[200],
+                  backgroundImage: _comments.first.userDTO != null &&
+                      _comments.first.userDTO.profile != null &&
+                      _comments.first.userDTO.profile!.isNotEmpty
+                      ? NetworkImage(
+                      "${Constants.baseUrl}/api/auth/images/${_comments.first.userDTO.profile}")
+                      : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
+                  child: _comments.first.userDTO != null &&
+                      _comments.first.userDTO.profile != null &&
+                      _comments.first.userDTO.profile!.isNotEmpty
+                      ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
+                      : Icon(Icons.person, size: 15, color: Colors.grey,), // 프로필 이미지가 없는 경우에 아이콘을 표시
+                ),
+                SizedBox(width: 10,),
+                Text(_comments.first.content)
+              ],
+              ) : Text(""),
+
             ),
           ),
           SizedBox(height: 20),
@@ -256,6 +279,26 @@ class _RecipePageState extends State<RecipePage> {
     );
   }
 
+  String formatRelativeTime(DateTime dateTime) {
+    Duration difference = DateTime.now().difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return '방금 전';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}분 전';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}시간 전';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}일 전';
+    } else if (difference.inDays < 30) {
+      return '${(difference.inDays / 7).floor()}주 전';
+    } else if (difference.inDays < 365) {
+      return '${(difference.inDays / 30).floor()}개월 전';
+    } else {
+      return '${(difference.inDays / 365).floor()}년 전';
+    }
+  }
+
   void _showCommentBottomSheet(BuildContext context) {
     TextEditingController _commentController = TextEditingController();
 
@@ -271,24 +314,157 @@ class _RecipePageState extends State<RecipePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(20),
+                alignment: Alignment.center,
+                child: Text(
+                  '댓글',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: _comments.length,
                   itemBuilder: (context, index) {
                     final comment = _comments[index];
-                    bool isCurrentUserComment = comment.userDTO.id == currentId; // 현재 사용자의 댓글인지 여부 확인
+                    bool isCurrentUserComment = comment.userDTO.id == currentId;
+                    bool isRecipeOwner = widget.recipe.userDTO.id == currentId;
 
                     return ListTile(
-                      title: Text(comment.content),
-                      tileColor: Colors.white,
-                      trailing: isCurrentUserComment
-                          ? IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
+                      leading: CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Colors.blue[200],
+                        backgroundImage: comment.userDTO != null &&
+                            comment.userDTO.profile != null &&
+                            comment.userDTO.profile!.isNotEmpty
+                            ? NetworkImage(
+                            "${Constants.baseUrl}/api/auth/images/${comment.userDTO.profile}")
+                            : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
+                        child: comment.userDTO != null &&
+                            comment.userDTO.profile != null &&
+                            comment.userDTO.profile!.isNotEmpty
+                            ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
+                            : Icon(Icons.person, size: 15, color: Colors.grey,), // 프로필 이미지가 없는 경우에 아이콘을 표시
+                      ),
+                      title: Row(
+                        children: [
+                          if(widget.recipe.userDTO.id != comment.userDTO.id)
+                            Text(comment.userDTO.nickname, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
 
-                        },
+                          if(widget.recipe.userDTO.id == comment.userDTO.id)
+                            Container(
+                              width : comment.userDTO.nickname.length * 15,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(10)
+                              ),
+                              child:
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(comment.userDTO.nickname,
+                                      style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.center,),
+                                    Icon(Icons.check_circle, size: 12, color: Colors.green),
+                                  ]
+                              ),
+                            ),
+                          Text("·", style: TextStyle(fontSize: 30, color: Colors.grey),),
+                          Text(formatRelativeTime(comment.modifyDate), style: TextStyle(fontSize: 13, color: Colors.grey)),
+
+                          if (comment.updateFlag.toString() == "true")
+                            Text("(수정됨)", style: TextStyle(fontSize: 13, color: Colors.grey)),
+                        ],
+                      ),
+                      subtitle: Text(comment.content),
+                      tileColor: Colors.white,
+                      trailing: isRecipeOwner && isCurrentUserComment
+                          ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditCommentPage(
+                                    commentId: comment.id,
+                                    currentContent: comment.content,
+                                  ),
+                                ),
+                              ).then((value) {
+                                // Handle callback or update logic if needed
+                                _fetchComments();
+                              });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              _deleteComment(comment.id);
+                              setState(() {
+                                _fetchComments();
+                                Navigator.pop(context);
+                              });
+                            },
+                          ),
+                        ],
                       )
-                          : null, // 다른 사용자의 댓글이면 삭제 버튼을 보여주지 않음
+                          : isRecipeOwner
+                          ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              _deleteComment(comment.id);
+                              setState(() {
+                                _fetchComments();
+                                Navigator.pop(context);
+                              });
+                            },
+                          ),
+                        ],
+                      )
+                          : isCurrentUserComment
+                          ? Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditCommentPage(
+                                    commentId: comment.id,
+                                    currentContent: comment.content,
+                                  ),
+                                ),
+                              ).then((value) {
+                                // Handle callback or update logic if needed
+                                _fetchComments();
+                              });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              _deleteComment(comment.id);
+                              setState(() {
+                                _fetchComments();
+                                Navigator.pop(context);
+                              });
+                            },
+                          ),
+                        ],
+                      )
+                          : null,
                     );
                   },
                 ),
@@ -352,6 +528,7 @@ class _RecipePageState extends State<RecipePage> {
                             if (response.statusCode == 200) {
                               _fetchComments(); // 댓글 리스트 다시 불러오기
                               _commentController.clear(); // 입력 필드 비우기
+                              Navigator.pop(context);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -375,6 +552,40 @@ class _RecipePageState extends State<RecipePage> {
     );
   }
 
+  void _deleteComment(int commentId) async {
+    try {
+      var response = await http.delete(
+        Uri.parse('${Constants.baseUrl}/comments/delete?id=$commentId'),
+      );
+      if (response.statusCode == 200) {
+        // 댓글 삭제 성공 시
+        _fetchComments(); // 댓글 리스트 다시 불러오기
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('댓글이 삭제되었습니다.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      } else {
+        // 댓글 삭제 실패 시
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('댓글 삭제에 실패했습니다.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      // 오류 발생 시
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('오류가 발생했습니다: $e'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
 }
 
 class CommentDTO {
@@ -383,8 +594,9 @@ class CommentDTO {
   bool updateFlag;
   UserDTO userDTO;
   RecipeDTO recipeDTO;
+  final DateTime modifyDate;
 
-  CommentDTO({required this.id, required this.content, required this.updateFlag, required this.userDTO, required this.recipeDTO});
+  CommentDTO({required this.id, required this.content, required this.updateFlag, required this.userDTO, required this.recipeDTO, required this.modifyDate,});
 
   factory CommentDTO.fromJson(Map<String, dynamic> json) {
     return CommentDTO(
@@ -393,6 +605,7 @@ class CommentDTO {
       userDTO: UserDTO.fromJson(json['userDTO']),
       recipeDTO: RecipeDTO.fromJson(json['recipeDTO']),
       updateFlag: json['updateFlag'],
+      modifyDate: DateTime.parse(json['modifyDate']),
     );
   }
 }

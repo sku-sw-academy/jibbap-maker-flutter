@@ -297,8 +297,8 @@ class _MyProfileState extends State<MyProfile> {
             padding: EdgeInsets.only(
                 left: screenWidth / 40, top: screenHeight / 90),
             child: Text(
-              "Notification",
-              style: TextStyle(fontSize: 20),
+              "알림 설정",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           SwitchListTile(
@@ -318,7 +318,7 @@ class _MyProfileState extends State<MyProfile> {
             padding: EdgeInsets.only(
                 left: screenWidth / 40, top: screenHeight / 90),
             child: Text(
-              "My Account Information",
+              "계정",
               style: TextStyle(fontSize: 20),
             ),
           ),
@@ -382,7 +382,7 @@ class _MyProfileState extends State<MyProfile> {
             padding: EdgeInsets.only(
                 left: screenWidth / 40, top: screenHeight / 90),
             child: Text(
-              "Support",
+              "이용안내",
               style: TextStyle(fontSize: 20),
             ),
           ),

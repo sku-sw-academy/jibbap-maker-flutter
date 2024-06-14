@@ -420,7 +420,7 @@ class _SelectedPageState extends State<SelectedPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: rightTitleWidgets,
-                  reservedSize: 32,
+                  reservedSize: 34,
                 ),
               ),
               topTitles: AxisTitles(

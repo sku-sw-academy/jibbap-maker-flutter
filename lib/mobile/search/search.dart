@@ -10,13 +10,16 @@ import 'package:flutter_splim/service/priceservice.dart';
 import 'package:flutter_splim/dto/PriceDTO.dart';
 import 'package:flutter_splim/mobile/search/result.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:math';
 
 class SearchPage extends StatefulWidget {
   @override
   _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageState extends State<SearchPage>  with SingleTickerProviderStateMixin {
   final DatabaseHelper dbHelper = DatabaseHelper();
   final ItemService itemService = ItemService();
   final PriceService priceService = PriceService();
@@ -24,9 +27,11 @@ class _SearchPageState extends State<SearchPage> {
   List<String> suggestions = []; // 예시 자동완성 목록
   late Future<List<Record>> recentSearches;
   late Future<List<PriceDTO>> futurePopularNames;
-
-
+  stt.SpeechToText _speech = stt.SpeechToText(); // SpeechToText instance
   RefreshController _refreshController = RefreshController(initialRefresh: false);
+  late AnimationController _animationController;
+  bool _isSpeechActive = false;
+  String recognizedText = '';
 
   void _onRefresh() async {
     // 새로고침 로직을 여기에 구현하세요.
@@ -43,6 +48,17 @@ class _SearchPageState extends State<SearchPage> {
     recentSearches = dbHelper.getRecords();
     futurePopularNames = priceService.fetchPopularItemPrices9();
     fetchSuggestions();
+    _initializeSpeech();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   void handleSearchChange(String searchTerm) {
@@ -70,6 +86,66 @@ class _SearchPageState extends State<SearchPage> {
       throw Exception('Failed to load suggestions');
     }
   }
+
+  void _initializeSpeech() async {
+    bool available = await _speech.initialize(
+      onError: (error) {
+        showToast("발음이 명확하지 않습니다.");
+        setState(() {
+          _isSpeechActive = false; // Speech to Text 비활성화
+        });
+      },
+      onStatus: (status) {
+        print('Status: $status');
+      },
+    );
+
+    if (available) {
+      print('Speech recognition initialized');
+    } else {
+      print('Speech recognition not available');
+    }
+  }
+
+  void _startListening() {
+    setState(() {
+      _isSpeechActive = true; // Speech to Text 활성화
+    });
+    _speech.listen(
+      onResult: (result) {
+        setState(() {
+          recognizedText = result.recognizedWords;
+          searchText = result.recognizedWords;
+          if(suggestions.contains(searchText))
+            handleSearchChange(searchText);
+          _isSpeechActive = false;
+        });
+      },
+
+      localeId: 'ko_KR', // 한국어 설정
+    );
+  }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.white,
+      textColor: Colors.black,
+      fontSize: 16.0,
+    );
+  }
+
+  void _stopListening() {
+    _speech.stop();
+    setState(() {
+      _isSpeechActive = false; // Deactivate animation when speech stops
+    });
+    _animationController.stop();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -100,10 +176,29 @@ class _SearchPageState extends State<SearchPage> {
                 }));
               }
             },
+            controller: TextEditingController(text: searchText),
             style: TextStyle(color: Colors.black),
           ),
         ),
         actions: [
+          AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) {
+              return IconButton(
+                icon: Icon(Icons.mic,
+                    color: _speech.isListening
+                        ? Colors.red.withOpacity(_animationController.value)
+                        : Colors.black),
+                onPressed: () {
+                  if (_speech.isListening) {
+                    _stopListening(); // Stop listening and hide animation
+                  } else {
+                    _startListening(); // Start listening and show animation
+                  }
+                },
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
@@ -126,7 +221,10 @@ class _SearchPageState extends State<SearchPage> {
       body: SmartRefresher(
         controller: _refreshController,
         onRefresh: _onRefresh,
-        child: ListView(
+        child: Stack(
+            children:[
+
+          ListView(
         children: [
           if (searchText.isEmpty)
             Column(
@@ -392,7 +490,62 @@ class _SearchPageState extends State<SearchPage> {
             ),
         ],
       ),
+              if (_isSpeechActive)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: 100, // 원하는 높이 설정
+                  child: AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) {
+                      return IgnorePointer(
+                        ignoring: !_isSpeechActive,
+                        child: CustomPaint(
+                          painter: WavePainter(_animationController),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+            ]
+      ),
     ),
     );
+  }
+}
+
+class WavePainter extends CustomPainter {
+  final Animation<double> _animation;
+
+  WavePainter(this._animation) : super(repaint: _animation);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.blueAccent.withOpacity(0.5);
+    final path = Path();
+    final waveHeight = 20.0;
+    final waveLength = size.width / 3;
+
+    path.moveTo(0, size.height / 2);
+
+    for (double i = 0; i < size.width; i++) {
+      path.lineTo(
+        i,
+        size.height / 2 + waveHeight * sin((i / waveLength + _animation.value * 2 * pi)),
+      );
+    }
+
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }

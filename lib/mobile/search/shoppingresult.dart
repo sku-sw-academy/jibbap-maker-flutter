@@ -273,7 +273,7 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: rightTitleWidgets,
-                    reservedSize: 31,
+                    reservedSize: 34,
                 ),
               ),
               topTitles: AxisTitles(

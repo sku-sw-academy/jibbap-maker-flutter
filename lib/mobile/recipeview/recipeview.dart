@@ -177,9 +177,9 @@ class _RecipeViewState extends State<RecipeView> {
                                   child: recipe.image != null && recipe.image!.isNotEmpty
                                       ? Image.network('${Constants.baseUrl}/recipe/images/${recipe.image}')
                                       : CircleAvatar(
-                                    backgroundColor: Colors.grey[300],
-                                    radius: 50,
-                                    child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
+                                        backgroundColor: Colors.grey[300],
+                                        radius: 50,
+                                        child: Icon(Icons.food_bank, size: 50, color: Colors.grey[600]),
                                   ),
                                 ),
                               ),
@@ -198,8 +198,8 @@ class _RecipeViewState extends State<RecipeView> {
 
                             Padding(
                               padding: const EdgeInsets.all(2.5),
-                              child:Text("댓글 : ${recipe.count}", textAlign: TextAlign.center,),
-
+                              child:Text(
+                                "댓글 : ${recipe.count}", textAlign: TextAlign.center,),
                               ),
                           ],
                         ),

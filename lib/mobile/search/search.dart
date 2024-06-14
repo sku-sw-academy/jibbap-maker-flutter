@@ -159,7 +159,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
     return Scaffold(
       appBar: AppBar(
         title: Container(
-          width: screenWidth * 0.7, // 너비를 전체 화면 너비의 70%로 설정
+          width: screenWidth * 0.8, // 너비를 전체 화면 너비의 70%로 설정
           child: TextField(
             onChanged: handleSearchChange,
             decoration: InputDecoration(
@@ -270,7 +270,6 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                               record.name,
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             trailing: Row(
@@ -361,7 +360,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                                 padding: EdgeInsets.only(left: 10.0), // Wrap 위젯에 왼쪽 패딩 추가
                             child:
                                 Wrap(
-                              spacing: 3.0,
+                              spacing: 6.0,
                               runSpacing: 3.0,
                               children: popularPrices.map((price) {
                                 return ElevatedButton(
@@ -373,8 +372,6 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                                       borderRadius: BorderRadius.circular(20), // 반지름 값을 버튼의 너비 또는 높이보다 작게 지정하여 원형으로 만듭니다.
                                     ),
                                     side: BorderSide(color: Colors.grey, width: 1),
-                                    elevation: 1.0,
-
                                     minimumSize: Size(63, 40),
                                   ),
                                   onPressed: () async {
@@ -407,7 +404,6 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                                     price.itemCode.itemName,
                                     style: TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 );

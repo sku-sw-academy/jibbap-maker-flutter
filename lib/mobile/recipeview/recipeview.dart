@@ -190,10 +190,11 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(50.0), // Adjust the height as needed
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.9, // Adjust the width as needed
+             // Adjust the width as needed
             // Add some margin if needed
             child: Row(
               children: [
+                SizedBox(width: screenWidth * 0.05,),
                 Expanded(
                   child: TextField(
                     controller: _textEditingController,

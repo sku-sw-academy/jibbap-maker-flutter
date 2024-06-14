@@ -319,7 +319,7 @@ class _MyProfileState extends State<MyProfile> {
                 left: screenWidth / 40, top: screenHeight / 90),
             child: Text(
               "계정",
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           ListTile(
@@ -351,7 +351,7 @@ class _MyProfileState extends State<MyProfile> {
                 left: screenWidth / 40, top: screenHeight / 90),
             child: Text(
               "My Custom",
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           ListTile(
@@ -383,7 +383,7 @@ class _MyProfileState extends State<MyProfile> {
                 left: screenWidth / 40, top: screenHeight / 90),
             child: Text(
               "이용안내",
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           ListTile(

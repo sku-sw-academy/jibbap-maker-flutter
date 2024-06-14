@@ -5,21 +5,100 @@ import 'package:flutter_splim/mobile/recipeview/recipe.dart';
 import 'package:flutter_splim/dto/RecipeDTO.dart';
 import 'package:flutter_splim/constant.dart';
 import 'package:flutter_splim/dto/RecipeAndComment.dart';
+import 'dart:math';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class RecipeView extends StatefulWidget {
   @override
   _RecipeViewState createState() => _RecipeViewState();
 }
 
-class _RecipeViewState extends State<RecipeView> {
+class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateMixin{
   String searchText = '';
   String sortOption = 'latest'; // Default sort option
   Future<List<RecipeAndComment>>? recipeList;
+  late AnimationController _animationController;
+  bool _isSpeechActive = false;
+  stt.SpeechToText _speech = stt.SpeechToText();
+  TextEditingController _textEditingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     recipeList = fetchRecipes();
+    _initializeSpeech();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _textEditingController.dispose(); // TextEditingController의 dispose 메서드 호출
+    super.dispose();
+  }
+
+  void _initializeSpeech() async {
+    bool available = await _speech.initialize(
+      onError: (error) {
+        setState(() {
+          _isSpeechActive = false;
+          print(_isSpeechActive);// Speech to Text 비활성화
+        });
+        showToast("발음이 명확하지 않습니다.");
+      },
+      onStatus: (status) {
+        print('Status: $status');
+      },
+    );
+
+    if (available) {
+      print('Speech recognition initialized');
+    } else {
+      print('Speech recognition not available');
+    }
+  }
+
+  void _startListening() {
+    setState(() {
+      _isSpeechActive = true; // Speech to Text 활성화
+    });
+    _speech.listen(
+      onResult: (result) {
+        setState(() {
+          searchText = result.recognizedWords;
+          _textEditingController.text = searchText;
+          handleSearchChange(searchText);
+          _isSpeechActive = false;
+        });
+      },
+
+      localeId: 'ko_KR', // 한국어 설정
+    );
+  }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.white,
+      textColor: Colors.black,
+      fontSize: 16.0,
+    );
+  }
+
+  void _stopListening() {
+    _speech.stop();
+    setState(() {
+      _isSpeechActive = false; // Deactivate animation when speech stops
+    });
+    _animationController.stop();
   }
 
   Future<List<RecipeAndComment>> fetchRecipes() async {
@@ -113,24 +192,52 @@ class _RecipeViewState extends State<RecipeView> {
           child: Container(
             width: MediaQuery.of(context).size.width * 0.9, // Adjust the width as needed
             // Add some margin if needed
-            child: TextField(
-              onChanged: handleSearchChange,
-              decoration: InputDecoration(
-                hintText: "검색어를 입력하세요",
-                border: OutlineInputBorder( // Here you can change the border
-                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                  borderRadius: BorderRadius.circular(8.0), // Optional, to make rounded borders
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _textEditingController,
+                    onChanged: handleSearchChange,
+                    decoration: InputDecoration(
+                      hintText: "검색어를 입력하세요",
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                    ),
+                    style: TextStyle(color: Colors.black),
+                  ),
                 ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
-              ),
-              style: TextStyle(color: Colors.black),
+                AnimatedBuilder(
+                  animation: _animationController,
+                  builder: (context, child) {
+                    return IconButton(
+                      icon: Icon(Icons.mic,
+                          color: _speech.isListening
+                              ? Colors.red.withOpacity(_animationController.value)
+                              : Colors.black),
+                      onPressed: () {
+                        if (_speech.isListening) {
+                          _stopListening(); // Stop listening and hide animation
+                        } else {
+                          _startListening(); // Start listening and show animation
+                        }
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ),
+
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: FutureBuilder<List<RecipeAndComment>>(
+      body: Stack(
+          children: [
+            Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: FutureBuilder<List<RecipeAndComment>>(
           future: recipeList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -212,6 +319,60 @@ class _RecipeViewState extends State<RecipeView> {
           },
         ),
       ),
+            if (_isSpeechActive)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 100, // 원하는 높이 설정
+                child: AnimatedBuilder(
+                  animation: _animationController,
+                  builder: (context, child) {
+                    return IgnorePointer(
+                      ignoring: !_isSpeechActive,
+                      child: CustomPaint(
+                        painter: WavePainter(_animationController),
+                      ),
+                    );
+                  },
+                ),
+              ),
+          ],
+      )
     );
+  }
+}
+
+class WavePainter extends CustomPainter {
+  final Animation<double> _animation;
+
+  WavePainter(this._animation) : super(repaint: _animation);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = Colors.blueAccent.withOpacity(0.5);
+    final path = Path();
+    final waveHeight = 20.0;
+    final waveLength = size.width / 3;
+
+    path.moveTo(0, size.height / 2);
+
+    for (double i = 0; i < size.width; i++) {
+      path.lineTo(
+        i,
+        size.height / 2 + waveHeight * sin((i / waveLength + _animation.value * 2 * pi)),
+      );
+    }
+
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }

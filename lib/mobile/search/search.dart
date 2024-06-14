@@ -32,12 +32,14 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
   late AnimationController _animationController;
   bool _isSpeechActive = false;
   String recognizedText = '';
+  TextEditingController textController = TextEditingController();
 
   void _onRefresh() async {
     // 새로고침 로직을 여기에 구현하세요.
     recentSearches = dbHelper.getRecords();
     futurePopularNames = priceService.fetchPopularItemPrices9();
     fetchSuggestions();
+    _initializeSpeech();
     await Future.delayed(Duration(seconds: 2));
     _refreshController.refreshCompleted();// 임시로 2초 대기
   }
@@ -58,6 +60,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
   @override
   void dispose() {
     _animationController.dispose();
+    textController.dispose();
     super.dispose();
   }
 
@@ -90,10 +93,11 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
   void _initializeSpeech() async {
     bool available = await _speech.initialize(
       onError: (error) {
-        showToast("발음이 명확하지 않습니다.");
         setState(() {
-          _isSpeechActive = false; // Speech to Text 비활성화
+          _isSpeechActive = false;
+          print(_isSpeechActive);// Speech to Text 비활성화
         });
+        showToast("발음이 명확하지 않습니다.");
       },
       onStatus: (status) {
         print('Status: $status');
@@ -115,10 +119,10 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
       onResult: (result) {
         setState(() {
           recognizedText = result.recognizedWords;
-          searchText = result.recognizedWords;
+          textController.text = result.recognizedWords;
+          _isSpeechActive = false;
           if(suggestions.contains(searchText))
             handleSearchChange(searchText);
-          _isSpeechActive = false;
         });
       },
 
@@ -145,7 +149,6 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
     });
     _animationController.stop();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +179,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                 }));
               }
             },
-            controller: TextEditingController(text: searchText),
+            controller: textController,
             style: TextStyle(color: Colors.black),
           ),
         ),
@@ -225,9 +228,9 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
             children:[
 
           ListView(
-        children: [
-          if (searchText.isEmpty)
-            Column(
+              children: [
+            if (textController.text.isEmpty)
+              Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
@@ -369,8 +372,8 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20), // 반지름 값을 버튼의 너비 또는 높이보다 작게 지정하여 원형으로 만듭니다.
                                     ),
-                                    side: BorderSide(color: Colors.black, width: 2),
-                                    elevation: 2.0,
+                                    side: BorderSide(color: Colors.grey, width: 1),
+                                    elevation: 1.0,
 
                                     minimumSize: Size(63, 40),
                                   ),
@@ -420,13 +423,13 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
               ],
             ),
 
-          if (searchText.isNotEmpty && filteredSuggestions.isNotEmpty)
+          if (textController.text.isNotEmpty && filteredSuggestions.isNotEmpty)
             Column(
               children: filteredSuggestions.map((suggestion) {
                 List<TextSpan> textSpans = [];
                 int index = 0;
                 String lowerCaseSuggestion = suggestion.toLowerCase();
-                String lowerCaseSearchText = searchText.toLowerCase();
+                String lowerCaseSearchText = textController.text.toLowerCase();
 
                 while (index < suggestion.length) {
                   int startIndex = lowerCaseSuggestion.indexOf(lowerCaseSearchText, index);
@@ -441,12 +444,12 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
 
                   // 검색어 부분 추가 (빨간색으로 표시)
                   textSpans.add(TextSpan(
-                    text: suggestion.substring(startIndex, startIndex + searchText.length),
+                    text: suggestion.substring(startIndex, startIndex + textController.text.length),
                     style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
                   ));
 
                   // 다음 검색 시작 위치 설정
-                  index = startIndex + searchText.length;
+                  index = startIndex + textController.text.length;
                 }
                 return ListTile(
                   title: RichText(
@@ -508,7 +511,6 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                     },
                   ),
                 ),
-
             ]
       ),
     ),

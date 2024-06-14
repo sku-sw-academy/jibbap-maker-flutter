@@ -11,9 +11,10 @@ import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
 import 'dart:convert';
 import 'package:flutter_splim/mobile/recipeview/editCommentPage.dart';
+import 'package:flutter_splim/dto/RecipeAndComment.dart';
 
 class RecipePage extends StatefulWidget {
-  final RecipeDTO recipe;
+  final RecipeAndComment recipe;
 
   RecipePage({required this.recipe});
 
@@ -407,6 +408,7 @@ class _RecipePageState extends State<RecipePage> {
                             _deleteComment(comment.id);
                             setState(() {
                             _fetchComments();
+                            widget.recipe.count = _comments.length;
                             Navigator.pop(context);
                           });
                           },
@@ -423,6 +425,7 @@ class _RecipePageState extends State<RecipePage> {
                             _deleteComment(comment.id);
                             setState(() {
                               _fetchComments();
+                              widget.recipe.count = _comments.length;
                               Navigator.pop(context);
                             });
                           },
@@ -524,7 +527,8 @@ class _RecipePageState extends State<RecipePage> {
                               },
                             );
                             if (response.statusCode == 200) {
-                              _fetchComments(); // 댓글 리스트 다시 불러오기
+                              _fetchComments();
+                              widget.recipe.count = _comments.length;// 댓글 리스트 다시 불러오기
                               _commentController.clear(); // 입력 필드 비우기
                               Navigator.pop(context);
                             } else {

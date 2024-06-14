@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_splim/mobile/recipeview/recipe.dart';
 import 'package:flutter_splim/dto/RecipeDTO.dart';
 import 'package:flutter_splim/constant.dart';
+import 'package:flutter_splim/dto/RecipeAndComment.dart';
 
 class RecipeView extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class RecipeView extends StatefulWidget {
 class _RecipeViewState extends State<RecipeView> {
   String searchText = '';
   String sortOption = 'latest'; // Default sort option
-  Future<List<RecipeDTO>>? recipeList;
+  Future<List<RecipeAndComment>>? recipeList;
 
   @override
   void initState() {
@@ -21,12 +22,12 @@ class _RecipeViewState extends State<RecipeView> {
     recipeList = fetchRecipes();
   }
 
-  Future<List<RecipeDTO>> fetchRecipes() async {
+  Future<List<RecipeAndComment>> fetchRecipes() async {
     final response = await http.get(Uri.parse('${Constants.baseUrl}/recipe/share'));
     if (response.statusCode == 200) {
       var responsebody = utf8.decode(response.bodyBytes);
       List<dynamic> body = jsonDecode(responsebody);
-      return body.map((item) => RecipeDTO.fromJson(item)).toList();
+      return body.map((item) => RecipeAndComment.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load recipes');
     }
@@ -44,11 +45,11 @@ class _RecipeViewState extends State<RecipeView> {
     });
   }
 
-  List<RecipeDTO> getFilteredRecipes(List<RecipeDTO> recipes, String searchTerm) {
-    List<RecipeDTO> filteredRecipes = recipes.where((recipe) => recipe.title.toLowerCase().contains(searchTerm.toLowerCase())).toList();
+  List<RecipeAndComment> getFilteredRecipes(List<RecipeAndComment> recipes, String searchTerm) {
+    List<RecipeAndComment> filteredRecipes = recipes.where((recipe) => recipe.title.toLowerCase().contains(searchTerm.toLowerCase())).toList();
 
     if (sortOption == 'comments') {
-
+      filteredRecipes.sort((a, b) => b.count.compareTo(a.count));
     } else {
       filteredRecipes.sort((a, b) => b.modifyDate.compareTo(a.modifyDate));
     }
@@ -129,7 +130,7 @@ class _RecipeViewState extends State<RecipeView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(6.0),
-        child: FutureBuilder<List<RecipeDTO>>(
+        child: FutureBuilder<List<RecipeAndComment>>(
           future: recipeList,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -139,24 +140,26 @@ class _RecipeViewState extends State<RecipeView> {
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return Center(child: Text('레시피 목록이 없습니다.'));
             } else {
-              List<RecipeDTO> filteredRecipes = getFilteredRecipes(snapshot.data!, searchText);
+              List<RecipeAndComment> filteredRecipes = getFilteredRecipes(snapshot.data!, searchText);
               return Scrollbar(
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 3 / 3.8,
+                    childAspectRatio: 3 / 4.15,
                     crossAxisSpacing: 10.0,
                     mainAxisSpacing: 10.0,
                   ),
                   itemCount: filteredRecipes.length,
                   itemBuilder: (context, index) {
-                    RecipeDTO recipe = filteredRecipes[index];
+                    RecipeAndComment recipe = filteredRecipes[index];
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => RecipePage(recipe: recipe)),
-                        );
+                        ).then((value) => setState(() {
+                          recipeList = fetchRecipes();
+                        }));
                       },
                       child: Card(
                         color: Colors.white,
@@ -182,16 +185,22 @@ class _RecipeViewState extends State<RecipeView> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(6.0),
                               child: RichText(
                                 text: TextSpan(
-                                  style: TextStyle(fontSize: recipe.title.length > 14 ? 10.0 : 14.0,
-                                      color: Colors.black),
+                                  style: TextStyle(fontSize: recipe.title.length > 14 ? 10.0 : 15.0,
+                                      color: Colors.black, fontWeight: FontWeight.bold),
                                   children: _highlightText(recipe.title, searchText),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
                             ),
+
+                            Padding(
+                              padding: const EdgeInsets.all(2.5),
+                              child:Text("댓글 : ${recipe.count}", textAlign: TextAlign.center,),
+
+                              ),
                           ],
                         ),
                       ),

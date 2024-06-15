@@ -55,7 +55,14 @@ class _SearchResultPageState extends State<SearchResultPage> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
+            child: filteredSuggestions.isEmpty
+                ? Center(
+              child: Text(
+                '검색어가 없습니다',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            )
+                : ListView.builder(
               itemCount: filteredSuggestions.length,
               itemBuilder: (context, index) {
                 String suggestion = filteredSuggestions[index];

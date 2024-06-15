@@ -183,7 +183,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                           futureRecipe = fetchRecipe();
                         });
                       },
-                      child: Text("다시", textAlign: TextAlign.center,),
+                      child: Text("재시도", textAlign: TextAlign.center,),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,

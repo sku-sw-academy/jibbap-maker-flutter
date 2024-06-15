@@ -9,6 +9,7 @@ import 'dart:math';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_splim/mobile/recipeview/filteredpage.dart';
 
 class RecipeView extends StatefulWidget {
   @override
@@ -38,21 +39,32 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
   @override
   void dispose() {
     _animationController.dispose();
-    _textEditingController.dispose(); // TextEditingController의 dispose 메서드 호출
+    _textEditingController.dispose();
+    _speech.stop(); // TextEditingController의 dispose 메서드 호출
     super.dispose();
   }
 
   void _initializeSpeech() async {
     bool available = await _speech.initialize(
       onError: (error) {
-        setState(() {
-          _isSpeechActive = false;
-          print(_isSpeechActive);// Speech to Text 비활성화
-        });
-        showToast("발음이 명확하지 않습니다.");
+        if (mounted) {
+          setState(() {
+            _isSpeechActive = false;
+            print(_isSpeechActive); // Speech to Text 비활성화
+          });
+          showToast("발음이 명확하지 않습니다.");
+        }
       },
       onStatus: (status) {
-        print('Status: $status');
+        print('Status: $status'); // status 값 출력
+        if (status == "notListening") {
+          if (mounted) {
+            setState(() {
+              _isSpeechActive = false;
+              print(_isSpeechActive); // Speech to Text 비활성화
+            });
+          }
+        }
       },
     );
 
@@ -67,16 +79,32 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
     setState(() {
       _isSpeechActive = true; // Speech to Text 활성화
     });
+    _animationController.repeat(); // 애니메이션 시작
     _speech.listen(
-      onResult: (result) {
-        setState(() {
-          searchText = result.recognizedWords;
-          _textEditingController.text = searchText;
-          handleSearchChange(searchText);
-          _isSpeechActive = false;
-        });
-      },
+      onResult: (result) async {
+        if (mounted) {
+          setState(() {
+           //_textEditingController.text = result.recognizedWords;
+            _isSpeechActive = false;
+            //handleSearchChange(_textEditingController.text);
+            _animationController.stop(); // 애니메이션 중지
+          });
 
+          if (result.recognizedWords.isNotEmpty) {
+            final fetchedRecipes = await fetchRecipes();
+            List<RecipeAndComment> filteredRecipes = getFilteredRecipes(fetchedRecipes, result.recognizedWords);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FilteredRecipePage(filteredRecipes: filteredRecipes, searchTerm: result.recognizedWords),
+              ),
+            ).then((value) => setState(() {
+              recipeList = fetchRecipes();
+            }));
+            showToast("${result.recognizedWords}의 결과입니다.");
+          }
+        }
+      },
       localeId: 'ko_KR', // 한국어 설정
     );
   }
@@ -87,7 +115,7 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.lightGreenAccent,
       textColor: Colors.black,
       fontSize: 16.0,
     );
@@ -95,9 +123,11 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
 
   void _stopListening() {
     _speech.stop();
-    setState(() {
-      _isSpeechActive = false; // Deactivate animation when speech stops
-    });
+    if (mounted) {
+      setState(() {
+        _isSpeechActive = false; // Deactivate animation when speech stops
+      });
+    }
     _animationController.stop();
   }
 

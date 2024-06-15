@@ -12,9 +12,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
 
     <application
-        android:label="flutter_splim"
+        android:label="알뜰집밥"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/img">
 
         <activity    android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
@@ -45,6 +45,9 @@
             <meta-data
                 android:name="com.google.firebase.messaging.default_notification_channel_id"
                 android:value="high_importance_channel" />
+            <meta-data
+                android:name="com.google.firebase.messaging.default_notification_icon"
+                android:resource="@drawable/img" />
 
             <intent-filter>
                 <action android:name="FLUTTER_NOTIFICATION_CLICK"/>
@@ -55,8 +58,6 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
-
 
         </activity>
         <!-- Don't delete the meta-data below.

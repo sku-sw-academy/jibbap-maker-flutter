@@ -119,10 +119,21 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
       onResult: (result) {
         setState(() {
           recognizedText = result.recognizedWords;
-          textController.text = result.recognizedWords;
+          //searchText = result.recognizedWords;
           _isSpeechActive = false;
-          if(suggestions.contains(searchText))
-            handleSearchChange(searchText);
+
+          if(result.recognizedWords.isNotEmpty){
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchResultPage(searchText: result.recognizedWords, suggestions: suggestions),
+              ),
+            ).then((value) => setState(() {
+              futurePopularNames = priceService.fetchPopularItemPrices9();
+            }));
+            showToast("${result.recognizedWords}의 결과입니다.");
+          }
+
         });
       },
 
@@ -136,7 +147,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.lightGreenAccent,
       textColor: Colors.black,
       fontSize: 16.0,
     );

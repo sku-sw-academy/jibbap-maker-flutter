@@ -213,21 +213,21 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
               );
             },
           ),
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              if (searchText.isNotEmpty) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
-                  ),
-                ).then((value) => setState(() {
-                  futurePopularNames = priceService.fetchPopularItemPrices9();
-                }));
-              }
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.search),
+          //   onPressed: () {
+          //     if (searchText.isNotEmpty) {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //           builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
+          //         ),
+          //       ).then((value) => setState(() {
+          //         futurePopularNames = priceService.fetchPopularItemPrices9();
+          //       }));
+          //     }
+          //   },
+          // ),
           SizedBox(width: 25,)
         ],
       ),

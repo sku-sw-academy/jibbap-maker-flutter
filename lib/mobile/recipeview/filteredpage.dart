@@ -41,7 +41,14 @@ class _FilteredRecipePageState extends State<FilteredRecipePage> {
           ),
         ],
       ),
-      body: Padding(
+      body: widget.filteredRecipes.isEmpty
+          ? Center(
+        child: Text(
+          '검색 결과가 없습니다.',
+          style: TextStyle(fontSize: 18.0),
+        ),
+      )
+          :Padding(
         padding: const EdgeInsets.all(6.0),
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -113,9 +120,12 @@ class _FilteredRecipePageState extends State<FilteredRecipePage> {
       return [TextSpan(text: text)];
     }
 
+    // Split search term by whitespace to handle multiple words
+    List<String> searchTerms = searchTerm.toLowerCase().split(' ');
+
     List<TextSpan> spans = [];
     int start = 0;
-    int index = text.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
+    int index = _indexOfMultiWords(text.toLowerCase(), searchTerms, start);
 
     while (index >= 0) {
       if (index > start) {
@@ -126,7 +136,7 @@ class _FilteredRecipePageState extends State<FilteredRecipePage> {
         style: TextStyle(color: Colors.red),
       ));
       start = index + searchTerm.length;
-      index = text.toLowerCase().indexOf(searchTerm.toLowerCase(), start);
+      index = _indexOfMultiWords(text.toLowerCase(), searchTerms, start);
     }
 
     if (start < text.length) {
@@ -135,6 +145,18 @@ class _FilteredRecipePageState extends State<FilteredRecipePage> {
 
     return spans;
   }
+
+// Function to find index of multiple words in text
+  int _indexOfMultiWords(String text, List<String> searchTerms, int start) {
+    for (String term in searchTerms) {
+      int index = text.indexOf(term, start);
+      if (index >= 0) {
+        return index;
+      }
+    }
+    return -1;
+  }
+
 
   void handleSortChange(String option) {
     setState(() {

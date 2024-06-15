@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_splim/mobile/recipeview/recipe.dart';
-import 'package:flutter_splim/dto/RecipeDTO.dart';
 import 'package:flutter_splim/constant.dart';
 import 'package:flutter_splim/dto/RecipeAndComment.dart';
 import 'dart:math';
@@ -24,6 +23,7 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
   bool _isSpeechActive = false;
   stt.SpeechToText _speech = stt.SpeechToText();
   TextEditingController _textEditingController = TextEditingController();
+  String lastSearchTerm = '';
 
   @override
   void initState() {
@@ -84,25 +84,11 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
       onResult: (result) async {
         if (mounted) {
           setState(() {
-           //_textEditingController.text = result.recognizedWords;
+           _textEditingController.text = result.recognizedWords;
             _isSpeechActive = false;
-            //handleSearchChange(_textEditingController.text);
+            handleSearchChange(_textEditingController.text);
             _animationController.stop(); // 애니메이션 중지
           });
-
-          if (result.recognizedWords.isNotEmpty) {
-            final fetchedRecipes = await fetchRecipes();
-            List<RecipeAndComment> filteredRecipes = getFilteredRecipes(fetchedRecipes, result.recognizedWords);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FilteredRecipePage(filteredRecipes: filteredRecipes, searchTerm: result.recognizedWords),
-              ),
-            ).then((value) => setState(() {
-              recipeList = fetchRecipes();
-            }));
-            showToast("${result.recognizedWords}의 결과입니다.");
-          }
         }
       },
       localeId: 'ko_KR', // 한국어 설정
@@ -122,12 +108,12 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
   }
 
   void _stopListening() {
-    _speech.stop();
     if (mounted) {
       setState(() {
         _isSpeechActive = false; // Deactivate animation when speech stops
       });
     }
+    _speech.stop();
     _animationController.stop();
   }
 
@@ -238,6 +224,18 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
                       contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
                     ),
                     style: TextStyle(color: Colors.black),
+                    onSubmitted: (String searchtext) async{
+                      final fetchedRecipes = await fetchRecipes();
+                      List<RecipeAndComment> filteredRecipes = getFilteredRecipes(fetchedRecipes, searchtext);
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                      builder: (context) => FilteredRecipePage(filteredRecipes: filteredRecipes, searchTerm: searchtext),
+                      ),
+                      ).then((value) => setState(() {
+                      recipeList = fetchRecipes();
+                  }));
+                    },
                   ),
                 ),
                 AnimatedBuilder(

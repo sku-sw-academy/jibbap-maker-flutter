@@ -111,13 +111,20 @@ class MainPage extends StatefulWidget{
 class _MainPageState extends State<MainPage> {
   String key = "accessToken";
   String refresh = "refreshToken";
-  late UserDTO? user;
+  late Future<UserDTO> user;
   final UserService userService = UserService();
 
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      Provider.of<NotificationProvider>(context, listen: false).incrementCount();
+      RemoteNotification? notification = message.notification;
+      print('noti - title : ${notification?.title}, body : ${notification?.body}');
+      await showNotification(title: notification?.title, message: notification?.body);
+    });
+    //user = _fetchUser();
   }
 
   Future<void> _checkLoginStatus() async {
@@ -139,6 +146,18 @@ class _MainPageState extends State<MainPage> {
       setState(() {
         Constants.isLogined = false;
       });
+    }
+  }
+
+  Future<UserDTO> _fetchUser() async {
+    final storageService = Provider.of<SecureService>(context, listen: false);
+    String? token = await storageService.readToken("refreshToken");
+    if (token != null && token.isNotEmpty) {
+      UserDTO user = await userService.getUserInfo(token);
+      Provider.of<UserProvider>(context, listen: false).updateUser(user);
+      return user;
+    } else {
+      throw Exception("유효한 토큰이 없습니다.");
     }
   }
 

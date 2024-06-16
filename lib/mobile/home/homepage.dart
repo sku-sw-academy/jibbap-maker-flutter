@@ -80,12 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     initializeData();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      Provider.of<NotificationProvider>(context, listen: false).incrementCount();
-      RemoteNotification? notification = message.notification;
-      print('noti - title : ${notification?.title}, body : ${notification?.body}');
-      await showNotification(title: notification?.title, message: notification?.body);
-    });
+
   }
 
   Future<void> initializeData() async {

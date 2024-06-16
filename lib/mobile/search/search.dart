@@ -35,13 +35,17 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
   TextEditingController textController = TextEditingController();
 
   void _onRefresh() async {
-    // 새로고침 로직을 여기에 구현하세요.
-    recentSearches = dbHelper.getRecords();
-    futurePopularNames = priceService.fetchPopularItemPrices9();
-    fetchSuggestions();
-    _initializeSpeech();
-    await Future.delayed(Duration(seconds: 2));
-    _refreshController.refreshCompleted();// 임시로 2초 대기
+    try {
+      await Future.wait([
+        dbHelper.getRecords().then((value) => setState(() => recentSearches = Future.value(value))),
+        priceService.fetchPopularItemPrices9().then((value) => setState(() => futurePopularNames = Future.value(value))),
+        fetchSuggestions(),
+      ]);
+    } catch (e) {
+      print('Refresh failed: $e');
+    } finally {
+      _refreshController.refreshCompleted();
+    }
   }
 
   @override
@@ -237,7 +241,6 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
         onRefresh: _onRefresh,
         child: Stack(
             children:[
-
           ListView(
               children: [
             if (textController.text.isEmpty)
@@ -293,6 +296,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                                     await dbHelper.deleteRecord(record.name);
                                     setState(() {
                                       recentSearches = dbHelper.getRecords();
+                                      futurePopularNames = priceService.fetchPopularItemPrices9();
                                     });
                                   },
                                 ),
@@ -317,6 +321,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
 
                               setState(() {
                                 recentSearches = dbHelper.getRecords();
+                                futurePopularNames = priceService.fetchPopularItemPrices9();
                               });
 
                               Navigator.push(
@@ -324,7 +329,8 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                                 MaterialPageRoute(builder: (context) => SelectedPage(itemname: record.name),
                                 ),
                               ).then((value) => setState(() {
-
+                                recentSearches = dbHelper.getRecords();
+                                futurePopularNames = priceService.fetchPopularItemPrices9();
                               }));
                             },
                           );
@@ -408,6 +414,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                                         builder: (context) => SelectedPage(itemname: price.itemCode.itemName),
                                       ),
                                     ).then((value) => setState(() {
+                                      recentSearches = dbHelper.getRecords();
                                       futurePopularNames = priceService.fetchPopularItemPrices9();
                                     }));
                                   },
@@ -473,6 +480,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                       await dbHelper.updateRecord(Record(name: suggestion, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
                       setState(() {
                         recentSearches = dbHelper.getRecords();
+                        futurePopularNames = priceService.fetchPopularItemPrices9();
                       });
                     }
 
@@ -481,6 +489,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                       await dbHelper.insertRecord(Record(name: suggestion, date: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()).toString()));
                       setState(() {
                         recentSearches = dbHelper.getRecords();
+                        futurePopularNames = priceService.fetchPopularItemPrices9();
                       });
                     }
 
@@ -492,6 +501,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                         builder: (context) => SelectedPage(itemname: suggestion),
                       ),
                     ).then((value) => setState(() {
+                      recentSearches = dbHelper.getRecords();
                       futurePopularNames = priceService.fetchPopularItemPrices9();
                     }));
                   },

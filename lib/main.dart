@@ -168,7 +168,7 @@ class _MainPageState extends State<MainPage> {
               label: 'Search',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view, color: Colors.grey),
+              icon: Icon(Icons.food_bank, color: Colors.grey),
               label: 'Recipe',
             ),
             BottomNavigationBarItem(

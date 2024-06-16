@@ -71,9 +71,16 @@ class _NotificationListPageState extends State<NotificationListPage> {
                     ],
                   ),
                   onTap: () {
+                    DateTime notificationDate = DateTime.parse(notification.modifyDate);
+                    DateTime tenDaysAgo = DateTime.now().subtract(Duration(days: 10));
+
                     if(notification.title == "문의답변 완료")
                       Navigator.push(context,
                         MaterialPageRoute(builder: (context) => CenterPage())
+                      );
+                    if(notification.title == "업데이트" && notificationDate.isAfter(tenDaysAgo))
+                      Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => DetailPage(regday: notification.modifyDate.toString().substring(0, 10)))
                       );
                   },
                 );

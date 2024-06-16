@@ -34,13 +34,22 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
   String recognizedText = '';
   TextEditingController textController = TextEditingController();
 
-  void _onRefresh() async {
+  Future<void> _onRefresh() async {
     try {
+      final recentSearchesResult = dbHelper.getRecords();
+      final futurePopularNamesResult = priceService.fetchPopularItemPrices9();
+      final suggestionsResult = fetchSuggestions();
+
       await Future.wait([
-        dbHelper.getRecords().then((value) => setState(() => recentSearches = Future.value(value))),
-        priceService.fetchPopularItemPrices9().then((value) => setState(() => futurePopularNames = Future.value(value))),
-        fetchSuggestions(),
+        recentSearchesResult,
+        futurePopularNamesResult,
+        suggestionsResult,
       ]);
+
+      setState(() {
+        recentSearches = recentSearchesResult;
+        futurePopularNames = futurePopularNamesResult;
+      });
     } catch (e) {
       print('Refresh failed: $e');
     } finally {

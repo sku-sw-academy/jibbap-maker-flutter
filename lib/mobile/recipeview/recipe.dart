@@ -187,38 +187,39 @@ class _RecipePageState extends State<RecipePage> {
                 ),
               ),
               SizedBox(width: 15),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "닉네임: " + widget.recipe.userDTO.nickname,
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
+              Expanded(
+                child: Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "닉네임: " + widget.recipe.userDTO.nickname,
+                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                       ),
-                      children: [
-                        TextSpan(
-                          text: "후기: ",
+                      SizedBox(height: 8),
+                      RichText(
+                        text: TextSpan(
                           style: TextStyle(
-
+                            color: Colors.black,
+                            fontSize: 14,
                           ),
+                          children: [
+                            TextSpan(
+                              text: "후기: ",
+                              style: TextStyle(),
+                            ),
+                            TextSpan(
+                              text: _review,
+                            ),
+                          ],
                         ),
-                        TextSpan(
-                          text: _review,
-                        ),
-                      ],
-                    ),
-                    softWrap: true, // 줄 바꿈 허용
-                    overflow: TextOverflow.visible, // 텍스트가 넘칠 때 처리 방법 설정 (기본값)
+                        softWrap: true, // 줄 바꿈 허용
+                        overflow: TextOverflow.visible, // 텍스트가 넘칠 때 처리 방법 설정 (기본값)
+                      ),
+                    ],
                   ),
-
-                ],
-              )
+                ),
+              ),
             ],
           ),
           Divider(),

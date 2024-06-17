@@ -193,7 +193,7 @@ class _ModifyPageState extends State<ModifyPage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
-              maxLines: 1,
+              maxLines: 3,
               decoration: InputDecoration(
                 hintText: '후기를 작성해주세요...',
                 border: OutlineInputBorder(),
@@ -205,9 +205,9 @@ class _ModifyPageState extends State<ModifyPage> {
                 });
               },
               inputFormatters: [
-                LengthLimitingTextInputFormatter(20), // 입력 길이 제한
+                LengthLimitingTextInputFormatter(50), // 입력 길이 제한
               ],
-              maxLength: 20,
+              maxLength: 50,
             ),
           ),
           SizedBox(height: 20),

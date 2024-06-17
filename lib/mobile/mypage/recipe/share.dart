@@ -70,7 +70,7 @@ class _SharePageState extends State<SharePage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
-              maxLines: 1,
+              maxLines: 3,
               enabled: false,
               decoration: InputDecoration(
                 hintText: widget.recipeDTO.comment,

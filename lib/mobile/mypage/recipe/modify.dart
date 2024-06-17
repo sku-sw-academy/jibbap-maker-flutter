@@ -7,10 +7,6 @@ import 'package:flutter_splim/dto/RecipeDTO.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_splim/constant.dart'; // Constants.baseUrl을 위한 import
-import 'package:flutter_splim/secure_storage/secure_service.dart';
-import 'package:flutter_splim/dto/UserDTO.dart';
-import 'package:flutter_splim/provider/userprovider.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 
 class ModifyPage extends StatefulWidget {

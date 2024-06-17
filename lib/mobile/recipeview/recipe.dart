@@ -205,7 +205,7 @@ class _RecipePageState extends State<RecipePage> {
                         TextSpan(
                           text: "후기: ",
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
+
                           ),
                         ),
                         TextSpan(

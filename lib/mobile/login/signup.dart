@@ -146,8 +146,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       validator: (value){
                         if(value == null || value.isEmpty){
                           return '닉네임을 입력하세요.';
-                        }else if(value.length > 20){
-                          return '닉네임을 20자 이하로 해주세요.';
+                        }else if(value.length > 10){
+                          return '닉네임을 10자 이하로 해주세요.';
                         }else if (_containsSpecialCharacters(value)) {
                           return '특수 문자를 포함할 수 없습니다.';
                         }

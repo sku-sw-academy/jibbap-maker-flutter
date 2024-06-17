@@ -125,7 +125,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
         );// 서버에서 받은 이미지
       });
     } else {
-      print('Failed to upload image');
+      print('Failed to upload image. Status code: ${response.statusCode}');
     }
   }
 

@@ -147,7 +147,7 @@ class _MyProfileState extends State<MyProfile> {
 
       if (croppedFile != null) {
         setState(() {
-          //_croppedFile = croppedFile;
+          _croppedFile = croppedFile;
           uploadImage(userId, croppedFile);
           _isDefaultImage = false;
         });
@@ -173,7 +173,7 @@ class _MyProfileState extends State<MyProfile> {
         );// 서버에서 받은 이미지
       });
     } else {
-      print('Failed to upload image');
+      print('Failed to upload image. Status code: ${response.statusCode}');
     }
   }
 

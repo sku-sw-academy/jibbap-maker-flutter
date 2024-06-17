@@ -110,7 +110,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
           _isSpeechActive = false;
           print(_isSpeechActive);// Speech to Text 비활성화
         });
-        showToast("발음이 명확하지 않습니다.");
+        showToast("발음이 정확하지 않습니다.");
       },
       onStatus: (status) {
         print('Status: $status');

@@ -11,6 +11,7 @@ import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:flutter_splim/dto/UserDTO.dart';
 import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 
 class ModifyPage extends StatefulWidget {
   final RecipeDTO recipeDTO;
@@ -196,7 +197,7 @@ class _ModifyPageState extends State<ModifyPage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
-              maxLines: 3,
+              maxLines: 1,
               decoration: InputDecoration(
                 hintText: '후기를 작성해주세요...',
                 border: OutlineInputBorder(),
@@ -207,6 +208,10 @@ class _ModifyPageState extends State<ModifyPage> {
                   _review = value;
                 });
               },
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(20), // 입력 길이 제한
+              ],
+              maxLength: 20,
             ),
           ),
           SizedBox(height: 20),

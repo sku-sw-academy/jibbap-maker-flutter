@@ -52,7 +52,7 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
             _isSpeechActive = false;
             print(_isSpeechActive); // Speech to Text 비활성화
           });
-          showToast("발음이 명확하지 않습니다.");
+          showToast("발음이 정확하지 않습니다.");
         }
       },
       onStatus: (status) {

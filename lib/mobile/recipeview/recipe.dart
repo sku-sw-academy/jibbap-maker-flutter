@@ -12,6 +12,7 @@ import 'package:flutter_splim/dto/UserDTO.dart';
 import 'dart:convert';
 import 'package:flutter_splim/mobile/recipeview/editCommentPage.dart';
 import 'package:flutter_splim/dto/RecipeAndComment.dart';
+import 'package:flutter/services.dart';
 
 class RecipePage extends StatefulWidget {
   final RecipeAndComment recipe;
@@ -191,15 +192,31 @@ class _RecipePageState extends State<RecipePage> {
                 children: [
                   Text(
                     "닉네임: " + widget.recipe.userDTO.nickname,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 8),
-                  Text(
-                    "후기: " + _review,
-                    style: TextStyle(
-                      fontSize: 16,
+                  RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: "후기: ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: _review,
+                        ),
+                      ],
                     ),
+                    softWrap: true, // 줄 바꿈 허용
+                    overflow: TextOverflow.visible, // 텍스트가 넘칠 때 처리 방법 설정 (기본값)
                   ),
+
                 ],
               )
             ],
@@ -245,7 +262,13 @@ class _RecipePageState extends State<RecipePage> {
                       : Icon(Icons.person, size: 15, color: Colors.grey,), // 프로필 이미지가 없는 경우에 아이콘을 표시
                 ),
                 SizedBox(width: 10,),
-                Text(_comments.first.content)
+                Expanded(
+                  child: Text(
+                    _comments.first.content,
+                    softWrap: true, // 줄 바꿈을 허용
+                    overflow: TextOverflow.visible, // 텍스트가 넘칠 때 처리 방법 설정
+                  ),
+                ),
               ],
               ) : Text(""),
 
@@ -358,27 +381,29 @@ class _RecipePageState extends State<RecipePage> {
 
                           if(widget.recipe.userDTO.id == comment.userDTO.id)
                             Container(
-                              width : comment.userDTO.nickname.length * 15,
+                              width: comment.userDTO.nickname.length <= 5
+                                  ? 10 * comment.userDTO.nickname.length.toDouble()
+                                  : 8.5 * comment.userDTO.nickname.length.toDouble(),
                               decoration: BoxDecoration(
                                   color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(10)
+                                  borderRadius: BorderRadius.circular(8)
                               ),
                               child:
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(comment.userDTO.nickname,
-                                      style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
+                                      style: TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
                                       textAlign: TextAlign.center,),
-                                    Icon(Icons.check_circle, size: 12, color: Colors.green),
+                                    Icon(Icons.check_circle, size: 8, color: Colors.green),
                                   ]
                               ),
                             ),
                           Text("·", style: TextStyle(fontSize: 30, color: Colors.grey),),
-                          Text(formatRelativeTime(comment.modifyDate), style: TextStyle(fontSize: 13, color: Colors.grey)),
+                          Text(formatRelativeTime(comment.modifyDate), style: TextStyle(fontSize: 10, color: Colors.grey)),
 
                           if (comment.updateFlag.toString() == "true")
-                            Text("(수정됨)", style: TextStyle(fontSize: 13, color: Colors.grey)),
+                            Text("(수정됨)", style: TextStyle(fontSize: 8, color: Colors.grey)),
                         ],
                       ),
                       subtitle: Text(comment.content),
@@ -485,6 +510,10 @@ class _RecipePageState extends State<RecipePage> {
                           border: OutlineInputBorder(),
                         ),
                         maxLines: 1,
+                        maxLength: 20,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(20), // 입력 길이 제한
+                        ],
                       ),
                     ),
                     SizedBox(width: 8),

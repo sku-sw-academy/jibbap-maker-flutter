@@ -211,134 +211,200 @@ class _ModifyPageState extends State<ModifyPage> {
           ),
           SizedBox(height: 20),
 
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    if(_isDefaultImage!){
-                      resetImage(widget.recipeDTO.id);
-                    }
+          if(!widget.recipeDTO.status)
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      if(_isDefaultImage!){
+                        resetImage(widget.recipeDTO.id);
+                      }
 
-                    if (_review.isNotEmpty) {
-                      try {
-
-                        if(_croppedFile != null){
-                          String imageName = await saveImageAndComment(
-                            File(_croppedFile!.path),
-                            _review,
-                            widget.recipeDTO.id,
-                          );
-                          setState(() {
-                            widget.recipeDTO.image = imageName;
-                            widget.recipeDTO.comment = _review;
-                          });
-                        }else{
-                          String ok = await saveComment(_review, widget.recipeDTO.id);
-                          if(ok == "ok"){
+                      if (_review.isNotEmpty) {
+                        try {
+                          if(_croppedFile != null){
+                            String imageName = await saveImageAndComment(
+                              File(_croppedFile!.path),
+                              _review,
+                              widget.recipeDTO.id,
+                            );
                             setState(() {
+                              widget.recipeDTO.image = imageName;
                               widget.recipeDTO.comment = _review;
                             });
                           }
-                        }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('저장되었습니다.')),
-                        );
+                          else{
+                            String ok = await saveComment(_review, widget.recipeDTO.id);
+                            if(ok == "ok"){
+                              setState(() {
+                                widget.recipeDTO.comment = _review;
+                              });
+                            }
+                          }
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('저장되었습니다.')),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('업로드에 실패했습니다.')),
+                          );
+                       }
 
-                      } catch (e) {
+                      }else{
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('업로드에 실패했습니다.')),
+                          SnackBar(content: Text('이미지 또는 후기를 작성하세요.')),
                         );
                       }
-
-                    }else{
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('후기를 작성하세요.')),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    surfaceTintColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
-                    ),
-                    side: BorderSide(color: Colors.black, width: 1),
-                    fixedSize: Size(100, 50),
+                    },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        surfaceTintColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
+                      ),
+                      side: BorderSide(color: Colors.black, width: 1),
+                      fixedSize: Size(100, 50),
                     // 다른 스타일 속성들...
-                  ),
-                  child: Text("저장하기"),
+                    ),
+                    child: Text("저장하기"),
                 ),
 
-                SizedBox(width: 20),
+                  SizedBox(width: 20),
 
-                ElevatedButton(
-                  onPressed: () async {
-                    if ((_croppedFile != null || (widget.recipeDTO.image != null && widget.recipeDTO.image!.isNotEmpty)) && _review.isNotEmpty) {
-                      try {
-                        if(_croppedFile != null){
-                          String imageName = await uploadImageAndComment(
-                            File(_croppedFile!.path),
-                            _review,
-                            widget.recipeDTO.id,
-                          );
-                          setState(() {
-                            widget.recipeDTO.image = imageName;
-                            widget.recipeDTO.comment = _review;
-                          });
-                        }else{
-                          String ok = await uploadComment(_review, widget.recipeDTO.id);
-                          if(ok == "ok"){
+                  ElevatedButton(
+                    onPressed: () async {
+                      if ((_croppedFile != null || (widget.recipeDTO.image != null && widget.recipeDTO.image!.isNotEmpty)) && _review.isNotEmpty) {
+                        try {
+                          if(_croppedFile != null){
+                            String imageName = await uploadImageAndComment(
+                              File(_croppedFile!.path),
+                              _review,
+                              widget.recipeDTO.id,
+                            );
                             setState(() {
+                              widget.recipeDTO.image = imageName;
                               widget.recipeDTO.comment = _review;
                             });
+                          }else{
+                            String ok = await uploadComment(_review, widget.recipeDTO.id);
+                            if(ok == "ok"){
+                              setState(() {
+                                widget.recipeDTO.comment = _review;
+                              });
+                            }
                           }
-                        }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('공유되었습니다.')),
-                        );
-                        if(!widget.recipeDTO.status){
-                          widget.recipeDTO.status = true;
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SharePage(recipeDTO: widget.recipeDTO)),
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('공유되었습니다.')),
                           );
-                        }else{
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => SharePage(recipeDTO: widget.recipeDTO)),
+                          if(!widget.recipeDTO.status){
+                            widget.recipeDTO.status = true;
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SharePage(recipeDTO: widget.recipeDTO)),
+                            );
+                          }else{
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => SharePage(recipeDTO: widget.recipeDTO)),
+                            );
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('업로드에 실패했습니다.')),
                           );
                         }
-
-                      } catch (e) {
+                      } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('업로드에 실패했습니다.')),
+                          SnackBar(content: Text('이미지와 후기를 모두 작성하세요.')),
                         );
                       }
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('이미지와 후기를 모두 작성하세요.')),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    surfaceTintColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      surfaceTintColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: BorderSide(color: Colors.black, width: 1),
+                      fixedSize: Size(100, 50),
                     ),
-                    side: BorderSide(color: Colors.black, width: 1),
-                    fixedSize: Size(100, 50),
-                  ),
-                  child: Text("공개"),
+                    child: Text("공개"),
                 ),
               ]
-          ),
+          )
+          else
+            Center(
+            child:
+              ElevatedButton(
+              onPressed: () async {
+                if ((_croppedFile != null || (_savedProfileImage != null && _savedProfileImage!.isNotEmpty)) && _review.isNotEmpty) {
+                  try {
+                    if(_croppedFile != null){
+                      String imageName = await uploadImageAndComment(
+                        File(_croppedFile!.path),
+                        _review,
+                        widget.recipeDTO.id,
+                      );
+                      setState(() {
+                        widget.recipeDTO.image = imageName;
+                        widget.recipeDTO.comment = _review;
+                      });
+                    }else{
+                      String ok = await uploadComment(_review, widget.recipeDTO.id);
+                      if(ok == "ok"){
+                        setState(() {
+                          widget.recipeDTO.comment = _review;
+                        });
+                      }
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('저장되었습니다.')),
+                    );
+                    if(!widget.recipeDTO.status){
+                      widget.recipeDTO.status = true;
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SharePage(recipeDTO: widget.recipeDTO)),
+                      );
+                    }else{
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SharePage(recipeDTO: widget.recipeDTO)),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('업로드에 실패했습니다.')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('이미지와 후기를 모두 작성하세요.')),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.white,
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                side: BorderSide(color: Colors.black, width: 1),
+                fixedSize: Size(100, 50),
+              ),
+              child: Text("저장하기"),
+            )
+            ),
 
           SizedBox(height: 20),
         ],

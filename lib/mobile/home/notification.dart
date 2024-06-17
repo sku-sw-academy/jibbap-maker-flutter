@@ -42,6 +42,7 @@ class _NotificationListPageState extends State<NotificationListPage> {
       appBar: AppBar(
         title: Text('알림'),
         centerTitle: true,
+        scrolledUnderElevation: 0,
       ),
       body: FutureBuilder<List<NotificationListDTO>>(
         future: notificationList,

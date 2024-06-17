@@ -399,7 +399,7 @@ class _MyProfileState extends State<MyProfile> {
           Divider(),
           Center(
             child: Container(
-              width: screenWidth / 3, // 버튼의 폭 설정
+              width: screenWidth * 0.28, // 버튼의 폭 설정
               height: screenHeight / 15,
               color: Colors.white,
               margin: EdgeInsets.only(
@@ -423,10 +423,10 @@ class _MyProfileState extends State<MyProfile> {
                     borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
                   ),
                   side: BorderSide(color: Colors.black, width: 1),
-                  fixedSize: Size(80, 30),
+                  fixedSize: Size(60, 30),
                   // 다른 스타일 속성들...
                 ),
-                child: Text("Log out",
+                child: Text("로그아웃",
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

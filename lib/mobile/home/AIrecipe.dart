@@ -172,7 +172,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         side: BorderSide(color: Colors.black, width: 1),
-                        minimumSize: Size(50, 50),
+                        minimumSize: Size(80, 50),
                       ),
                     ),
                     SizedBox(width: 40),
@@ -183,7 +183,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                           futureRecipe = fetchRecipe();
                         });
                       },
-                      child: Text("재시도", textAlign: TextAlign.center,),
+                      child: Text("재시도", textAlign: TextAlign.center, style: TextStyle(fontSize: 11),),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
@@ -191,7 +191,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         side: BorderSide(color: Colors.black, width: 1),
-                        minimumSize: Size(50, 50),
+                        fixedSize: Size(80, 50),
                       ),
                     ),
                   ],

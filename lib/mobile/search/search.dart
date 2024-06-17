@@ -145,6 +145,11 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
               futurePopularNames = priceService.fetchPopularItemPrices9();
             }));
             showToast("${result.recognizedWords}의 결과입니다.");
+          }else{
+            setState(() {
+              _isSpeechActive = false;
+              print(_isSpeechActive);// Speech to Text 비활성화
+            });
           }
 
         });
@@ -152,6 +157,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
 
       localeId: 'ko_KR', // 한국어 설정
     );
+
   }
 
   void showToast(String message) {
@@ -172,6 +178,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
       _isSpeechActive = false; // Deactivate animation when speech stops
     });
     _animationController.stop();
+    //_animationController.reset();
   }
 
   @override
@@ -481,6 +488,8 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                       children: textSpans,
                     ),
                   ),
+                  leading: Icon(Icons.search, color: Colors.grey, size: 22,),
+
                   onTap: () async {
                     bool isExisting = await dbHelper.checkIfSuggestionExists(suggestion);
 

@@ -91,7 +91,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
               crossAxisCount: 2, // 한 줄에 두 개의 항목을 배치
               crossAxisSpacing: 8.0, // 항목 사이의 가로 간격
               mainAxisSpacing: 8.0, // 항목 사이의 세로 간격
-              childAspectRatio: 2 / 3.7, // 카드의 가로 세로 비율
+              childAspectRatio: calculateChildAspectRatio(context), // 카드의 가로 세로 비율
             ),
             itemCount: 4,
             itemBuilder: (context, index) {
@@ -103,6 +103,18 @@ class _ShoppingPageState extends State<ShoppingPage> {
         }
       },
     );
+  }
+
+  double calculateChildAspectRatio(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    print(width);
+    if (width > 380) {
+      return 2 / 3.7; // 넓은 화면에서의 비율
+    } else if (width > 300) {
+      return 2 / 3.8; // 중간 크기 화면에서의 비율
+    } else {
+      return 2 / 4; // 작은 화면에서의 비율
+    }
   }
 
   Widget buildShopCard(Shop shop) {

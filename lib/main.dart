@@ -217,23 +217,49 @@ class _MainPageState extends State<MainPage> {
                 });
               });
             } else if (index == 2) {
-              // 마이페이지는 홈 화면과 같이 TabBarView에 표시됩니다.
-              // 탭 인덱스를 이용하여 화면을 전환합니다.
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RecipeView()),
-              ).then((value){
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => RecipeView(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    var begin = Offset(1.0, 0.0);
+                    var end = Offset.zero;
+                    var curve = Curves.ease;
+
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                ),
+              ).then((value) {
                 storageService.readToken(key).then((token) {
                   setState(() {
                     Constants.isLogined = token != null && token.isNotEmpty;
                   });
                 });
               });
-            }else if (index == 3) {
+            } else if (index == 3) {
               if (Constants.isLogined) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MyPage()),
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => MyPage(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      var begin = Offset(1.0, 0.0);
+                      var end = Offset.zero;
+                      var curve = Curves.ease;
+
+                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                      return SlideTransition(
+                        position: animation.drive(tween),
+                        child: child,
+                      );
+                    },
+                  ),
                 ).then((value) {
                   storageService.readToken(key).then((token) {
                     setState(() {
@@ -241,7 +267,8 @@ class _MainPageState extends State<MainPage> {
                     });
                   });
                 });
-              } else {
+              }
+              else {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginPage()),

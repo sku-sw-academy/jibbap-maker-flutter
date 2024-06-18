@@ -133,10 +133,11 @@ class _RecipePageState extends State<RecipePage> {
                       String message = await addSave();
                       if (message == "success")
                         showDialog(
+                          barrierDismissible: false,
                           context: context,
                           builder: (context) => AlertDialog(
                             title: Text('성공'),
-                            content: Text('저장되었습니다.'),
+                            content: Text('추가되었습니다.'),
                             actions: <Widget>[
                               TextButton(
                                 child: Text('확인'),

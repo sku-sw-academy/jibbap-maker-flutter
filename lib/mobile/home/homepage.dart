@@ -233,10 +233,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SearchPage()),
-                    ).then((value) => setState(() {
-                      initializeData();
-                    }));
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) => SearchPage(),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          var begin = Offset(1.0, 0.0);
+                          var end = Offset.zero;
+                          var curve = Curves.ease;
+                          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                          return SlideTransition(
+                            position: animation.drive(tween),
+                            child: child,
+                          );
+                        },
+                      ),
+                    ).then((value) => setState(() {}));
                   },
                 ),
               ],
@@ -291,7 +301,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: screenHeight * 0.36,
                       child: Column(
                         children: [
-                          SizedBox(height: screenHeight * 0.008,),
+                          SizedBox(height: screenHeight * 0.007,),
                           Container(
                             height: screenHeight * 0.05,
                             width: screenWidth * 0.3,
@@ -307,7 +317,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: Colors.lightBlueAccent[100], // 배경색 바꾸기
                             ),
                           ),
-                          SizedBox(height: screenHeight * 0.018,),
+                          SizedBox(height: screenHeight * 0.016,),
                           Card(
                             shape: CircleBorder(),
                             elevation: 4.0,
@@ -431,7 +441,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           return Padding(
                                             padding: EdgeInsets.symmetric(vertical: 4), // 위아래 간격 조절
                                             child: Container(
-                                              height: 61, // 고정 높이
+                                              height: screenHeight * 0.078, // 고정 높이
                                               decoration: BoxDecoration(
                                                 border: Border.all(color: Colors.black),
                                                 borderRadius: BorderRadius.circular(10), // 경계선 색상
@@ -477,8 +487,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     } else if (snapshot.hasError) {
                                       return Center(child: Text('Error: ${snapshot.error}'));
                                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                      return Column(children: [Container(
-                                        height: 100, // 고정 높이
+                                      return Column(children: [
+                                        Container(
+                                        height: screenHeight * 0.124, // 고정 높이
                                         decoration: BoxDecoration(
                                           border: Border.all(color: Colors.black),
                                           borderRadius: BorderRadius.circular(10),// 경계선 색상
@@ -507,7 +518,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         children: [
                                           if (price.length < 3) ...[
                                             Container(
-                                              height: 100, // 고정 높이
+                                              height: screenHeight * 0.08, // 고정 높이
                                               decoration: BoxDecoration(
                                                 border: Border.all(color: Colors.black),
                                                 borderRadius: BorderRadius.circular(10),// 경계선 색상
@@ -531,9 +542,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                               ),
                                             ),
                                           ] else ...[
-                                            SizedBox(height: 4,),
+                                            SizedBox(height: screenHeight * 0.004,),
                                             Container(
-                                              height: 60, // 고정 높이
+                                              height: screenHeight * 0.078, // 고정 높이
                                               decoration: BoxDecoration(
                                                 border: Border.all(color: Colors.black),
                                                 borderRadius: BorderRadius.circular(10),// 경계선 색상
@@ -566,10 +577,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 },
                                               ),
                                             ),
-                                            SizedBox(height: 8,),
+                                            SizedBox(height: screenHeight * 0.01,),
 
                                             Container(
-                                              height: 60, // 고정 높이
+                                              height: screenHeight * 0.078, // 고정 높이
                                               decoration: BoxDecoration(
                                                 border: Border.all(color: Colors.black),
                                                 borderRadius: BorderRadius.circular(10),// 경계선 색상
@@ -602,9 +613,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 },
                                               ),
                                             ),
-                                            SizedBox(height: 8,),
+                                            SizedBox(height: screenHeight * 0.01,),
                                             Container(
-                                              height: 60, // 고정 높이
+                                              height: screenHeight * 0.078, // 고정 높이
                                               decoration: BoxDecoration(
                                                 border: Border.all(color: Colors.black),
                                                 borderRadius: BorderRadius.circular(10),// 경계선 색상
@@ -637,7 +648,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 },
                                               ),
                                             ),
-                                            SizedBox(height: 4,),
+                                            SizedBox(height: screenHeight * 0.01,),
                                           ],
                                         ],
                                       );
@@ -752,7 +763,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
 
-          SizedBox(height: 20,),
+          SizedBox(height: screenHeight * 0.01,),
 
           Column(
             children: [
@@ -788,7 +799,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
 
-          SizedBox(height: screenHeight / 50,),
+          SizedBox(height: screenHeight * 0.01,),
 
           FutureBuilder<List<PriceDTO>>(
             future: _futurePopularNames,

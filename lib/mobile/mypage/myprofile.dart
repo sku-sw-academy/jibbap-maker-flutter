@@ -291,14 +291,20 @@ class _MyProfileState extends State<MyProfile> {
             ),
           ),
           Container(
-            color: Color(0x1FB9A2A2),
+            decoration: BoxDecoration(
+              color: Color(0x1FB9A2A2),
+              border: Border(
+                top: BorderSide(width: 1.0, color: Colors.grey),
+                bottom: BorderSide(width: 1.0, color: Colors.grey),
+              ),
+            ),
             width: double.infinity,
-            height: screenHeight / 15,
+            height: screenHeight  * 0.05,
             padding: EdgeInsets.only(
                 left: screenWidth / 40, top: screenHeight / 90),
             child: Text(
               "알림 설정",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
           ),
           SwitchListTile(
@@ -312,60 +318,93 @@ class _MyProfileState extends State<MyProfile> {
                 }
               }),
           Container(
-            color: Color(0x1FB9A2A2),
+            decoration: BoxDecoration(
+              color: Color(0x1FB9A2A2),
+              border: Border(
+                top: BorderSide(width: 1.0, color: Colors.grey),
+                bottom: BorderSide(width: 1.0, color: Colors.grey),
+              ),
+            ),
             width: double.infinity,
-            height: screenHeight / 15,
+            height: screenHeight  * 0.05,
             padding: EdgeInsets.only(
                 left: screenWidth / 40, top: screenHeight / 90),
             child: Text(
               "계정",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
           ),
-          ListTile(
-            title: Text("프로필 수정"),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ChangeProfilePage()),
-              ).then((value) => setState(() {}));
-            },
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(width: 1.0, color: Colors.grey),
+              ),
+            ),
+            child: ListTile(
+              title: Text("프로필 수정"),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChangeProfilePage()),
+                ).then((value) => setState(() {}));
+              },
+            ),
           ),
-          Divider(),
-          ListTile(
-            title: Text("비밀번호 변경"),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ChangePasswordPage()),
-              ).then((value) => setState(() {}));
-            },
+
+          Container(
+            child: ListTile(
+              title: Text("비밀번호 변경"),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+                ).then((value) => setState(() {}));
+              },
+            ),
           ),
           Container(
-            color: Color(0x1FB9A2A2),
+            decoration: BoxDecoration(
+              color: Color(0x1FB9A2A2),
+              border: Border(
+                top: BorderSide(width: 1.0, color: Colors.grey),
+                bottom: BorderSide(width: 1.0, color: Colors.grey),
+              ),
+            ),
             width: double.infinity,
-            height: screenHeight / 15,
+            height: screenHeight  * 0.05,
             padding: EdgeInsets.only(
                 left: screenWidth / 40, top: screenHeight / 90),
             child: Text(
-              "My Custom",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              "내 맞춤",
+              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
           ),
-          ListTile(
-            title: Text("레시피"),
-            trailing: Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RecipeListPage(userId: userId)),
-              ).then((value) => setState(() {}));
-            },
+
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(width: 1.0, color: Colors.grey),
+              ),
+            ),
+            child:
+
+            ListTile(
+              title: Text("레시피"),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RecipeListPage(userId: userId)),
+                ).then((value) => setState(() {}));
+              },
+            ),
           ),
-          Divider(),
-          ListTile(
+
+        Container(
+
+          child: ListTile(
             title: Text("식재료"),
             trailing: Icon(Icons.arrow_forward_ios),
             onTap: () {
@@ -375,20 +414,34 @@ class _MyProfileState extends State<MyProfile> {
               ).then((value) => setState(() {}));
             },
           ),
+      ),
           Container(
-            color: Color(0x1FB9A2A2),
+            decoration: BoxDecoration(
+              color: Color(0x1FB9A2A2),
+              border: Border(
+                top: BorderSide(width: 1.0, color: Colors.grey),
+                bottom: BorderSide(width: 1.0, color: Colors.grey),
+              ),
+            ),
             width: double.infinity,
-            height: screenHeight / 15,
+            height: screenHeight  * 0.05,
             padding: EdgeInsets.only(
                 left: screenWidth / 40, top: screenHeight / 90),
             child: Text(
-              "이용안내",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              "이용 안내",
+              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
           ),
-          ListTile(
-            title: Text("고객센터"),
-            trailing: Icon(Icons.arrow_forward_ios),
+
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(width: 1.0, color: Colors.grey),
+              ),
+            ),
+            child: ListTile(
+              title: Text("고객센터"),
+              trailing: Icon(Icons.arrow_forward_ios),
             onTap: () {
               Navigator.push(
                 context,
@@ -396,7 +449,8 @@ class _MyProfileState extends State<MyProfile> {
               ).then((value) => setState(() {}));
             },
           ),
-          Divider(),
+          ),
+
           Center(
             child: Container(
               width: screenWidth * 0.28, // 버튼의 폭 설정

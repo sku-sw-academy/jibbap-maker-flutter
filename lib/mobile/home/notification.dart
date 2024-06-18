@@ -54,7 +54,8 @@ class _NotificationListPageState extends State<NotificationListPage> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('알림 목록이 없습니다.'));
           } else {
-            return ListView.builder(
+            return Scrollbar(
+                child:ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 NotificationListDTO notification = snapshot.data![index];
@@ -86,6 +87,7 @@ class _NotificationListPageState extends State<NotificationListPage> {
                   },
                 );
               },
+            ),
             );
           }
         },

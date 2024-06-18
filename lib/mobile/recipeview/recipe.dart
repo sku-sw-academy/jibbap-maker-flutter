@@ -162,7 +162,8 @@ class _RecipePageState extends State<RecipePage> {
             ),
         ],
       ),
-      body: ListView(
+      body: Scrollbar(child:
+        ListView(
         children: [
           SizedBox(height: 20),
           _buildPhotoArea(),
@@ -278,6 +279,7 @@ class _RecipePageState extends State<RecipePage> {
           ),
           SizedBox(height: 20),
         ],
+      ),
       ),
     );
   }

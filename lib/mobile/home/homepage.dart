@@ -181,11 +181,17 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       showBadge: notificationProvider.notificationCount > 0,
                       child: IconButton(
-                        icon: Icon(notificationProvider.notificationCount > 0 ? Icons.notifications : Icons.notifications_none,),
+                        icon: Icon(
+                          notificationProvider.notificationCount > 0
+                              ? Icons.notifications
+                              : Icons.notifications_none,
+                        ),
                         onPressed: () async {
                           final storageService = Provider.of<SecureService>(context, listen: false);
                           String? token = await storageService.readToken(key);
+
                           if (token == null || token.isEmpty) {
+                            // 로그인이 필요한 경우 다이얼로그 표시
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
@@ -211,23 +217,37 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ],
                               ),
                             );
-                            return;
-                          }else{
+                          } else {
+                            // 로그인된 경우 알림 페이지로 이동
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => NotificationListPage(userId: userId),
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation1, animation2) => NotificationListPage(userId: userId),
+                                transitionsBuilder: (context, animation1, animation2, child) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: Offset(1.0, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(animation1),
+                                    child: child,
+                                  );
+                                },
+                                transitionDuration: Duration(milliseconds: 500),
                               ),
-                            ).then((value) => setState(() {
-                              initializeData();
-                              Provider.of<NotificationProvider>(context, listen: false).resetCount();
-                            }));
+                            ).then((value) {
+                              // 페이지 이동 후에 초기화 및 상태 업데이트
+                              if (mounted) {
+                                initializeData();
+                                Provider.of<NotificationProvider>(context, listen: false).resetCount();
+                              }
+                            });
                           }
                         },
                       ),
                     );
                   },
                 ),
+
                 IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {
@@ -245,6 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: child,
                           );
                         },
+                        transitionDuration: Duration(milliseconds: 500),
                       ),
                     ).then((value) => setState(() {}));
                   },
@@ -413,7 +434,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 ),
                                 ],
-                                fillColor: Colors.amberAccent, // 선택된 버튼의 배경 색상
+                                fillColor: Colors.lightBlueAccent[100], // 선택된 버튼의 배경 색상
                                 selectedBorderColor: Colors.grey, // 선택된 버튼의 테두리 색상
                                 color: Colors.black,
                               ),

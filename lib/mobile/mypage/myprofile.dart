@@ -221,16 +221,39 @@ class _MyProfileState extends State<MyProfile> {
                 ),
                 showBadge: notificationProvider.notificationCount > 0,
                 child: IconButton(
-                  icon: Icon(notificationProvider.notificationCount > 0 ? Icons.notifications : Icons.notifications_none,),
+                  icon: Icon(
+                    notificationProvider.notificationCount > 0
+                        ? Icons.notifications
+                        : Icons.notifications_none,
+                  ),
                   onPressed: () async {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => NotificationListPage(userId: userId),
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            NotificationListPage(userId: userId),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          var begin = Offset(1.0, 0.0);
+                          var end = Offset.zero;
+                          var curve = Curves.ease;
+
+                          var tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+
+                          return SlideTransition(
+                            position: animation.drive(tween),
+                            child: child,
+                          );
+                        },
+                        transitionDuration: Duration(milliseconds: 500),
                       ),
-                    ).then((value) => setState(() {
-                      Provider.of<NotificationProvider>(context, listen: false).resetCount();
-                    }));
+                    ).then((value) {
+                      setState(() {
+                        Provider.of<NotificationProvider>(context, listen: false)
+                            .resetCount();
+                      });
+                    });
                   },
                 ),
               );
@@ -248,7 +271,6 @@ class _MyProfileState extends State<MyProfile> {
                     var begin = Offset(1.0, 0.0);
                     var end = Offset.zero;
                     var curve = Curves.ease;
-
                     var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
                     return SlideTransition(
@@ -256,6 +278,7 @@ class _MyProfileState extends State<MyProfile> {
                       child: child,
                     );
                   },
+                  transitionDuration: Duration(milliseconds: 500),
                 ),
               ).then((value) => setState(() {}));
             },
@@ -360,7 +383,21 @@ class _MyProfileState extends State<MyProfile> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ChangeProfilePage()),
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => ChangeProfilePage(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      var begin = Offset(1.0, 0.0);
+                      var end = Offset.zero;
+                      var curve = Curves.ease;
+                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                      return SlideTransition(
+                        position: animation.drive(tween),
+                        child: child,
+                      );
+                    },
+                    transitionDuration: Duration(milliseconds: 500),
+                  ),
                 ).then((value) => setState(() {}));
               },
             ),
@@ -373,7 +410,21 @@ class _MyProfileState extends State<MyProfile> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ChangePasswordPage()),
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) => ChangePasswordPage(),
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        var begin = Offset(1.0, 0.0);
+                        var end = Offset.zero;
+                        var curve = Curves.ease;
+                        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                        return SlideTransition(
+                          position: animation.drive(tween),
+                          child: child,
+                        );
+                      },
+                      transitionDuration: Duration(milliseconds: 500),
+                    ),
                 ).then((value) => setState(() {}));
               },
             ),
@@ -407,10 +458,24 @@ class _MyProfileState extends State<MyProfile> {
             ListTile(
               title: Text("레시피"),
               trailing: Icon(Icons.arrow_forward_ios),
-              onTap: () {
+              onTap: () {    //
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => RecipeListPage(userId: userId)),
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => RecipeListPage(userId: userId),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      var begin = Offset(1.0, 0.0);
+                      var end = Offset.zero;
+                      var curve = Curves.ease;
+                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                      return SlideTransition(
+                        position: animation.drive(tween),
+                        child: child,
+                      );
+                    },
+                    transitionDuration: Duration(milliseconds: 500),
+                  ),
                 ).then((value) => setState(() {}));
               },
             ),
@@ -424,7 +489,21 @@ class _MyProfileState extends State<MyProfile> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyPrefer()),
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => MyPrefer(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    var begin = Offset(1.0, 0.0);
+                    var end = Offset.zero;
+                    var curve = Curves.ease;
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                  transitionDuration: Duration(milliseconds: 500),
+                ),
               ).then((value) => setState(() {}));
             },
           ),
@@ -459,7 +538,21 @@ class _MyProfileState extends State<MyProfile> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CenterPage()),
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => CenterPage(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    var begin = Offset(1.0, 0.0);
+                    var end = Offset.zero;
+                    var curve = Curves.ease;
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                  transitionDuration: Duration(milliseconds: 500),
+                ),
               ).then((value) => setState(() {}));
             },
           ),

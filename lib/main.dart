@@ -204,19 +204,31 @@ class _MainPageState extends State<MainPage> {
                 _checkLoginStatus();
               });
             }
-
             else if (index == 1) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SearchPage()),
-              ).then((value){
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) => SearchPage(),
+                  transitionsBuilder: (context, animation1, animation2, child) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: Offset(-1.0, 0.0),
+                        end: Offset.zero,
+                      ).animate(animation1),
+                      child: child,
+                    );
+                  },
+                  transitionDuration: Duration(milliseconds: 500),
+                ),
+              ).then((value) {
                 storageService.readToken(key).then((token) {
                   setState(() {
                     Constants.isLogined = token != null && token.isNotEmpty;
                   });
                 });
               });
-            } else if (index == 2) {
+            }
+            else if (index == 2) {
               Navigator.push(
                 context,
                 PageRouteBuilder(
@@ -233,6 +245,7 @@ class _MainPageState extends State<MainPage> {
                       child: child,
                     );
                   },
+                  transitionDuration: Duration(milliseconds: 500),
                 ),
               ).then((value) {
                 storageService.readToken(key).then((token) {
@@ -259,6 +272,7 @@ class _MainPageState extends State<MainPage> {
                         child: child,
                       );
                     },
+                    transitionDuration: Duration(milliseconds: 500),
                   ),
                 ).then((value) {
                   storageService.readToken(key).then((token) {

@@ -429,7 +429,6 @@ class _MyProfileState extends State<MyProfile> {
                 child: Text("로그아웃",
                     style: TextStyle(
                         color: Colors.black,
-                        fontWeight: FontWeight.bold,
                         fontSize: 15)),
               ),
             ),

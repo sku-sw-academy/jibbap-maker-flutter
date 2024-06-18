@@ -91,6 +91,9 @@ class _InquiryPageState extends State<InquiryPage> {
           setState(() {
             inquiries.removeWhere((item) => item['id'] == id);
           });
+          SnackBar(
+            content: Text("삭제되었습니다."),
+          );
         } else {
           throw Exception('Failed to delete inquiry with id: $id');
         }
@@ -107,6 +110,41 @@ class _InquiryPageState extends State<InquiryPage> {
         ),
       );
     }
+  }
+
+  Future<void> _showDeleteDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // 다이얼로그 바깥을 눌러도 다이얼로그가 닫히지 않음
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('삭제 확인'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('삭제하면 다시는 볼 수 없습니다.'),
+                Text('정말 삭제하시겠습니까?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+              },
+            ),
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop(); // 다이얼로그 닫기
+                _deleteSelectedInquiries(); // 선택된 항목 삭제 함수 호출
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -194,7 +232,7 @@ class _InquiryPageState extends State<InquiryPage> {
           ? FloatingActionButton(
         foregroundColor: Colors.white,
         backgroundColor: Colors.red,
-        onPressed: _deleteSelectedInquiries,
+        onPressed: _showDeleteDialog,
             child: Icon(Icons.delete),
           tooltip: '선택된 항목 삭제',
       )

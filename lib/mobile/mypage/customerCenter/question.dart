@@ -32,6 +32,7 @@ class _QuestionPageState extends State<QuestionPage> {
 
         if (response.statusCode == 200) {
           showDialog(
+            barrierDismissible: false,
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(

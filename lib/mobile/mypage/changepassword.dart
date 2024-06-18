@@ -158,7 +158,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(vertical: 20), // 버튼의 세로(padding) 길이를 조정합니다.
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // 버튼의 모서리를 조정하여 네모로 만듭니다.
+                    borderRadius: BorderRadius.zero,
                   ),
                   backgroundColor: Colors.white,
                   surfaceTintColor: Colors.white,

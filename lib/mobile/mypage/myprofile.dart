@@ -453,8 +453,8 @@ class _MyProfileState extends State<MyProfile> {
 
           Center(
             child: Container(
-              width: screenWidth * 0.28, // 버튼의 폭 설정
-              height: screenHeight / 15,
+              width: screenWidth * 0.262, // 버튼의 폭 설정
+              height: screenHeight * 0.06,
               color: Colors.white,
               margin: EdgeInsets.only(
                   top: screenHeight / 80, bottom: screenHeight / 80),
@@ -474,10 +474,10 @@ class _MyProfileState extends State<MyProfile> {
                   surfaceTintColor: Colors.white,
                   foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
+                    borderRadius: BorderRadius.circular(5), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
                   ),
                   side: BorderSide(color: Colors.black, width: 1),
-                  fixedSize: Size(60, 30),
+                  fixedSize: Size(40, 20),
                   // 다른 스타일 속성들...
                 ),
                 child: Text("로그아웃",

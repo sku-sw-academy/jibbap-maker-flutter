@@ -181,10 +181,17 @@ class _InquiryPageState extends State<InquiryPage> {
                   itemCount: inquiries.length,
                   itemBuilder: (context, index) {
                   var inquiry = inquiries[index];
-                  return ListTile(
-                  title: Text(inquiry['title']),
-                  subtitle: Text(
-                    inquiry['modifyDate']
+                    return Container(
+                      decoration: BoxDecoration(
+                      border: Border(
+                      top: index == 0 ? BorderSide(width: 1.0, color: Colors.grey) : BorderSide.none,
+                      bottom: BorderSide(width: 1.0, color: Colors.grey),
+                      ),
+                    ),
+                      child:ListTile(
+                        title: Text(inquiry['title']),
+                        subtitle: Text(
+                        inquiry['modifyDate']
                         .toString()
                         .substring(5, 10)
                         .replaceAll("-", "월") +
@@ -214,14 +221,15 @@ class _InquiryPageState extends State<InquiryPage> {
                       },
                     )
                         : null,
-                    trailing: Text(
+                      trailing: Text(
                       inquiry["status"] ? '완료' : '대기중',
                       style: TextStyle(
                         color: inquiry["status"] ? Colors.green : Colors.red,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  );
+                  ),
+                    );
               },
             ),
                 ),

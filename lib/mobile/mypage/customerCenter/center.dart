@@ -40,7 +40,7 @@ class _CenterPageState extends State<CenterPage> {
                   indicatorWeight: 3.0, // 선택된 탭의 하단 선 두께
                   tabs: [
                     Tab(text: 'FAQ'),
-                    Tab(text: '고객 지원'),
+                    Tab(text: '1:1 문의'),
                     Tab(text: '공지사항'),
                   ],
                 ),

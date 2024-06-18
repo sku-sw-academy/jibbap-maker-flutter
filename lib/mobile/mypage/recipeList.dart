@@ -150,8 +150,10 @@ class _RecipeListPageState extends State<RecipeListPage> {
                   RecipeDTO recipeDTO = snapshot.data![index];
                   return Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(0),
+                      border: Border(
+                        top: index == 0 ? BorderSide(width: 1.0, color: Colors.grey) : BorderSide.none,
+                        bottom: BorderSide(width: 1.0, color: Colors.grey),
+                      ),
                     ),
                     margin: EdgeInsets.symmetric(vertical: 0, horizontal: 3),
                     child: ListTile(

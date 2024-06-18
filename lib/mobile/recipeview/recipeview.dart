@@ -266,9 +266,9 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
           children: [
             Padding(
           padding: const EdgeInsets.all(6.0),
-          child: FutureBuilder<List<RecipeAndComment>>(
-          future: recipeList,
-          builder: (context, snapshot) {
+              child: FutureBuilder<List<RecipeAndComment>>(
+              future: recipeList,
+              builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
@@ -277,8 +277,8 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
               return Center(child: Text('레시피 목록이 없습니다.'));
             } else {
               List<RecipeAndComment> filteredRecipes = getFilteredRecipes(snapshot.data!, searchText);
-              return Scrollbar(
-                child: GridView.builder(
+                return Scrollbar(
+                  child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 3 / 4.15,
@@ -320,6 +320,7 @@ class _RecipeViewState extends State<RecipeView> with SingleTickerProviderStateM
                                 ),
                               ),
                             ),
+
                             Padding(
                               padding: const EdgeInsets.all(6.0),
                               child: RichText(

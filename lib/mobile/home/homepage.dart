@@ -272,19 +272,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-        body: SmartRefresher(
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        child: ListView(
-        children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(
-                top: screenHeight * 0.01, right: screenWidth * 0.04),
-              child: Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () async {
+
+            body: SmartRefresher(
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              child: ListView(
+                children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(
+                  top: screenHeight * 0.01, right: screenWidth * 0.04),
+                  child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () async {
                       final storageService = Provider.of<SecureService>(context, listen: false);
                       String? token = await storageService.readToken(key);
                       if (token == null || token.isEmpty) {
@@ -318,15 +319,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => AIRecipePage(userId: userId, futurePrices: futurePrices,)));
                       }
                     },
-                    child: Container(
-                      height: screenHeight * 0.36,
-                      child: Column(
-                        children: [
-                          SizedBox(height: screenHeight * 0.007,),
-                          Container(
+                        child: Container(
+                          height: screenHeight * 0.36,
+                          child: Column(
+                          children: [
+                            SizedBox(height: screenHeight * 0.007,),
+                            Container(
                             height: screenHeight * 0.05,
                             width: screenWidth * 0.3,
-                            child: Center(
+                              child: Center(
                                 child: Text("AI 레시피",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
@@ -338,12 +339,12 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: Colors.lightBlueAccent[100], // 배경색 바꾸기
                             ),
                           ),
-                          SizedBox(height: screenHeight * 0.016,),
-                          Card(
-                            shape: CircleBorder(),
-                            elevation: 4.0,
-                            color: Colors.white,
-                            child: Container(
+                            SizedBox(height: screenHeight * 0.016,),
+                            Card(
+                              shape: CircleBorder(),
+                              elevation: 4.0,
+                              color: Colors.white,
+                              child: Container(
                               height: screenHeight * 0.245,
                               width: screenWidth * 0.4,
                               decoration: BoxDecoration(
@@ -362,15 +363,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
 
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    height: screenHeight * 0.36,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        height: screenHeight * 0.36,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                          Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(width: screenWidth  * 0.08),
@@ -442,8 +443,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                         ),
 
-                        Expanded(
-                          child: Column(
+                          Expanded(
+                            child: Column(
                             children: [
                               if (Constants.isSelelcted) ...[
                                 FutureBuilder<List<PriceDTO>>(
@@ -510,7 +511,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                                       return Column(children: [
                                         Container(
-                                        height: screenHeight * 0.124, // 고정 높이
+                                        height: screenHeight * 0.13, // 고정 높이
                                         decoration: BoxDecoration(
                                           border: Border.all(color: Colors.black),
                                           borderRadius: BorderRadius.circular(10),// 경계선 색상
@@ -539,7 +540,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         children: [
                                           if (price.length < 3) ...[
                                             Container(
-                                              height: screenHeight * 0.08, // 고정 높이
+                                              height: screenHeight * 0.13, // 고정 높이
                                               decoration: BoxDecoration(
                                                 border: Border.all(color: Colors.black),
                                                 borderRadius: BorderRadius.circular(10),// 경계선 색상
@@ -688,34 +689,34 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
 
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
+                GestureDetector(
+                onTap: () {
+                Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ShoppingPage(increaseValues: _increaseValues, decreaseValues: _decreaseValues)),
-              ).then((value) => setState(() {
+                  MaterialPageRoute(builder: (context) => ShoppingPage(increaseValues: _increaseValues, decreaseValues: _decreaseValues)),
+                ).then((value) => setState(() {
 
-              }));
-            },
-            child: FutureBuilder<List<List<Shop>>>(
-              future: Future.wait([_increaseValues, _decreaseValues]),
-              builder: (context, snapshot) {
+                 }));
+                },
+                  child: FutureBuilder<List<List<Shop>>>(
+                    future: Future.wait([_increaseValues, _decreaseValues]),
+                    builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   List<Shop> increaseValues = snapshot.data![0];
                   List<Shop> decreaseValues = snapshot.data![1];
-                  return Container(
+                    return Container(
                     height: screenHeight / 3.8,
                     color: Colors.white,
-                    child: Card(
+                      child: Card(
                       color: Colors.white,
                       elevation: 1.0,
-                      child: Padding(
+                        child: Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: Row(
+                          child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(width: 8),
@@ -784,16 +785,16 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
 
-          SizedBox(height: screenHeight * 0.01,),
+                SizedBox(height: screenHeight * 0.01,),
 
-          Column(
-            children: [
-              Container(
-                margin: EdgeInsets.only(left: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start, // 왼쪽 정렬
-                  children: [
-                    Text(
+                Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 10),
+                    child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start, // 왼쪽 정렬
+                    children: [
+                      Text(
                       '관심있는 품목 소비자 가격은?',
                       style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
                     ),
@@ -801,12 +802,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
 
-              Container(
-                margin: EdgeInsets.only(right: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end, // 오른쪽 정렬
-                  children: [
-                    Text(
+                  Container(
+                    margin: EdgeInsets.only(right: 5),
+                    child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end, // 오른쪽 정렬
+                    children: [
+                      Text(
                       '가격단위 : 원 기준일 ($date)',
                       style: TextStyle(fontSize: 16,
                           color: Colors.black,
@@ -820,20 +821,20 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
 
-          SizedBox(height: screenHeight * 0.01,),
+                SizedBox(height: screenHeight * 0.01,),
 
-          FutureBuilder<List<PriceDTO>>(
-            future: _futurePopularNames,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                FutureBuilder<List<PriceDTO>>(
+                  future: _futurePopularNames,
+                  builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text('No data found'));
+                  return Center(child: Text('No data found'));
               } else {
                 List<PriceDTO> popularPrices = snapshot.data!;
-                return Container(
+                  return Container(
                   height: screenHeight / 3,
                   color: Colors.white,
                   child: GridView.count(
@@ -911,14 +912,14 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             },
           ),
-          SizedBox(height: 15),
-        ],
-      ),
-      ),
-      );
-        },
+                SizedBox(height: 15),
+                ],
+              ),
+            ),
+          );
+          },
         );
-        }
+      }
       },
     );
   }

@@ -191,7 +191,7 @@ class _InquiryPageState extends State<InquiryPage> {
                       child:ListTile(
                         title: Text(inquiry['title']),
                         subtitle: Text(
-                        inquiry['modifyDate']
+                        inquiry['createDate']
                         .toString()
                         .substring(5, 10)
                         .replaceAll("-", "월") +

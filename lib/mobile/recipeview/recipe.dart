@@ -402,7 +402,7 @@ class _RecipePageState extends State<RecipePage> {
                               ),
                             ),
                           Text("·", style: TextStyle(fontSize: 30, color: Colors.grey),),
-                          Text(formatRelativeTime(comment.modifyDate), style: TextStyle(fontSize: 10, color: Colors.grey)),
+                          Text(formatRelativeTime(comment.createDate), style: TextStyle(fontSize: 10, color: Colors.grey)),
 
                           if (comment.updateFlag.toString() == "true")
                             Text("(수정됨)", style: TextStyle(fontSize: 8, color: Colors.grey)),
@@ -628,8 +628,9 @@ class CommentDTO {
   UserDTO userDTO;
   RecipeDTO recipeDTO;
   final DateTime modifyDate;
-
-  CommentDTO({required this.id, required this.content, required this.updateFlag, required this.userDTO, required this.recipeDTO, required this.modifyDate,});
+  final DateTime createDate;
+  
+  CommentDTO({required this.id, required this.content, required this.updateFlag, required this.userDTO, required this.recipeDTO, required this.modifyDate, required this.createDate});
 
   factory CommentDTO.fromJson(Map<String, dynamic> json) {
     return CommentDTO(
@@ -639,6 +640,7 @@ class CommentDTO {
       recipeDTO: RecipeDTO.fromJson(json['recipeDTO']),
       updateFlag: json['updateFlag'],
       modifyDate: DateTime.parse(json['modifyDate']),
+      createDate: DateTime.parse(json['createDate'])
     );
   }
 }

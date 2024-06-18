@@ -138,9 +138,13 @@ class _AIRecipePageState extends State<AIRecipePage> {
               children: [
                 Divider(),
                 // 여기에 데이터를 표시
-                Text(
-                  snapshot.data!.content.replaceAll("content : ", "내용"),
-                  style: TextStyle(fontSize: 16),
+
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    snapshot.data!.content.replaceAll("content : ", "내용"),
+                    style: TextStyle(fontSize: 16),
+                  ),
                 ),
 
                 Divider(),

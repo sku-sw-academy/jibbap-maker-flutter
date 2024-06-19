@@ -206,6 +206,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
                     builder: (context) => SearchResultPage(searchText: searchText, suggestions: suggestions),
                   ),
                 ).then((value) => setState(() {
+                  recentSearches = dbHelper.getRecords();
                   futurePopularNames = priceService.fetchPopularItemPrices9();
                 }));
               }

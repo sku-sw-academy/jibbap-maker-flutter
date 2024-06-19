@@ -40,22 +40,18 @@ class LoginPage extends StatelessWidget{
             Navigator.pop(context);
           },
           ),
-          title: Container(
-            margin: EdgeInsets.only(
-              left: widthRatio * 104,
-            ),
-            child: Text(
-                "로그인",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontFamily: 'GowunBatang',
-                  fontWeight: FontWeight.w400,
-                  height: 0,
-                  letterSpacing: -0.40,
-                )
-            ),
+          title: Text(
+              "로그인",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontFamily: 'GowunBatang',
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: -0.40,
+              )
           ),
+          centerTitle: true,
           backgroundColor: Color(0xA545B0C5),
         ),
         body: Center(
@@ -193,7 +189,7 @@ class LoginPage extends StatelessWidget{
                     ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF46B1C6),
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),

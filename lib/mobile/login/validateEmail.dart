@@ -90,11 +90,7 @@ class _ValidateEmailState extends State<ValidateEmail> {
             Navigator.pop(context); // 뒤로가기 버튼 클릭 시 이전 화면으로 이동
           },
         ),
-        title: Container(
-          margin: EdgeInsets.only(
-            left: widthRatio * 84,
-          ),
-          child: Text(
+        title: Text(
             "인증",
             style: TextStyle(
               color: Colors.black,
@@ -103,9 +99,9 @@ class _ValidateEmailState extends State<ValidateEmail> {
               fontWeight: FontWeight.w400,
               height: 0,
               letterSpacing: -0.40,
-            ),
-          ),
+            )
         ),
+        centerTitle: true,
         backgroundColor: Color(0xA545B0C5),
       ),
       body: Center(
@@ -215,7 +211,7 @@ class _ValidateEmailState extends State<ValidateEmail> {
                 ),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF46B1C6), // 배경색 설정
+                    backgroundColor: Colors.white, // 배경색 설정
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0), // 원하는 값으로 조절
                     ),
@@ -264,7 +260,7 @@ class _ValidateEmailState extends State<ValidateEmail> {
                     child: Text(
                       _canResend ? '재전송' : '확인', // 타이머가 종료되면 '재전송' 버튼으로 변경
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 16,
                         fontFamily: 'GowunBatang',
                         fontWeight: FontWeight.w700,

@@ -62,22 +62,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             Navigator.pop(context);
           },
           ),
-          title: Container(
-            margin: EdgeInsets.only(
-              left: widthRatio * 104,
-            ),
-            child: Text(
-                "회원가입",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontFamily: 'GowunBatang',
-                  fontWeight: FontWeight.w400,
-                  height: 0,
-                  letterSpacing: -0.40,
-                )
-            ),
+          title: Text(
+              "회원가입",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontFamily: 'GowunBatang',
+                fontWeight: FontWeight.w400,
+                height: 0,
+                letterSpacing: -0.40,
+              )
           ),
+          centerTitle: true,
           backgroundColor: Color(0xA545B0C5),
         ),
         body : Form(
@@ -219,7 +215,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       obscureText: true,
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.lock),
-                        labelText: "P/W",
+                        labelText: "비밀번호",
                         labelStyle: TextStyle(
                           color: Color(0xE5001F3F),
                           fontSize: 13,
@@ -234,10 +230,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           ),
                         ),
                         isDense: true,
-                        hintText: '특수문자, 대소문자, 숫자 포함 8자리 이상 입력하세요.',
+                        hintText: '문자, 특수문자, 숫자 포함 8자리 이상 입력하세요.',
                         hintStyle: TextStyle(
                           color: Color(0xFFCCCCCC),
-                          fontSize: 13,
+                          fontSize: 9,
                           fontFamily: 'GowunBatang',
                           fontWeight: FontWeight.w700,
                           height: 0,
@@ -245,7 +241,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         ),
                         errorStyle: TextStyle(
                           color: Colors.red,
-                          fontSize: 13,
+                          fontSize: 10,
                           fontFamily: 'GowunBatang',
                           fontWeight: FontWeight.w700,
                           height: 0,
@@ -275,7 +271,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       obscureText: true,
                       decoration: InputDecoration(
                         prefixIcon: Icon(Icons.enhanced_encryption),
-                        labelText: "P/W C",
+                        labelText: "비밀번호 확인",
                         labelStyle: TextStyle(
                           color: Color(0xE5001F3F),
                           fontSize: 13,
@@ -350,7 +346,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     ),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF46B1C6),
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),

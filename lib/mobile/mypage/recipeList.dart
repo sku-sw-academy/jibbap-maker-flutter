@@ -75,6 +75,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
           print('ID가 $id인 선택된 추가 레시피가 성공적으로 삭제되었습니다.');
         } else {
           print('ID가 $id인 선택된 추가 레시피 삭제에 실패했습니다: ${response.reasonPhrase}');
+          print('서버 응답 내용: ${response.body}');
         }
       }
 

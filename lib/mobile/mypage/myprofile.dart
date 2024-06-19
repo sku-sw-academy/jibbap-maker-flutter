@@ -20,6 +20,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 final FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin();
 
@@ -42,6 +43,7 @@ class _MyProfileState extends State<MyProfile> {
   XFile? _image;
   CroppedFile? _croppedFile;
   final ImagePicker picker = ImagePicker();
+  String userName = "";
 
   @override
   void initState() {
@@ -53,6 +55,7 @@ class _MyProfileState extends State<MyProfile> {
     // 사용자 정보 불러오기
     user = Provider.of<UserProvider>(context, listen: false).user;
     setState(() {
+      userName = utf8.decode(user!.nickname!.runes.toList());
       _switchValue = user?.push ?? false;
       userId = user?.id ?? -1;
       _isDefaultImage = user?.profile == null || user!.profile!.isEmpty ?? true;
@@ -317,7 +320,7 @@ class _MyProfileState extends State<MyProfile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${user?.nickname ?? ''}', // 여기에 닉네임을 넣어주세요
+                      '${userName ?? ''}', // 여기에 닉네임을 넣어주세요
                       style: TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -384,7 +387,7 @@ class _MyProfileState extends State<MyProfile> {
                 Navigator.push(
                   context,
                   PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) => ChangeProfilePage(),
+                    pageBuilder: (context, animation, secondaryAnimation) => ChangeProfilePage(name: userName),
                     transitionsBuilder: (context, animation, secondaryAnimation, child) {
                       var begin = Offset(1.0, 0.0);
                       var end = Offset.zero;
@@ -398,7 +401,9 @@ class _MyProfileState extends State<MyProfile> {
                     },
                     transitionDuration: Duration(milliseconds: 500),
                   ),
-                ).then((value) => setState(() {}));
+                ).then((value) => setState(() {
+                  userName = user!.nickname!;
+                }));
               },
             ),
           ),
@@ -425,7 +430,9 @@ class _MyProfileState extends State<MyProfile> {
                       },
                       transitionDuration: Duration(milliseconds: 500),
                     ),
-                ).then((value) => setState(() {}));
+                ).then((value) => setState(() {
+                  _loadUserSettings();
+                }));
               },
             ),
           ),

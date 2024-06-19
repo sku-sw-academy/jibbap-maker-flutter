@@ -72,9 +72,9 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
               color: Colors.black12,
             ),
             columns: [
-              DataColumn(label: Expanded(child: Text('날짜', textAlign: TextAlign.center),)),
-              DataColumn(label: Expanded(child: Text('가격', textAlign: TextAlign.center))),
-              DataColumn(label: Expanded(child: Text('등락률', textAlign: TextAlign.center))),
+              DataColumn(label: Expanded(child: Text('날짜', textAlign: TextAlign.center, style: TextStyle(fontSize: 12),),)),
+              DataColumn(label: Expanded(child: Text('가격(원)', textAlign: TextAlign.center , style: TextStyle(fontSize: 12)), )),
+              DataColumn(label: Expanded(child: Text('등락률(%)', textAlign: TextAlign.center, style: TextStyle(fontSize: 12)))),
             ],
             rows: searchData.map((price) {
               Color textColor;
@@ -265,7 +265,7 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: leftTitleWidgets,
-                  reservedSize: 35,
+                  reservedSize: 30,
                 ),
               ),
               rightTitles: AxisTitles(
@@ -273,7 +273,7 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: rightTitleWidgets,
-                    reservedSize: 34,
+                    reservedSize: 28,
                 ),
               ),
               topTitles: AxisTitles(
@@ -305,7 +305,7 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 10,
+      fontSize: 8,
     );
 
     double maxY = _calculateMaxY(searchData);
@@ -313,7 +313,13 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
     double result = maxY - minY;
     String text = "";
 
-    if(result <= 1000){
+    if(result <= 200){
+      if(value.toInt() % 50 == 0){
+        text = (value.toDouble() / 1000).toString() + "k";
+      }else{
+        text = "";
+      }
+    } else if(result <= 1000){
       if(value.toInt() % 200 == 0){
         text = (value.toDouble() / 1000).toString() + "k";
       }else{

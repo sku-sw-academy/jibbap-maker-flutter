@@ -10,9 +10,11 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_splim/constant.dart';
 import 'package:flutter_splim/service/userservice.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
+import 'dart:convert';
 
 class ChangeProfilePage extends StatefulWidget {
-
+  final String name;
+  ChangeProfilePage({required this.name});
   @override
   _ChangeProfilePageState createState() => _ChangeProfilePageState();
 }
@@ -33,7 +35,7 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
   void initState() {
     super.initState();
     user = Provider.of<UserProvider>(context, listen: false).user;
-    _nickNameController.text = user?.nickname ?? '';
+    _nickNameController.text = widget.name;
     _savedProfileImage = user?.profile;
     print(_savedProfileImage);
     _isDefaultImage = _savedProfileImage == null; // If _savedProfileImage is not null, set _isDefaultImage to true
@@ -245,12 +247,12 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>{
                 return null;
               },
                 onFieldSubmitted: (_) async {
-                  if (_formKey.currentState!.validate() && _nickNameController.text != user!.nickname) {
+                  if (_formKey.currentState!.validate() && _nickNameController.text != utf8.decode(user!.nickname!.runes.toList())) {
 
                     String result = await userService.changeNickName(user!.id, _nickNameController.text);
                     if (result != "error") {
                       setState(() {
-                        user!.nickname = result;
+                        user!.nickname = _nickNameController.text;
                       });
                       showDialog(
                         context: context,

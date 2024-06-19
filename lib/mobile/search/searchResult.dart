@@ -118,9 +118,9 @@ class _SelectedPageState extends State<SelectedPage> {
               color: Colors.black12,
             ),
             columns: [
-              DataColumn(label: Expanded(child: Text('날짜', textAlign: TextAlign.center),)),
-              DataColumn(label: Expanded(child: Text('가격', textAlign: TextAlign.center))),
-              DataColumn(label: Expanded(child: Text('등락률', textAlign: TextAlign.center))),
+              DataColumn(label: Expanded(child: Text('날짜', textAlign: TextAlign.center, style: TextStyle(fontSize: 12),),)),
+              DataColumn(label: Expanded(child: Text('가격(원)', textAlign: TextAlign.center , style: TextStyle(fontSize: 12)), )),
+              DataColumn(label: Expanded(child: Text('등락률(%)', textAlign: TextAlign.center, style: TextStyle(fontSize: 12)))),
             ],
             rows: searchData.map((price) {
               Color textColor;
@@ -315,6 +315,7 @@ class _SelectedPageState extends State<SelectedPage> {
                         onChanged: (int? newIndex) {
                           setState(() {
                             selectedRankIndex = newIndex;
+                            updateDataTable();
                           });
                           print('Selected item: ${ranks[selectedKindIndex!][selectedRankIndex!]}');
                         },
@@ -334,25 +335,6 @@ class _SelectedPageState extends State<SelectedPage> {
 
               SizedBox(width: 20),
 
-              ElevatedButton(
-                onPressed: () async {
-                  if (selectedKindIndex != null && selectedRankIndex != null) {
-                    updateDataTable();
-                  }
-                },
-                child: Text('검색', style: TextStyle(fontSize: 12),),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  surfaceTintColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // 네모 모양을 만들기 위해 모서리 반경을 0으로 설정
-                  ),
-                  side: BorderSide(color: Colors.black, width: 1),
-                  fixedSize: Size(75, 25),
-                  // 다른 스타일 속성들...
-                ),
-              ),
             ],
           ),
 
@@ -412,7 +394,7 @@ class _SelectedPageState extends State<SelectedPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: leftTitleWidgets,
-                  reservedSize: 35,
+                  reservedSize: 30,
                 ),
               ),
               rightTitles: AxisTitles(
@@ -420,7 +402,7 @@ class _SelectedPageState extends State<SelectedPage> {
                   showTitles: true,
                   interval: 1,
                   getTitlesWidget: rightTitleWidgets,
-                  reservedSize: 34,
+                  reservedSize: 28,
                 ),
               ),
               topTitles: AxisTitles(
@@ -451,7 +433,7 @@ class _SelectedPageState extends State<SelectedPage> {
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 10,
+      fontSize: 8,
     );
 
     double maxY = _calculateMaxY(searchData);
@@ -459,7 +441,13 @@ class _SelectedPageState extends State<SelectedPage> {
     double result = maxY - minY;
     String text = "";
 
-    if(result <= 1000){
+    if(result <= 200){
+      if(value.toInt() % 50 == 0){
+        text = (value.toDouble() / 1000).toString() + "k";
+      }else{
+        text = "";
+      }
+    } else if(result <= 1000){
       if(value.toInt() % 200 == 0){
         text = (value.toDouble() / 1000).toString() + "k";
       }else{
@@ -531,7 +519,7 @@ class _SelectedPageState extends State<SelectedPage> {
         }
       }
 
-      return maxDpr1 * 1.07; //
+      return maxDpr1 * 1.03; //
     }else{
       return 1.0;
     }

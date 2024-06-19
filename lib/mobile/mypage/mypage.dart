@@ -53,14 +53,40 @@ class _MyPageState extends State<MyPage> {
             else if (index == 1) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SearchPage()),
+                PageRouteBuilder(
+                  pageBuilder: (context, animation1, animation2) => SearchPage(),
+                  transitionsBuilder: (context, animation1, animation2, child) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: Offset(-1.0, 0.0),
+                        end: Offset.zero,
+                      ).animate(animation1),
+                      child: child,
+                    );
+                  },
+                  transitionDuration: Duration(milliseconds: 400),
+                ),
               ).then((value) => setState(() {
               }));
             }
             else if (index == 2) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => RecipeView()),
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => RecipeView(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    var begin = Offset(1.0, 0.0);
+                    var end = Offset.zero;
+                    var curve = Curves.ease;
+                    var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                  transitionDuration: Duration(milliseconds: 400),
+                ),
               ).then((value) => setState(() {
               }));
             }

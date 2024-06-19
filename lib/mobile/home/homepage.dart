@@ -232,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     child: child,
                                   );
                                 },
-                                transitionDuration: Duration(milliseconds: 500),
+                                transitionDuration: Duration(milliseconds: 400),
                               ),
                             ).then((value) {
                               // 페이지 이동 후에 초기화 및 상태 업데이트
@@ -265,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: child,
                           );
                         },
-                        transitionDuration: Duration(milliseconds: 500),
+                        transitionDuration: Duration(milliseconds: 400),
                       ),
                     ).then((value) => setState(() {}));
                   },
@@ -436,7 +436,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 ],
                                 fillColor: Colors.lightBlueAccent[100], // 선택된 버튼의 배경 색상
-                                selectedBorderColor: Colors.grey, // 선택된 버튼의 테두리 색상
+                                selectedBorderColor: Colors.black, // 선택된 버튼의 테두리 색상
                                 color: Colors.black,
                               ),
                             ),
@@ -907,6 +907,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       );
                     }).toList(),
+                    physics: NeverScrollableScrollPhysics(),
                   ),
                 );
               }

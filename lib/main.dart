@@ -218,7 +218,7 @@ class _MainPageState extends State<MainPage> {
                       child: child,
                     );
                   },
-                  transitionDuration: Duration(milliseconds: 500),
+                  transitionDuration: Duration(milliseconds: 400),
                 ),
               ).then((value) {
                 storageService.readToken(key).then((token) {
@@ -244,7 +244,7 @@ class _MainPageState extends State<MainPage> {
                       child: child,
                     );
                   },
-                  transitionDuration: Duration(milliseconds: 500),
+                  transitionDuration: Duration(milliseconds: 400),
                 ),
               ).then((value) {
                 storageService.readToken(key).then((token) {
@@ -270,7 +270,7 @@ class _MainPageState extends State<MainPage> {
                         child: child,
                       );
                     },
-                    transitionDuration: Duration(milliseconds: 500),
+                    transitionDuration: Duration(milliseconds: 400),
                   ),
                 ).then((value) {
                   storageService.readToken(key).then((token) {

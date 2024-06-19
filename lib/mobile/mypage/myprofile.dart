@@ -249,7 +249,7 @@ class _MyProfileState extends State<MyProfile> {
                             child: child,
                           );
                         },
-                        transitionDuration: Duration(milliseconds: 500),
+                        transitionDuration: Duration(milliseconds: 400),
                       ),
                     ).then((value) {
                       setState(() {
@@ -281,7 +281,7 @@ class _MyProfileState extends State<MyProfile> {
                       child: child,
                     );
                   },
-                  transitionDuration: Duration(milliseconds: 500),
+                  transitionDuration: Duration(milliseconds: 400),
                 ),
               ).then((value) => setState(() {}));
             },
@@ -399,7 +399,7 @@ class _MyProfileState extends State<MyProfile> {
                         child: child,
                       );
                     },
-                    transitionDuration: Duration(milliseconds: 500),
+                    transitionDuration: Duration(milliseconds: 400),
                   ),
                 ).then((value) => setState(() {
                   try {
@@ -434,7 +434,7 @@ class _MyProfileState extends State<MyProfile> {
                           child: child,
                         );
                       },
-                      transitionDuration: Duration(milliseconds: 500),
+                      transitionDuration: Duration(milliseconds: 400),
                     ),
                 ).then((value) => setState(() {
                   _loadUserSettings();
@@ -487,7 +487,7 @@ class _MyProfileState extends State<MyProfile> {
                         child: child,
                       );
                     },
-                    transitionDuration: Duration(milliseconds: 500),
+                    transitionDuration: Duration(milliseconds: 400),
                   ),
                 ).then((value) => setState(() {}));
               },
@@ -515,7 +515,7 @@ class _MyProfileState extends State<MyProfile> {
                       child: child,
                     );
                   },
-                  transitionDuration: Duration(milliseconds: 500),
+                  transitionDuration: Duration(milliseconds: 400),
                 ),
               ).then((value) => setState(() {}));
             },
@@ -564,7 +564,7 @@ class _MyProfileState extends State<MyProfile> {
                       child: child,
                     );
                   },
-                  transitionDuration: Duration(milliseconds: 500),
+                  transitionDuration: Duration(milliseconds: 400),
                 ),
               ).then((value) => setState(() {}));
             },

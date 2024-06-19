@@ -117,6 +117,8 @@ class _AIRecipePageState extends State<AIRecipePage> {
               return Text('Error: ${snapshot.error}');
             } else if (!snapshot.hasData || snapshot.data!.title.isEmpty) {
               return Text('No title available');
+            } else if (!snapshot.hasData || snapshot.data!.content.isEmpty) {
+              return Text('오류');
             } else {
               return Text(snapshot.data!.title.replaceAll("title :", ""));
             }
@@ -132,7 +134,37 @@ class _AIRecipePageState extends State<AIRecipePage> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.content.isEmpty) {
-            return Center(child: Text('No data available'));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '문제가 생겼습니다. 다시 시도하세요.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        isSave = false;
+                        futureRecipe = fetchRecipe();
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: BorderSide(color: Colors.black, width: 1),
+                      minimumSize: Size(100, 50),
+                    ),
+                    child: Text("다시 시도", style: TextStyle(fontSize: 16)),
+                  ),
+                ],
+              ),
+            );
           } else {
             return ListView(
               children: [
@@ -199,6 +231,8 @@ class _AIRecipePageState extends State<AIRecipePage> {
                     ),
                   ],
                 ),
+
+                SizedBox(height: 20,)
               ],
             );
           }

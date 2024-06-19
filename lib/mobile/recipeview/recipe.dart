@@ -84,6 +84,8 @@ class _RecipePageState extends State<RecipePage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.recipe.title, style: TextStyle(fontSize: 25)),
@@ -162,11 +164,26 @@ class _RecipePageState extends State<RecipePage> {
             ),
         ],
       ),
-      body: Scrollbar(child:
+      body:
+      Scrollbar(child:
         ListView(
         children: [
-          SizedBox(height: 20),
+          //SizedBox(height: screenHeight * 0.01),
+          Padding(
+            padding: EdgeInsets.all(13.0), // 모든 방향에 16.0의 패딩 적용
+            child: Row(
+              children: [
+                Spacer(), // 남은 공간을 채워서 Text 위젯을 오른쪽으로 보냄
+                Text(
+                  "게시일: ${widget.recipe.modifyDate.toString().substring(0,10)}",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ],
+            ),
+          ),
+
           _buildPhotoArea(),
+
           Divider(),
           Row(
             children: [
@@ -363,224 +380,267 @@ class _RecipePageState extends State<RecipePage> {
                     bool isRecipeOwner = widget.recipe.userDTO.id == currentId;
 
                     return ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       leading: CircleAvatar(
-                        radius: 10,
+                        radius: 20,
                         backgroundColor: Colors.blue[200],
                         backgroundImage: comment.userDTO != null &&
                             comment.userDTO.profile != null &&
                             comment.userDTO.profile!.isNotEmpty
-                            ? NetworkImage(
-                            "${Constants.baseUrl}/api/auth/images/${comment.userDTO.profile}")
-                            : null, // 빈 값을 사용하여 배경 이미지가 없음을 나타냄
+                            ? NetworkImage("${Constants.baseUrl}/api/auth/images/${comment.userDTO.profile}")
+                            : null,
                         child: comment.userDTO != null &&
                             comment.userDTO.profile != null &&
                             comment.userDTO.profile!.isNotEmpty
-                            ? null // 프로필 이미지가 있는 경우에는 아이콘을 표시하지 않음
-                            : Icon(Icons.person, size: 15, color: Colors.grey,), // 프로필 이미지가 없는 경우에 아이콘을 표시
+                            ? null
+                            : Icon(Icons.person, size: 30, color: Colors.grey),
                       ),
                       title: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if(widget.recipe.userDTO.id != comment.userDTO.id)
-                            Text(comment.userDTO.nickname, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-
-                          if(widget.recipe.userDTO.id == comment.userDTO.id)
-                            Container(
-                              width: comment.userDTO.nickname.length <= 5
-                                  ? 10 * comment.userDTO.nickname.length.toDouble()
-                                  : 8.5 * comment.userDTO.nickname.length.toDouble(),
-                              decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(8)
-                              ),
-                              child:
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
-                                    Text(comment.userDTO.nickname,
-                                      style: TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,),
-                                    Icon(Icons.check_circle, size: 8, color: Colors.green),
-                                  ]
-                              ),
+                                    if (widget.recipe.userDTO.id != comment.userDTO.id)
+                                      Text(
+                                        comment.userDTO.nickname,
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                      ),
+                                    if (widget.recipe.userDTO.id == comment.userDTO.id)
+                                      Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              comment.userDTO.nickname,
+                                              style: TextStyle(fontSize: 12, color: Colors.white, fontWeight: FontWeight.bold),
+                                            ),
+                                            Icon(Icons.check_circle, size: 12, color: Colors.green),
+                                          ],
+                                        ),
+                                      ),
+                                    SizedBox(width: 8),
+                                    Text("·", style: TextStyle(fontSize: 18, color: Colors.grey)),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      formatRelativeTime(comment.createDate),
+                                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                                    ),
+                                    if (comment.updateFlag.toString() == "true")
+                                      Text(" (수정됨)", style: TextStyle(fontSize: 10, color: Colors.grey)),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  comment.content,
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                SizedBox(height: 8),
+                                // 버튼을 댓글 내용 아래에 배치
+                                if (isRecipeOwner && isCurrentUserComment)
+                                  Row(
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => EditCommentPage(
+                                                commentId: comment.id,
+                                                currentContent: comment.content,
+                                              ),
+                                            ),
+                                          ).then((value) {
+                                            _fetchComments();
+                                          });
+                                        },
+                                        child: Text(
+                                          "수정",
+                                          style: TextStyle(color: Colors.green),
+                                        ),
+                                      ),
+                                      SizedBox(width: 2),
+                                      TextButton(
+                                        onPressed: () {
+                                          _deleteComment(comment.id);
+                                          setState(() {
+                                            _fetchComments();
+                                            widget.recipe.count = _comments.length;
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                        child: Text(
+                                          "삭제",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                if (isRecipeOwner && !isCurrentUserComment)
+                                  TextButton(
+                                    onPressed: () {
+                                      _deleteComment(comment.id);
+                                      setState(() {
+                                        _fetchComments();
+                                        widget.recipe.count = _comments.length;
+                                        Navigator.pop(context);
+                                      });
+                                    },
+                                    child: Text(
+                                      "삭제",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                if (!isRecipeOwner && isCurrentUserComment)
+                                  Row(
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => EditCommentPage(
+                                                commentId: comment.id,
+                                                currentContent: comment.content,
+                                              ),
+                                            ),
+                                          ).then((value) {
+                                            _fetchComments();
+                                          });
+                                        },
+                                        child: Text(
+                                          "수정",
+                                          style: TextStyle(color: Colors.green),
+                                        ),
+                                      ),
+                                      SizedBox(width: 2),
+                                      TextButton(
+                                        onPressed: () {
+                                          _deleteComment(comment.id);
+                                          setState(() {
+                                            _fetchComments();
+                                            Navigator.pop(context);
+                                          });
+                                        },
+                                        child: Text(
+                                          "삭제",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              ],
                             ),
-                          Text("·", style: TextStyle(fontSize: 30, color: Colors.grey),),
-                          Text(formatRelativeTime(comment.createDate), style: TextStyle(fontSize: 10, color: Colors.grey)),
-
-                          if (comment.updateFlag.toString() == "true")
-                            Text("(수정됨)", style: TextStyle(fontSize: 8, color: Colors.grey)),
+                          ),
                         ],
                       ),
-                      subtitle: Text(comment.content),
+                      //subtitle: Text(comment.content),
                       tileColor: Colors.white,
-                      trailing: isRecipeOwner && isCurrentUserComment
-                          ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                            TextButton(onPressed:(){
-                              Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                              builder: (context) => EditCommentPage(
-                                commentId: comment.id,
-                                currentContent: comment.content,
-                              ),
-                            ),
-                            ).then((value) {
-                            // Handle callback or update logic if needed
-                              _fetchComments();
-                            });
-                            },
-                              child: Text("수정", style: TextStyle(color: Colors.green, ),)
-                          ),
-
-                          TextButton(onPressed:(){
-                            _deleteComment(comment.id);
-                            setState(() {
-                            _fetchComments();
-                            widget.recipe.count = _comments.length;
-                            Navigator.pop(context);
-                          });
-                          },
-                              child: Text("삭제", style: TextStyle(color: Colors.red),)
-                          ),
-
-                        ],
-                      )
-                          : isRecipeOwner
-                          ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextButton(onPressed:(){
-                            _deleteComment(comment.id);
-                            setState(() {
-                              _fetchComments();
-                              widget.recipe.count = _comments.length;
-                              Navigator.pop(context);
-                            });
-                          },
-                              child: Text("삭제", style: TextStyle(color: Colors.red),)
-                          ),
-                        ],
-                      )
-                          : isCurrentUserComment
-                          ? Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextButton(onPressed:(){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => EditCommentPage(
-                                  commentId: comment.id,
-                                  currentContent: comment.content,
-                                ),
-                              ),
-                            ).then((value) {
-                              // Handle callback or update logic if needed
-                              _fetchComments();
-                            });
-                          },
-                              child: Text("수정", style: TextStyle(color: Colors.green),)
-                          ),
-
-                          TextButton(onPressed:(){
-                            _deleteComment(comment.id);
-                            setState(() {
-                              _fetchComments();
-                              Navigator.pop(context);
-                            });
-                          },
-                              child: Text("삭제", style: TextStyle(color: Colors.red),)
-                          ),
-                        ],
-                      )
-                          : null,
                     );
                   },
                 ),
-
               ),
+
               Divider(),
-              Container(
-                color: Colors.white,
-                padding: EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _commentController,
-                        decoration: InputDecoration(
-                          hintText: "댓글을 입력하세요",
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 1,
-                        maxLength: 20,
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(20), // 입력 길이 제한
-                        ],
+            Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 80, // Adjust the height as needed for the TextField
+                    child: TextField(
+                      controller: _commentController,
+                      decoration: InputDecoration(
+                        hintText: "댓글을 입력하세요",
+                        border: OutlineInputBorder(),
                       ),
+                      maxLines: 1,
+                      maxLength: 20,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(20), // 입력 길이 제한
+                      ],
                     ),
-                    SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () async {
-                        final storageService = Provider.of<SecureService>(context, listen: false);
-                        String? token = await storageService.readToken(key);
-                        if (token == null || token.isEmpty) {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text('로그인 필요'),
-                              content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text('확인'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => LoginPage()),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                  ),
+                ),
+                SizedBox(width: 8),
+                Container(
+                  height: 60, // Match the height with the TextField
+                  decoration: BoxDecoration(
+                    color: Colors.blue, // Button background color
+                    borderRadius: BorderRadius.circular(5), // Rounded corners
+                  ),
+                  child: TextButton(
+                    onPressed: () async {
+                      final storageService = Provider.of<SecureService>(context, listen: false);
+                      String? token = await storageService.readToken(key);
+                      if (token == null || token.isEmpty) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('로그인 필요'),
+                            content: Text('로그인이 필요합니다. 로그인하시겠습니까?'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('확인'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => LoginPage()),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                        return;
+                      } else {
+                        if (_commentController.text.isNotEmpty) {
+                          // 서버로 댓글 추가 요청
+                          var response = await http.post(
+                            Uri.parse('${Constants.baseUrl}/comments/send'),
+                            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                            body: {
+                              'userId': currentId.toString(),
+                              'recipeId': widget.recipe.id.toString(),
+                              'content': _commentController.text,
+                            },
                           );
-                          return;
-                        } else {
-                          if (_commentController.text.isNotEmpty) {
-                            // 서버로 댓글 추가 요청
-                            var response = await http.post(
-                              Uri.parse('${Constants.baseUrl}/comments/send'),
-                              headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                              body: {
-                                'userId': currentId.toString(),
-                                'recipeId': widget.recipe.id.toString(),
-                                'content': _commentController.text,
-                              },
+                          if (response.statusCode == 200) {
+                            _fetchComments();
+                            widget.recipe.count = _comments.length; // 댓글 리스트 다시 불러오기
+                            _commentController.clear(); // 입력 필드 비우기
+                            Navigator.pop(context);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('댓글 추가에 실패했습니다.'),
+                                duration: Duration(seconds: 2),
+                              ),
                             );
-                            if (response.statusCode == 200) {
-                              _fetchComments();
-                              widget.recipe.count = _comments.length;// 댓글 리스트 다시 불러오기
-                              _commentController.clear(); // 입력 필드 비우기
-                              Navigator.pop(context);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('댓글 추가에 실패했습니다.'),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                            }
                           }
                         }
-                      },
-                      child: Icon(Icons.send),
-                    ),
-                  ],
+                      }
+                    },
+                    child: Icon(Icons.send, color: Colors.white),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+          ),
+
+          ],
           ),
         );
       },

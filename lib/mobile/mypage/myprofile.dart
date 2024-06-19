@@ -402,7 +402,13 @@ class _MyProfileState extends State<MyProfile> {
                     transitionDuration: Duration(milliseconds: 500),
                   ),
                 ).then((value) => setState(() {
-                  userName = user!.nickname!;
+                  try {
+                    userName = utf8.decode(user!.nickname!.runes.toList());
+                  } catch (e) {
+                    print('UTF-8 decoding error: $e');
+                    userName = user!.nickname!;
+                  }
+
                 }));
               },
             ),

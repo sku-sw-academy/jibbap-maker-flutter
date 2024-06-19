@@ -143,6 +143,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
               ),
             ).then((value) => setState(() {
               futurePopularNames = priceService.fetchPopularItemPrices9();
+              recentSearches = dbHelper.getRecords();
             }));
             showToast("${result.recognizedWords}의 결과입니다.");
           }else{

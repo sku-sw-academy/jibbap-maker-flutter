@@ -66,7 +66,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
       // 선택된 추가 레시피 삭제
       for (int id in addSelectedIds) {
         final response = await http.delete(
-          Uri.parse('${Constants.baseUrl}/add/delete/$id'),
+          Uri.parse('${Constants.baseUrl}/add/delete/${widget.userId}/$id'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },

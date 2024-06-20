@@ -5,6 +5,10 @@ import 'package:flutter_splim/dto/gptchatrequest.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_splim/constant.dart';
 import 'dart:convert';
+import 'package:http_parser/http_parser.dart'; // 추가
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'dart:io';
+import 'package:path/path.dart' as path;
 
 class AIRecipePage extends StatefulWidget {
   final int userId;
@@ -19,22 +23,41 @@ class AIRecipePage extends StatefulWidget {
 class _AIRecipePageState extends State<AIRecipePage> {
   late Future<GptChatResponse> futureRecipe;
   bool isSave = false;
+  File? _savedImageFile;
 
   Future<void> saveRecipe(GptChatResponse recipe) async {
+    File? imageFile;
+    String? imagePath;
+
+    // 이미지 다운로드 및 저장
+    if (recipe.imageUrl.isNotEmpty) {
+      imageFile = await _downloadImage(recipe.imageUrl);
+      if (imageFile != null) {
+        imagePath = imageFile.path;
+      }
+    }
+
+    // 서버 URL 정의
     final url = Uri.parse('${Constants.baseUrl}/recipe/save');
 
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: {
-        'userId': widget.userId.toString(),
-        'title': recipe.title.replaceAll("title : ", ""),
-        'content': recipe.content.replaceAll("content : ", ""),
-      },
-    );
+    // HTTP 요청 생성
+    final request = http.MultipartRequest('POST', url);
 
+    // 필수 파라미터 추가
+    request.fields['userId'] = widget.userId.toString();
+    request.fields['title'] = recipe.title.replaceAll("title : ", "");
+    request.fields['content'] = recipe.content.replaceAll("content : ", "");
+
+    // 이미지 파일이 있으면 추가
+    if (imagePath != null) {
+      request.files.add(await http.MultipartFile.fromPath('imageFile', imagePath));
+    }
+
+    // HTTP 요청 보내기
+    final streamedResponse = await request.send();
+
+    // 응답 처리
+    final response = await http.Response.fromStream(streamedResponse);
     if (response.statusCode == 200) {
       showDialog(
         context: context,
@@ -60,6 +83,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
   }
 
   Future<GptChatResponse> sendGptChatRequest(int userId, List<PriceDTO> prices) async {
+
     final url = Uri.parse('${Constants.baseUrl}/api/gpt/recipe');
 
     GptChatRequest request = GptChatRequest(
@@ -90,6 +114,39 @@ class _AIRecipePageState extends State<AIRecipePage> {
     futureRecipe = fetchRecipe(); // 초기화 시에 응답을 받기 위해 initState에서 호출
   }
 
+  Future<void> _saveAndDisplayImage(GptChatResponse recipe) async {
+    try {
+      if (recipe.imageUrl.isNotEmpty) {
+        // 이미지 다운로드
+        File imageFile = await _downloadImage(recipe.imageUrl);
+        setState(() {
+          _savedImageFile = imageFile;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('이미지 URL이 비어 있습니다.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('이미지를 다운로드할 수 없습니다: $e')),
+      );
+    }
+  }
+
+// 이미지 다운로드 및 저장 메서드 수정
+  Future<File> _downloadImage(String url) async {
+    final cacheManager = DefaultCacheManager();
+    final fileInfo = await cacheManager.getFileFromCache(url);
+
+    if (fileInfo != null) {
+      return fileInfo.file;
+    } else {
+      final file = await cacheManager.downloadFile(url);
+      return file.file;
+    }
+  }
+
   // 응답을 받는 메서드
   Future<GptChatResponse> fetchRecipe() async {
     try {
@@ -109,6 +166,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
+        backgroundColor: Colors.white,
         title: FutureBuilder<GptChatResponse>(
           future: futureRecipe,
           builder: (context, snapshot) {
@@ -169,6 +227,8 @@ class _AIRecipePageState extends State<AIRecipePage> {
           } else {
             return ListView(
               children: [
+                _buildPhotoArea(snapshot.data!.imageUrl),
+
                 Divider(),
                 // 여기에 데이터를 표시
                 Padding(
@@ -189,6 +249,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                         try {
                           if(!isSave){
                             await saveRecipe(snapshot.data!);
+                            //await _saveAndDisplayImage(snapshot.data!);
                           }else{
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('이미 저장되었습니다.'),)
@@ -235,10 +296,51 @@ class _AIRecipePageState extends State<AIRecipePage> {
 
                 SizedBox(height: 20,)
               ],
+
+
             );
           }
         },
       ),
     );
   }
+
+  Widget _buildPhotoArea(String imageUrl) {
+    return Center(
+      child: GestureDetector(
+        // 이미지 선택 기능 추가
+        child: Container(
+          width: 300,
+          height: 300,
+          decoration: BoxDecoration(
+            color: Colors.blue[200],
+          ),
+          child: imageUrl.isNotEmpty
+              ? Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+          )
+              : Icon(
+            Icons.food_bank,
+            color: Colors.grey,
+            size: 70,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSavedImage() {
+    return _savedImageFile != null
+        ? Image.file(_savedImageFile!)
+        : Container(
+      width: 300,
+      height: 300,
+      color: Colors.grey[300],
+      child: Center(
+        child: Text('이미지가 저장되지 않았습니다.'),
+      ),
+    );
+  }
+
 }

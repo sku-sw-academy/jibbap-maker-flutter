@@ -262,6 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: ListView(
                 children: <Widget>[
                 Container(
+                  color: Colors.white,
                   margin: EdgeInsets.only(
                   top: screenHeight * 0.01, right: screenWidth * 0.04),
                   child: Row(
@@ -309,7 +310,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             SizedBox(height: screenHeight * 0.007,),
                             Container(
                             height: screenHeight * 0.05,
-                            width: screenWidth * 0.3,
+                            width: screenWidth * 0.37,
                               child: Center(
                                 child: Text("AI 레시피",
                                   textAlign: TextAlign.center,
@@ -318,7 +319,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
-                              border: Border.all(color: Colors.lightBlueAccent),
+                              border: Border.all(color: Colors.blue),
                               color: Colors.lightBlueAccent[100], // 배경색 바꾸기
                             ),
                           ),
@@ -331,6 +332,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               height: screenHeight * 0.245,
                               width: screenWidth * 0.4,
                               decoration: BoxDecoration(
+                                color: Colors.white,
                                 image: DecorationImage(
                                   image: AssetImage('asset/food/playstore-icon1.png'), // 여기에 로컬 이미지 경로를 입력하세요
                                   fit: BoxFit.fill, // 이미지를 Container의 크기에 맞게 조정합니다.
@@ -703,13 +705,16 @@ class _MyHomePageState extends State<MyHomePage> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(width: 8),
+
                             Expanded(
                               child: Image.asset(
                                 'asset/food/market.png', // 이미지 경로
                                 fit: BoxFit.cover, // 이미지가 적절하게 확장되도록 설정
                               ),
                             ),
+
                             SizedBox(width: 5),
+
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,

@@ -371,6 +371,7 @@ class _RecipePageState extends State<RecipePage> {
                   ),
                 ),
               ),
+
               Expanded(
                 child: ListView.builder(
                   itemCount: _comments.length,
@@ -379,7 +380,22 @@ class _RecipePageState extends State<RecipePage> {
                     bool isCurrentUserComment = comment.userDTO.id == currentId;
                     bool isRecipeOwner = widget.recipe.userDTO.id == currentId;
 
-                    return ListTile(
+                    return Container(
+                        decoration: BoxDecoration(
+                        border: Border(
+                          top: index == 0
+                              ? BorderSide(
+                            color: Colors.grey,
+                            width: 1.0,
+                          )
+                              : BorderSide.none,
+                        bottom: BorderSide(
+                        color: Colors.grey,
+                        width: 1.0,
+                        ),
+                      ),
+                    ),
+                    child:ListTile(
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       leading: CircleAvatar(
                         radius: 30,
@@ -440,7 +456,7 @@ class _RecipePageState extends State<RecipePage> {
                                 SizedBox(height: 8),
                                 Text(
                                   comment.content,
-                                  style: TextStyle(fontSize: 14),
+                                  style: TextStyle(fontSize: 16),
                                 ),
                                 SizedBox(height: 8),
                                 // 버튼을 댓글 내용 아래에 배치
@@ -463,7 +479,7 @@ class _RecipePageState extends State<RecipePage> {
                                         },
                                         child: Text(
                                           "수정",
-                                          style: TextStyle(color: Colors.green),
+                                          style: TextStyle(fontSize: 12, color: Colors.green),
                                         ),
                                       ),
                                       SizedBox(width: 2),
@@ -478,7 +494,7 @@ class _RecipePageState extends State<RecipePage> {
                                         },
                                         child: Text(
                                           "삭제",
-                                          style: TextStyle(color: Colors.red),
+                                          style: TextStyle(fontSize: 12, color: Colors.red),
                                         ),
                                       ),
                                     ],
@@ -495,7 +511,7 @@ class _RecipePageState extends State<RecipePage> {
                                     },
                                     child: Text(
                                       "삭제",
-                                      style: TextStyle(color: Colors.red),
+                                      style: TextStyle(fontSize: 12, color: Colors.red),
                                     ),
                                   ),
                                 if (!isRecipeOwner && isCurrentUserComment)
@@ -517,7 +533,7 @@ class _RecipePageState extends State<RecipePage> {
                                         },
                                         child: Text(
                                           "수정",
-                                          style: TextStyle(color: Colors.green),
+                                          style: TextStyle(fontSize: 12, color: Colors.green),
                                         ),
                                       ),
                                       SizedBox(width: 2),
@@ -531,7 +547,7 @@ class _RecipePageState extends State<RecipePage> {
                                         },
                                         child: Text(
                                           "삭제",
-                                          style: TextStyle(color: Colors.red),
+                                          style: TextStyle(fontSize: 12, color: Colors.red),
                                         ),
                                       ),
                                     ],
@@ -543,6 +559,7 @@ class _RecipePageState extends State<RecipePage> {
                       ),
                       //subtitle: Text(comment.content),
                       tileColor: Colors.white,
+                    )
                     );
                   },
                 ),

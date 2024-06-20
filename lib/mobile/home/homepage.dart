@@ -59,22 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _refreshController.refreshCompleted();// 임시로 2초 대기
   }
 
-  Future<void> showNotification({
-    required title,
-    required message
-  }) async{
-    notiPlugin.show(11, title, message,
-      NotificationDetails(
-        android: AndroidNotificationDetails(
-          "channelId",
-          "channelName",
-          channelDescription: "channelDescription",
-          icon: "@mipmap/ic_launcher",
-        ),
-      ),
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -711,7 +695,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: screenHeight / 3.8,
                     color: Colors.white,
                       child: Card(
-                      color: Colors.white,
+                      color: Colors.grey[100],
                       elevation: 1.0,
                         child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -732,7 +716,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: [
                                 CircleAvatar(
                                   radius: 35, // 원형의 크기 조절
-                                  backgroundColor: Colors.blue[100], // 원형의 배경색
+                                  backgroundColor: Colors.white, // 원형의 배경색
                                   child: Text(
                                     "Weekly", // 원형 안에 들어갈 글자
                                     style: TextStyle(
@@ -849,8 +833,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           }));
                         },
                         child: Card(
-                          color: Colors.blue[50],
-                          elevation: 1.5,
+                          color: Colors.white,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder( // 카드에 경계선 추가
+                            side: BorderSide(color: Colors.black, width: 0.5),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
                           child: Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,

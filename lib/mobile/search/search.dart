@@ -216,6 +216,7 @@ class _SearchPageState extends State<SearchPage>  with SingleTickerProviderState
             style: TextStyle(color: Colors.black),
           ),
         ),
+        backgroundColor: Colors.white,
         actions: [
           AnimatedBuilder(
             animation: _animationController,

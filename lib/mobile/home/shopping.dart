@@ -123,14 +123,14 @@ class _ShoppingPageState extends State<ShoppingPage> {
       onTap: () {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => ShoppingResultPage(itemname: shop.name, kindname: shop.kind, rankname: shop.rank))).then((value) => setState(() {
-
         }));
       },
       child: Card(
         elevation: 2.0,
-        color: Colors.lightGreenAccent[100],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0), // Adjust the value as needed
+        color: Colors.white,
+        shape: RoundedRectangleBorder( // 카드에 경계선 추가
+          side: BorderSide(color: Colors.black, width: 0.5),
+          borderRadius: BorderRadius.circular(5.0),
         ),
         child: Column(
           children: [

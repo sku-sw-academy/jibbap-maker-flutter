@@ -43,6 +43,7 @@ class _NotificationListPageState extends State<NotificationListPage> {
         title: Text('알림'),
         centerTitle: true,
         scrolledUnderElevation: 0,
+        backgroundColor: Colors.white,
       ),
       body: FutureBuilder<List<NotificationListDTO>>(
         future: notificationList,

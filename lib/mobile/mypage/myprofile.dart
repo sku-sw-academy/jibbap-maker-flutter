@@ -212,7 +212,7 @@ class _MyProfileState extends State<MyProfile> {
           'My Page',
           style: TextStyle(fontSize: 25),
         ),
-        backgroundColor: Colors.grey[100],
+        backgroundColor: Colors.white,
         centerTitle: true,
         actions: [
           Consumer<NotificationProvider>(

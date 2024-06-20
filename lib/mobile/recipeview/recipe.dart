@@ -382,7 +382,7 @@ class _RecipePageState extends State<RecipePage> {
                     return ListTile(
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       leading: CircleAvatar(
-                        radius: 20,
+                        radius: 30,
                         backgroundColor: Colors.blue[200],
                         backgroundImage: comment.userDTO != null &&
                             comment.userDTO.profile != null &&

@@ -105,6 +105,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+          // 배경색 설정
+          scaffoldBackgroundColor: Colors.white,
           useMaterial3: true,
         ),
         home: MainPage(),

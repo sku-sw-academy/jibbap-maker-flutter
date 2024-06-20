@@ -407,7 +407,7 @@ class _RecipePageState extends State<RecipePage> {
                                     if (widget.recipe.userDTO.id != comment.userDTO.id)
                                       Text(
                                         comment.userDTO.nickname,
-                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                       ),
                                     if (widget.recipe.userDTO.id == comment.userDTO.id)
                                       Container(
@@ -426,9 +426,9 @@ class _RecipePageState extends State<RecipePage> {
                                           ],
                                         ),
                                       ),
-                                    SizedBox(width: 8),
+                                    SizedBox(width: 4),
                                     Text("·", style: TextStyle(fontSize: 18, color: Colors.grey)),
-                                    SizedBox(width: 8),
+                                    SizedBox(width: 4),
                                     Text(
                                       formatRelativeTime(comment.createDate),
                                       style: TextStyle(fontSize: 12, color: Colors.grey),

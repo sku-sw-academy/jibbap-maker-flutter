@@ -96,6 +96,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
       List<PriceDTO> prices = await widget.futurePrices;
       GptChatResponse response = await sendGptChatRequest(widget.userId, prices);
       print('Recipe: ${response.title}');
+      print('content: ${response.content}');
       return response;
     } catch (e) {
       print('Error: $e');
@@ -112,15 +113,15 @@ class _AIRecipePageState extends State<AIRecipePage> {
           future: futureRecipe,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('Loading...');
+              return Text('레시피 생성 중...');
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else if (!snapshot.hasData || snapshot.data!.title.isEmpty) {
               return Text('No title available');
             } else if (!snapshot.hasData || snapshot.data!.content.isEmpty) {
-              return Text('오류');
+              return Text('레시피 생성 실패');
             } else {
-              return Text(snapshot.data!.title.replaceAll("title :", ""));
+              return Text(snapshot.data!.title);
             }
           },
         ),
@@ -139,7 +140,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '문제가 생겼습니다. 다시 시도하세요.',
+                    '레시피 생성에 실패했습니다. 다시 시도하세요.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),

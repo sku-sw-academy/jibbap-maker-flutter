@@ -80,7 +80,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     initializeData();
-
   }
 
   Future<void> initializeData() async {

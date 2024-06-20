@@ -46,7 +46,7 @@ Future<void> showNotification({
         "channelId",
         "channelName",
         channelDescription: "channelDescription",
-        icon: "@mipmap/ic_launcher",
+        icon: "@drawable/img",
       ),
     ),
   );
@@ -55,7 +55,15 @@ Future<void> showNotification({
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async{
   RemoteNotification? notification = message.notification;
   print('noti - title : ${notification?.title}, body : ${notification?.body}');
-  await showNotification(title: notification?.title, message: notification?.body);
+  if (notification != null) {
+    if(notification.title != null && notification.body != null){
+      await showNotification(
+        title: notification.title ?? 'No Title',
+        message: notification.body ?? 'No Body',
+      );
+    }
+  }
+  //await showNotification(title: notification?.title, message: notification?.body);
   notificationProvider?.incrementCount();
 }
 

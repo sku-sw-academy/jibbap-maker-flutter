@@ -53,7 +53,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
       _currentMessageIndex = 0;
     });
 
-    _timer = Timer.periodic(Duration(seconds: 8), (timer) {
+    _timer = Timer.periodic(Duration(seconds: 9), (timer) {
       setState(() {
         _currentMessageIndex = (_currentMessageIndex + 1) % _loadingMessages.length;
       });
@@ -71,6 +71,26 @@ class _AIRecipePageState extends State<AIRecipePage> {
         imagePath = imageFile.path;
       }
     }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 16),
+                Text('저장 중입니다...'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
 
     // 서버 URL 정의
     final url = Uri.parse('${Constants.baseUrl}/recipe/save');
@@ -93,7 +113,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
 
     // 응답 처리
     final response = await http.Response.fromStream(streamedResponse);
-
+    Navigator.of(context).pop();
     if (response.statusCode == 200) {
       showDialog(
         context: context,
@@ -206,9 +226,9 @@ class _AIRecipePageState extends State<AIRecipePage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Text('불러오는 중...');
             } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return Text('레시피 생성 실패');
             } else if (!snapshot.hasData || snapshot.data!.title.isEmpty) {
-              return Text('No title available');
+              return Text('레시피 생성 실패');
             } else if (!snapshot.hasData || snapshot.data!.content.isEmpty) {
               return Text('레시피 생성 실패');
             } else {
@@ -246,7 +266,37 @@ class _AIRecipePageState extends State<AIRecipePage> {
             ),
             );
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '레시피 생성에 실패했습니다. 다시 시도하세요.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        isSave = false;
+                        futureRecipe = fetchRecipe();
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: BorderSide(color: Colors.black, width: 1),
+                      minimumSize: Size(100, 50),
+                    ),
+                    child: Text("다시 시도", style: TextStyle(fontSize: 16)),
+                  ),
+                ],
+              ),
+            );
           } else if (!snapshot.hasData || snapshot.data!.content.isEmpty) {
             return Center(
               child: Column(
@@ -353,7 +403,6 @@ class _AIRecipePageState extends State<AIRecipePage> {
 
                 SizedBox(height: 20,)
               ],
-
 
             );
           }

@@ -18,6 +18,7 @@ import 'package:flutter_splim/provider/userprovider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_splim/secure_storage/secure_service.dart';
 import 'package:flutter_splim/mobile/camera/CameraRecipe.dart';
+import 'package:flutter_splim/mobile/login/signout.dart';
 
 class MyPage extends StatefulWidget{
 
@@ -30,6 +31,8 @@ class _MyPageState extends State<MyPage> {
   final UserService userService = UserService();
   XFile? _image;
   CroppedFile? _croppedFile;
+  String key = "accessToken";
+  String refresh = "refreshToken";
 
   Future<void> _showPicker(BuildContext context) async {
     showModalBottomSheet(
@@ -113,41 +116,79 @@ class _MyPageState extends State<MyPage> {
   Future<void> _analyzeImage(File image) async {
     UserDTO? user = Provider.of<UserProvider>(context, listen: false).user;
     int? userId = user != null ? user?.id : 0;
-    final uri = Uri.parse('${Constants.baseUrl}/api/gpt/');
+    final uri = Uri.parse('${Constants.baseUrl}/api/camera/detect');
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 16),
+                Text('이미지를 분석 중입니다...'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
 
     var request = http.MultipartRequest('POST', uri)
-      ..files.add(await http.MultipartFile.fromPath('image', image.path));
+      ..files.add(await http.MultipartFile.fromPath('imageFile', image.path));
 
     var response = await request.send();
+    Navigator.of(context).pop();
 
     if (response.statusCode == 200) {
       String imageName = await response.stream.bytesToString();
 
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('음식 이름 확인'),
-          content: Text('이 이미지는 $imageName 입니까?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('취소'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('확인'),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) =>
-                        CameraPage(userId: userId!, name: imageName))
-                );
-              },
-            ),
-          ],
-        ),
-      );
-
+      if(!imageName.contains("Error"))
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('음식 이름 확인'),
+            content: Text('이 이미지는 $imageName 입니까?'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('취소'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) =>
+                          CameraPage(userId: userId!, name: imageName))
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      else
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('실패'),
+            content: Text('잘못된 이미지 입니다.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
       print('Response: $image');
     } else {
       print('Error: ${response.statusCode}');
@@ -159,6 +200,8 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
+    final storageService = Provider.of<SecureService>(context, listen: false);
+
     return DefaultTabController(
       length: 1, // 탭의 개수// 초기화할 탭의 인덱스 (0부터 시작)
       child: Scaffold(
@@ -168,7 +211,7 @@ class _MyPageState extends State<MyPage> {
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 3,
+          currentIndex: 4,
           type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(
@@ -178,6 +221,10 @@ class _MyPageState extends State<MyPage> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.search, color: Colors.grey),
                 label: '검색',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.camera, color: Colors.blue),
+              label: '카메라',
             ),
             BottomNavigationBarItem(
                 icon: Icon(Icons.food_bank, color: Colors.grey),
@@ -216,6 +263,22 @@ class _MyPageState extends State<MyPage> {
               }));
             }
             else if (index == 2) {
+              if (Constants.isLogined) {
+                _showPicker(context);
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                ).then((value) {
+                  storageService.readToken(key).then((token) {
+                    setState(() {
+                      Constants.isLogined = token != null && token.isNotEmpty;
+                    });
+                  });
+                });
+              }
+            }
+            else if (index == 3) {
               Navigator.push(
                 context,
                 PageRouteBuilder(

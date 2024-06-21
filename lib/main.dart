@@ -259,41 +259,79 @@ class _MainPageState extends State<MainPage> {
   Future<void> _analyzeImage(File image) async {
     UserDTO? user = Provider.of<UserProvider>(context, listen: false).user;
     int? userId = user != null ? user?.id : 0;
-    final uri = Uri.parse('${Constants.baseUrl}/api/gpt/');
+    final uri = Uri.parse('${Constants.baseUrl}/api/camera/detect');
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 16),
+                Text('이미지를 분석 중입니다...'),
+              ],
+            ),
+          ),
+        );
+      },
+    );
 
     var request = http.MultipartRequest('POST', uri)
       ..files.add(await http.MultipartFile.fromPath('imageFile', image.path));
 
     var response = await request.send();
+    Navigator.of(context).pop();
 
     if (response.statusCode == 200) {
       String imageName = await response.stream.bytesToString();
 
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('음식 이름 확인'),
-          content: Text('이 이미지는 $imageName 입니까?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('취소'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('확인'),
-              onPressed: () {
-                Navigator.push(context,
+      if(!imageName.contains("Error"))
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('음식 이름 확인'),
+            content: Text('이 이미지는 $imageName 입니까?'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('취소'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(context,
                     MaterialPageRoute(builder: (context) =>
                         CameraPage(userId: userId!, name: imageName))
-                );
-              },
-            ),
-          ],
-        ),
-      );
-
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      else
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('실패'),
+            content: Text('잘못된 이미지 입니다.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
       print('Response: $image');
     } else {
       print('Error: ${response.statusCode}');

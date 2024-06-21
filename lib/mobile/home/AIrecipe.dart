@@ -64,14 +64,6 @@ class _AIRecipePageState extends State<AIRecipePage> {
     File? imageFile;
     String? imagePath;
 
-    // 이미지 다운로드 및 저장
-    if (recipe.imageUrl.isNotEmpty) {
-      imageFile = await _downloadImage(recipe.imageUrl);
-      if (imageFile != null) {
-        imagePath = imageFile.path;
-      }
-    }
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -91,6 +83,14 @@ class _AIRecipePageState extends State<AIRecipePage> {
         );
       },
     );
+
+    // 이미지 다운로드 및 저장
+    if (recipe.imageUrl.isNotEmpty) {
+      imageFile = await _downloadImage(recipe.imageUrl);
+      if (imageFile != null) {
+        imagePath = imageFile.path;
+      }
+    }
 
     // 서버 URL 정의
     final url = Uri.parse('${Constants.baseUrl}/recipe/save');

@@ -5,10 +5,10 @@ import 'package:flutter_splim/dto/gptchatrequest.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_splim/constant.dart';
 import 'dart:convert';
-import 'package:http_parser/http_parser.dart'; // 추가
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'dart:io';
-import 'package:path/path.dart' as path;
+import 'package:lottie/lottie.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class AIRecipePage extends StatefulWidget {
   final int userId;
@@ -163,6 +163,9 @@ class _AIRecipePageState extends State<AIRecipePage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -189,7 +192,24 @@ class _AIRecipePageState extends State<AIRecipePage> {
         future: futureRecipe,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 120),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start, // Column의 시작 부분에 배치합니다.
+                children: [
+                  Lottie.asset(
+                    'asset/lottie/food_animation.json',
+                    width: screenWidth * 0.8,
+                  ),
+                  SpinKitThreeBounce(
+                    color: Colors.amber,
+                    size: 30.0,
+                  ),
+                ],
+              ),
+            ),
+            );
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.content.isEmpty) {

@@ -23,6 +23,9 @@ import 'package:flutter_splim/provider/notificationProvider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:image_cropper/image_cropper.dart';
+import 'dart:io';
+import 'package:flutter_splim/mobile/camera/CameraRecipe.dart';
 
 final FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin();
 NotificationProvider? notificationProvider;
@@ -125,6 +128,8 @@ class _MainPageState extends State<MainPage> {
   String refresh = "refreshToken";
   late Future<UserDTO> user;
   final UserService userService = UserService();
+  XFile? _image;
+  CroppedFile? _croppedFile;
 
   @override
   void initState() {
@@ -206,42 +211,95 @@ class _MainPageState extends State<MainPage> {
     final ImagePicker _picker = ImagePicker();
     final XFile? image = await _picker.pickImage(source: source);
     if (image != null) {
-      await _analyzeImage(image);
+      _image = XFile(image.path);
+      cropImage();
     }
   }
 
-  Future<void> _analyzeImage(XFile image) async {
-    final bytes = await image.readAsBytes();
-    final base64Image = base64Encode(bytes);
-    final apiKey = 'YOUR_GOOGLE_CLOUD_VISION_API_KEY';
-    final url = 'https://vision.googleapis.com/v1/images:annotate?key=$apiKey';
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'requests': [
-          {
-            'image': {
-              'content': base64Image,
-            },
-            'features': [
-              {
-                'type': 'LABEL_DETECTION',
-                'maxResults': 10,
-              },
-            ],
-          },
+  Future<void> cropImage() async {
+    if (_image != null) {
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: _image!.path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 100,
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: '이미지 자르기/회전하기',
+            toolbarColor: Colors.grey[100],
+            toolbarWidgetColor: Colors.black,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true,
+          ),
+          IOSUiSettings(
+            title: '이미지 자르기/회전하기',
+            aspectRatioLockEnabled: true,
+          ),
+          WebUiSettings(
+            context: context,
+            presentStyle: CropperPresentStyle.dialog,
+            boundary: CroppieBoundary(width: 520, height: 520),
+            viewPort: CroppieViewPort(width: 480, height: 480, type: 'circle'),
+            enableExif: true,
+            enableZoom: true,
+            showZoomer: true,
+          ),
         ],
-      }),
-    );
+      );
+
+      if (croppedFile != null) {
+        setState(() {
+          _croppedFile = croppedFile;
+          _analyzeImage(File(_croppedFile!.path));
+        });
+      }
+    }
+  }
+
+  Future<void> _analyzeImage(File image) async {
+    UserDTO? user = Provider.of<UserProvider>(context, listen: false).user;
+    int? userId = user != null ? user?.id : 0;
+    final uri = Uri.parse('${Constants.baseUrl}/api/gpt/');
+
+    var request = http.MultipartRequest('POST', uri)
+      ..files.add(await http.MultipartFile.fromPath('imageFile', image.path));
+
+    var response = await request.send();
+
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      // Handle the response from Google Cloud Vision API
-      print('Response: $data');
+      String imageName = await response.stream.bytesToString();
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('음식 이름 확인'),
+          content: Text('이 이미지는 $imageName 입니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) =>
+                        CameraPage(userId: userId!, name: imageName))
+                );
+              },
+            ),
+          ],
+        ),
+      );
+
+      print('Response: $image');
     } else {
       print('Error: ${response.statusCode}');
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('이미지를 인식하지 못했습니다.'),)
+      );
     }
   }
 
@@ -259,30 +317,32 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
           items: [
             BottomNavigationBarItem(
                 icon: Icon(Icons.home, color: Colors.black),
-                label: 'Home',
+                label: '홈',
                 backgroundColor: Colors.white
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.search, color: Colors.grey),
-              label: 'Search',
+              label: '검색',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.camera, color: Colors.blue),
-              label: 'Camera',
+              label: '카메라',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.food_bank, color: Colors.grey),
-              label: 'Recipe',
+              label: '레시피',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person, color: Colors.grey),
-              label: 'My Page',
+              label: '내 정보',
             ),
           ],
           selectedItemColor: Colors.black,
+          backgroundColor: Colors.white,
           onTap: (int index) {
             if(index == 0){
               setState(() {
@@ -312,7 +372,20 @@ class _MainPageState extends State<MainPage> {
                 });
               });
             } else if (index == 2) {
-              _showPicker(context);
+              if (Constants.isLogined) {
+                _showPicker(context);
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                ).then((value) {
+                  storageService.readToken(key).then((token) {
+                    setState(() {
+                      Constants.isLogined = token != null && token.isNotEmpty;
+                    });
+                  });
+                });
+              }
             } else if (index == 3) {
               Navigator.push(
                 context,

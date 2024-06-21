@@ -11,17 +11,17 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:async';
 
-class AIRecipePage extends StatefulWidget {
+class CameraPage extends StatefulWidget {
   final int userId;
-  final Future<List<PriceDTO>> futurePrices;
+  final String name;
 
-  AIRecipePage({required this.userId, required this.futurePrices});
+  CameraPage({required this.userId, required this.name});
 
   @override
-  _AIRecipePageState createState() => _AIRecipePageState();
+  _CameraPageState createState() => _CameraPageState();
 }
 
-class _AIRecipePageState extends State<AIRecipePage> {
+class _CameraPageState extends State<CameraPage> {
   late Future<GptChatResponse> futureRecipe;
   bool isSave = false;
   File? _savedImageFile;
@@ -118,13 +118,13 @@ class _AIRecipePageState extends State<AIRecipePage> {
     }
   }
 
-  Future<GptChatResponse> sendGptChatRequest(int userId, List<PriceDTO> prices) async {
+  Future<GptChatResponse> sendGptChatRequest(int userId, String name) async {
 
     final url = Uri.parse('${Constants.baseUrl}/api/gpt/recipe');
 
     GptChatRequest request = GptChatRequest(
       id: userId,
-      thriftyItems: prices.map((price) => price.itemCode.itemName).join(', '),
+      thriftyItems: name,
     );
 
     final response = await http.post(
@@ -144,26 +144,6 @@ class _AIRecipePageState extends State<AIRecipePage> {
     }
   }
 
-  Future<void> _saveAndDisplayImage(GptChatResponse recipe) async {
-    try {
-      if (recipe.imageUrl.isNotEmpty) {
-        // 이미지 다운로드
-        File imageFile = await _downloadImage(recipe.imageUrl);
-        setState(() {
-          _savedImageFile = imageFile;
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('이미지 URL이 비어 있습니다.')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('이미지를 다운로드할 수 없습니다: $e')),
-      );
-    }
-  }
-
 // 이미지 다운로드 및 저장 메서드 수정
   Future<File> _downloadImage(String url) async {
     final cacheManager = DefaultCacheManager();
@@ -180,8 +160,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
   // 응답을 받는 메서드
   Future<GptChatResponse> fetchRecipe() async {
     try {
-      List<PriceDTO> prices = await widget.futurePrices;
-      GptChatResponse response = await sendGptChatRequest(widget.userId, prices);
+      GptChatResponse response = await sendGptChatRequest(widget.userId, widget.name);
       print('Recipe: ${response.title}');
       print('content: ${response.content}');
       return response;
@@ -223,27 +202,27 @@ class _AIRecipePageState extends State<AIRecipePage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 100),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start, // Column의 시작 부분에 배치합니다.
-                children: [
-                  Lottie.asset(
-                    'asset/lottie/food_animation.json',
-                    width: screenWidth * 0.8,
-                  ),
-                  SpinKitThreeBounce(
-                    color: Colors.amber,
-                    size: 30.0,
-                  ),
-                  SizedBox(height: screenHeight * 0.1),
-                  Text(
-                    _loadingMessages[_currentMessageIndex],
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.only(top: 100),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start, // Column의 시작 부분에 배치합니다.
+                  children: [
+                    Lottie.asset(
+                      'asset/lottie/food_animation.json',
+                      width: screenWidth * 0.8,
+                    ),
+                    SpinKitThreeBounce(
+                      color: Colors.amber,
+                      size: 30.0,
+                    ),
+                    SizedBox(height: screenHeight * 0.1),
+                    Text(
+                      _loadingMessages[_currentMessageIndex],
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
-            ),
             );
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -307,7 +286,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
                             //await _saveAndDisplayImage(snapshot.data!);
                           }else{
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('이미 저장되었습니다.'),)
+                                SnackBar(content: Text('이미 저장되었습니다.'),)
                             );
                           }
                         } catch (e) {
@@ -387,17 +366,5 @@ class _AIRecipePageState extends State<AIRecipePage> {
     );
   }
 
-  Widget _buildSavedImage() {
-    return _savedImageFile != null
-        ? Image.file(_savedImageFile!)
-        : Container(
-      width: 300,
-      height: 300,
-      color: Colors.grey[300],
-      child: Center(
-        child: Text('이미지가 저장되지 않았습니다.'),
-      ),
-    );
-  }
 
 }

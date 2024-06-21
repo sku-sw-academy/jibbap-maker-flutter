@@ -209,7 +209,7 @@ class _MyProfileState extends State<MyProfile> {
       appBar: AppBar(
         scrolledUnderElevation: 0,
         title: Text(
-          'My Page',
+          '내 정보',
           style: TextStyle(fontSize: 25),
         ),
         backgroundColor: Colors.white,

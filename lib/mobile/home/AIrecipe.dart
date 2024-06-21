@@ -9,6 +9,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'dart:io';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'dart:async';
 
 class AIRecipePage extends StatefulWidget {
   final int userId;
@@ -24,6 +25,40 @@ class _AIRecipePageState extends State<AIRecipePage> {
   late Future<GptChatResponse> futureRecipe;
   bool isSave = false;
   File? _savedImageFile;
+  int _currentMessageIndex = 0;
+  late Timer _timer;
+
+  final List<String> _loadingMessages = [
+    '잠시만 기다려주세요...',
+    '레시피를 생성 중입니다...',
+    '이미지 생성 중입니다...',
+    '거의 완료되었습니다...',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    futureRecipe = fetchRecipe(); // 초기화 시에 응답을 받기 위해 initState에서 호출
+    _startLoadingMessagesTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  void _startLoadingMessagesTimer() {
+    setState(() {
+      _currentMessageIndex = 0;
+    });
+
+    _timer = Timer.periodic(Duration(seconds: 8), (timer) {
+      setState(() {
+        _currentMessageIndex = (_currentMessageIndex + 1) % _loadingMessages.length;
+      });
+    });
+  }
 
   Future<void> saveRecipe(GptChatResponse recipe) async {
     File? imageFile;
@@ -108,12 +143,6 @@ class _AIRecipePageState extends State<AIRecipePage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    futureRecipe = fetchRecipe(); // 초기화 시에 응답을 받기 위해 initState에서 호출
-  }
-
   Future<void> _saveAndDisplayImage(GptChatResponse recipe) async {
     try {
       if (recipe.imageUrl.isNotEmpty) {
@@ -174,7 +203,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
           future: futureRecipe,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('레시피 생성 중...');
+              return Text('불러오는 중...');
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else if (!snapshot.hasData || snapshot.data!.title.isEmpty) {
@@ -194,7 +223,7 @@ class _AIRecipePageState extends State<AIRecipePage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
             child: Padding(
-              padding: const EdgeInsets.only(top: 120),
+              padding: const EdgeInsets.only(top: 100),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start, // Column의 시작 부분에 배치합니다.
                 children: [
@@ -205,6 +234,11 @@ class _AIRecipePageState extends State<AIRecipePage> {
                   SpinKitThreeBounce(
                     color: Colors.amber,
                     size: 30.0,
+                  ),
+                  SizedBox(height: screenHeight * 0.1),
+                  Text(
+                    _loadingMessages[_currentMessageIndex],
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -295,10 +329,12 @@ class _AIRecipePageState extends State<AIRecipePage> {
                     SizedBox(width: 40),
                     ElevatedButton(
                       onPressed: () {
+                        _timer?.cancel();
                         setState(() {
                           isSave = false;
                           futureRecipe = fetchRecipe();
                         });
+                        _startLoadingMessagesTimer();
                       },
                       child: Text("재시도", textAlign: TextAlign.center, style: TextStyle(fontSize: 11),),
                       style: ElevatedButton.styleFrom(

@@ -20,7 +20,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_splim/provider/notificationProvider.dart';
-//import 'package:easy_localization/easy_localization.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 final FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin();
 NotificationProvider? notificationProvider;
@@ -105,7 +107,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-          // 배경색 설정
           scaffoldBackgroundColor: Colors.white,
           useMaterial3: true,
         ),
@@ -135,7 +136,6 @@ class _MainPageState extends State<MainPage> {
       print('noti - title : ${notification?.title}, body : ${notification?.body}');
       await showNotification(title: notification?.title, message: notification?.body);
     });
-    //user = _fetchUser();
   }
 
   Future<void> _checkLoginStatus() async {
@@ -172,6 +172,79 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  Future<void> _showPicker(BuildContext context) async {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('사진 선택'),
+                onTap: () {
+                  _pickImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_camera),
+                title: Text('카메라로 찍기'),
+                onTap: () {
+                  _pickImage(ImageSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: source);
+    if (image != null) {
+      await _analyzeImage(image);
+    }
+  }
+
+  Future<void> _analyzeImage(XFile image) async {
+    final bytes = await image.readAsBytes();
+    final base64Image = base64Encode(bytes);
+    final apiKey = 'YOUR_GOOGLE_CLOUD_VISION_API_KEY';
+    final url = 'https://vision.googleapis.com/v1/images:annotate?key=$apiKey';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'requests': [
+          {
+            'image': {
+              'content': base64Image,
+            },
+            'features': [
+              {
+                'type': 'LABEL_DETECTION',
+                'maxResults': 10,
+              },
+            ],
+          },
+        ],
+      }),
+    );
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      // Handle the response from Google Cloud Vision API
+      print('Response: $data');
+    } else {
+      print('Error: ${response.statusCode}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -182,10 +255,9 @@ class _MainPageState extends State<MainPage> {
       child: Scaffold(
         body: TabBarView(
           children: [
-            MyHomePage(), // 홈 화면
+            MyHomePage(),
           ],
         ),
-
         bottomNavigationBar: BottomNavigationBar(
           items: [
             BottomNavigationBarItem(
@@ -198,6 +270,10 @@ class _MainPageState extends State<MainPage> {
               label: 'Search',
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.camera, color: Colors.blue),
+              label: 'Camera',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.food_bank, color: Colors.grey),
               label: 'Recipe',
             ),
@@ -206,16 +282,13 @@ class _MainPageState extends State<MainPage> {
               label: 'My Page',
             ),
           ],
-
           selectedItemColor: Colors.black,
-
           onTap: (int index) {
             if(index == 0){
               setState(() {
                 _checkLoginStatus();
               });
-            }
-            else if (index == 1) {
+            } else if (index == 1) {
               Navigator.push(
                 context,
                 PageRouteBuilder(
@@ -238,8 +311,9 @@ class _MainPageState extends State<MainPage> {
                   });
                 });
               });
-            }
-            else if (index == 2) {
+            } else if (index == 2) {
+              _showPicker(context);
+            } else if (index == 3) {
               Navigator.push(
                 context,
                 PageRouteBuilder(
@@ -264,7 +338,7 @@ class _MainPageState extends State<MainPage> {
                   });
                 });
               });
-            } else if (index == 3) {
+            } else if (index == 4) {
               if (Constants.isLogined) {
                 Navigator.push(
                   context,
@@ -290,8 +364,7 @@ class _MainPageState extends State<MainPage> {
                     });
                   });
                 });
-              }
-              else {
+              } else {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => LoginPage()),

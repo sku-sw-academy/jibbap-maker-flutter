@@ -313,28 +313,38 @@ class _ShoppingResultPageState extends State<ShoppingResultPage> {
     double result = maxY - minY;
     String text = "";
 
-    if(result <= 200){
-      if(value.toInt() % 50 == 0){
-        text = (value.toDouble() / 1000).toString() + "k";
-      }else{
+    String truncateToOneDecimal(double number) {
+      String numberStr = (number.toDouble() / 1000).toString();
+      int decimalIndex = numberStr.indexOf('.');
+      if (decimalIndex != -1 && decimalIndex + 2 < numberStr.length) {
+        return numberStr.substring(0, decimalIndex + 2) + "k";
+      } else {
+        return numberStr + "k";
+      }
+    }
+
+    if (result <= 100) {
+      if (value.toInt() % 50 == 0) {
+        text = truncateToOneDecimal(value);
+      } else {
         text = "";
       }
-    } else if(result <= 1000){
-      if(value.toInt() % 200 == 0){
-        text = (value.toDouble() / 1000).toString() + "k";
-      }else{
+    } else if (result <= 1000) {
+      if (value.toInt() % 200 == 0) {
+        text = truncateToOneDecimal(value);
+      } else {
         text = "";
       }
-    }else if(result <= 5000){
-      if(value.toInt() % 500 == 0){
-        text = (value.toDouble() / 1000).toString() + "k";
-      }else{
+    } else if (result <= 5000) {
+      if (value.toInt() % 1000 == 0) {
+        text = truncateToOneDecimal(value);
+      } else {
         text = "";
       }
-    }else{
-      if(value.toInt() % 1000 == 0){
-        text = (value.toDouble() / 1000).toString() + "k";
-      }else{
+    } else {
+      if (value.toInt() % 10000 == 0) {
+        text = truncateToOneDecimal(value);
+      } else {
         text = "";
       }
     }

@@ -27,6 +27,7 @@ import 'package:flutter_splim/provider/notificationProvider.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:lottie/lottie.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -329,8 +330,20 @@ class _MyHomePageState extends State<MyHomePage> {
                               elevation: 4.0,
                               color: Colors.white,
                               child: Container(
-                              height: screenHeight * 0.245,
-                              width: screenWidth * 0.4,
+                              height: screenHeight * 0.245, //screenHeight * 0.245
+                              width: screenWidth * 0.4, // screenWidth * 0.4
+                                // child: SizedBox(
+                                //   height: screenHeight * 0.2, // 원하는 높이 설정
+                                //   width: screenWidth * 0.1, // 원하는 너비 설정
+                                //   child: Lottie.asset(
+                                //     'asset/lottie/recipe_animation.json', // 여기에 Lottie 파일 경로를 입력하세요
+                                //     fit: BoxFit.contain, // Lottie 애니메이션을 Container의 크기에 맞게 조정합니다.
+                                //   ),
+                                // ),
+                                // decoration: BoxDecoration(
+                                //   color: Colors.white,
+                                //   borderRadius: BorderRadius.circular(14.0),
+                                // ),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 image: DecorationImage(
@@ -339,7 +352,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 borderRadius: BorderRadius.circular(14.0),
                               ),
-
                             ),
                           ),
                         ],
@@ -767,7 +779,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   );
                 } else {
-                  return Center(child: Text('No data found'));
+                    return Center(child: Text('No data found'));
                 }
               },
             ),

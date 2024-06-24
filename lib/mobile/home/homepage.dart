@@ -795,7 +795,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.start, // 왼쪽 정렬
                     children: [
                       Text(
-                      '관심있는 품목 소비자 가격은?',
+                      '인기있는 품목 가격은?',
                       style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ],
